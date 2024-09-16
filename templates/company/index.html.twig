@@ -9,12 +9,16 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/germleo/Documents/stage-direct/src/Controller/CompanyController.php</code></li>
-        <li>Your template at <code>C:/Users/germleo/Documents/stage-direct/templates/company/index.html.twig</code></li>
-    </ul>
+    <h1>Liste des entreprises</h1>
+    <table border="1">
+    <tr>
+        <td> Nom de l'entreprise </td>
+    </tr>
+    {% for company in companies %}
+    <tr>
+        <td>{{ company.name }}</td>
+    </tr>
+    {% endfor %}
+    </table>
 </div>
 {% endblock %}
