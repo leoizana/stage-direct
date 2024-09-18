@@ -25,8 +25,9 @@ class CompanyController extends AbstractController
             'companies' => $companies,
         ]);
     }
-    #[Route('/add1', name: 'company_add1')]
-    public function addFirst(EntityManagerInterface $entityManager): Response
+
+    #[Route('/add', name: 'company_add')]
+    public function add(EntityManagerInterface $entityManager): Response
     {
         $sturno = new Company();
         $sturno->setName("STURNO");
@@ -34,6 +35,34 @@ class CompanyController extends AbstractController
         $entityManager->persist($sturno);
         $entityManager->flush();
         return new Response("Entreprise 'STURNIO' créee avec succès !")
+        ;
+    }
+
+    #[Route('/update/{id}', name: 'company_update')]
+    public function modificationCompany(int $id,EntityManagerInterface $entityManager, CompanyRepository $companyRepository): Response
+    {
+        $company = $companyRepository->find($id);
+        $company->setName("TC Bois");
+
+        //$entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($company);
+
+        $entityManager ->flush();
+
+        return new Response("Entreprise modifier avec succès !")
+        ;
+    }
+    
+    #[Route('/delete/{id}', name: 'company_delete')]
+    public function deleteCompany(int $id,EntityManagerInterface $entityManager, CompanyRepository $companyRepository): Response
+    {
+        $company = $companyRepository->find($id);
+
+        //$entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($company);
+        $entityManager ->flush();
+
+        return new Response("Entreprise supprimer avec succès !")
         ;
     }
 }
