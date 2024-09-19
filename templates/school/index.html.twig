@@ -4,29 +4,31 @@
 
 {% block body %}
     <h1>School index</h1>
-
+    {% set i = 0 %}
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Address</th>
-                <th>Zipcode</th>
-                <th>Town</th>
-                <th>actions</th>
+                <th scope="col">Id</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Adresse</th>
+                <th scope="col">Code postale</th>
+                <th scope="col">Villes</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for school in schools %}
+        {% set i = i + 1%}
             <tr>
+                <th scope="row">{{ i }}</th>
                 <td>{{ school.id }}</td>
                 <td>{{ school.name }}</td>
                 <td>{{ school.address }}</td>
                 <td>{{ school.zipcode }}</td>
                 <td>{{ school.town }}</td>
                 <td>
-                    <a href="{{ path('app_school_show', {'id': school.id}) }}">show</a>
-                    <a href="{{ path('app_school_edit', {'id': school.id}) }}">edit</a>
+                    <a class="btn btn-info href="{{ path('app_school_show', {'id': school.id}) }}"><img src="icons/check2.svg"></a>
+                    <a class="btn btn-warning href="{{ path('app_school_edit', {'id': school.id}) }}"><img src="icons/pencil-fill.svg"></a>
                 </td>
             </tr>
         {% else %}
@@ -37,5 +39,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_school_new') }}">Create new</a>
+    <a class="btn btn-primary href="{{ path('app_school_new') }}"><img src="icons/plus-lg.svg"> Ajouter</a>
 {% endblock %}
