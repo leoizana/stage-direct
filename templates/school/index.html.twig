@@ -27,8 +27,8 @@
                 <td>{{ school.zipcode }}</td>
                 <td>{{ school.town }}</td>
                 <td>
-                    <a class="btn btn-info href="{{ path('app_school_show', {'id': school.id}) }}"><img src="icons/check2.svg"></a>
-                    <a class="btn btn-warning href="{{ path('app_school_edit', {'id': school.id}) }}"><img src="icons/pencil-fill.svg"></a>
+                    <a class="btn btn-info" href="{{ path('app_school_show', {'id': school.id}) }}"><img src="icons/check2.svg"></a>
+                    <a class="btn btn-warning" href="{{ path('app_school_edit', {'id': school.id}) }}"><img src="icons/pencil-fill.svg"></a>
                 </td>
             </tr>
         {% else %}
@@ -39,5 +39,5 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary href="{{ path('app_school_new') }}"><img src="icons/plus-lg.svg"> Ajouter</a>
+    <a class="btn btn-primary" href="{{ path('app_school_new') }}"  ><img src="icons/plus-lg.svg">Ajouter</a>
 {% endblock %}
