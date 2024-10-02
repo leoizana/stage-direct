@@ -164,43 +164,54 @@
     <div class="collapse navbar-collapse" id="navbarScroll">
       <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             École 
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/school/">Listes des écoles</a></li>
+            <li><a class="dropdown-item " href="/school/index">Listes des écoles</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
             <li><a class="dropdown-item" href="/school/new">Ajouter une école</a></li>
+            {% endif %}
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Entreprise 
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/company/">Listes des entreprises</a></li>
+            {% if is_granted('ROLE_STUDENT') %}
             <li><a class="dropdown-item" href="/company/add">Ajouter une entreprise</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/company/update/2">Modifier l'entreprise n 2</a></li>
-            <li><a class="dropdown-item" href="/company/delete/3">Supprimer l'entreprise n 3</a></li>
+            {% endif %}
           </ul>
-        </li>
+        </li>{% if is_granted('ROLE_TEACHER') %}
          <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Étudiants 
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/student/">Listes des étudiants</a></li>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
             <li><a class="dropdown-item" href="/student/new">Ajouter un étudiant</a></li>
+            {% endif %}
           </ul>
         </li>
-      </ul>
+      
+      {% if app.user %}
       <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <a href="/logout" class="btn btn-outline-danger">Se déconnecter</a>
       </form>
+      {% else %}
+      <form class="d-flex" role="search">
+        <a href="/login" class="btn btn-outline-success">Se connecter</a>
+      </form>
+      {% endif %}
+
+      </ul>
     </div>
   </div>
 </nav>

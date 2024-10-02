@@ -30,6 +30,7 @@ class CompanyController extends AbstractController
     #[Route('/', name: 'company_index')]
     public function index( Request $request): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_STUDENT');
         $companies = $this->companyRepository->findAll();
         dump($request);
 
@@ -43,6 +44,7 @@ class CompanyController extends AbstractController
     #[Route('/update/{id}', name: 'company_update')]
     public function modificationCompany(int $id): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_TEACHER');
         $company = $this->companyRepository->find($id);
         $company->setName("TC Bois");
 
@@ -58,6 +60,7 @@ class CompanyController extends AbstractController
     #[Route('/delete/{id}', name: 'company_delete')]
     public function deleteCompany(int $id,): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_TEACHER');
         $company = $this->companyRepository->find($id);
 
         //$entityManager = $this->getDoctrine()->getManager();
@@ -70,6 +73,7 @@ class CompanyController extends AbstractController
     #[Route('/add', name: 'company_add')]
     public function add(Request $request,): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_TEACHER');
         $company = new Company();
         $form = $this->formFactory->create(CompanyType::class, $company);
 

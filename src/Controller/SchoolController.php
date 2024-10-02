@@ -14,9 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/school')]
 final class SchoolController extends AbstractController
 {
-    #[Route(name: 'app_school_index', methods: ['GET'])]
+    #[Route('/index', name: 'app_school_index', methods: ['GET'])]
     public function index(SchoolRepository $schoolRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_STUDENT');
         return $this->render('school/index.html.twig', [
             'schools' => $schoolRepository->findAll(),
         ]);
@@ -25,6 +26,7 @@ final class SchoolController extends AbstractController
     #[Route('/new', name: 'app_school_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $school = new School();
         $form = $this->createForm(SchoolType::class, $school);
         $form->handleRequest($request);
@@ -45,6 +47,7 @@ final class SchoolController extends AbstractController
     #[Route('/{id}', name: 'app_school_show', methods: ['GET'])]
     public function show(School $school): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_STUDENT');
         return $this->render('school/show.html.twig', [
             'school' => $school,
         ]);
@@ -53,6 +56,7 @@ final class SchoolController extends AbstractController
     #[Route('/{id}/edit', name: 'app_school_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, School $school, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $form = $this->createForm(SchoolType::class, $school);
         $form->handleRequest($request);
 
@@ -71,6 +75,7 @@ final class SchoolController extends AbstractController
     #[Route('/{id}', name: 'app_school_delete', methods: ['POST'])]
     public function delete(Request $request, School $school, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         if ($this->isCsrfTokenValid('delete'.$school->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($school);
             $entityManager->flush();
