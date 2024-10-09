@@ -19,7 +19,7 @@ class StudentFixtures extends Fixture
       $student->setAddress("Quelques parts...");
       $student->setZipcode('50540');
       $student->setTown('Dans une ville de Normandie');
-      $student->addSchool($this->getReference(StudentFixtures::NDLP_SCHOOL_REFERENCE));
+      //$student->addSchool($this->getReference(StudentFixtures::NDLP_SCHOOL_REFERENCE));
 
       $manager->persist($student);
 
