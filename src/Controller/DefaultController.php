@@ -2,21 +2,25 @@
 
 namespace App\Controller;
 
+use App\Services\MessageGenerator;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/')]
 class DefaultController extends AbstractController
 {
     #[Route('/', name: 'app_default')]
-    public function index(): Response
+    public function index(MessageGenerator $messageGenerator): Response
     {
+        $message = $messageGenerator->getRandomMessage();
+        
         return $this->render('default/index.html.twig', [
             'controller_name' => 'DefaultController',
             'result' => 'OK',
+            'message' => $message,
         ]);
     }
     #[Route('/sendmail/', name: 'app_sendmail')]
