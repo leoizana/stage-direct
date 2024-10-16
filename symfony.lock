@@ -4,25 +4,13 @@
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.12",
-            "ref": "7266981c201efbbe02ae53c87f8bb378e3f825ae"
+            "version": "2.13",
+            "ref": "8d96c0b51591ffc26794d865ba3ee7d193438a83"
         },
         "files": [
             "./config/packages/doctrine.yaml",
             "./src/Entity/.gitignore",
             "./src/Repository/.gitignore"
-        ]
-    },
-    "doctrine/doctrine-fixtures-bundle": {
-        "version": "3.6",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.0",
-            "ref": "1f5514cfa15b947298df4d771e694e578d4c204d"
-        },
-        "files": [
-            "./src/DataFixtures/AppFixtures.php"
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
@@ -143,6 +131,18 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/messenger": {
+        "version": "7.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.0",
+            "ref": "ba1ac4e919baba5644d31b57a3284d6ba12d52ee"
+        },
+        "files": [
+            "./config/packages/messenger.yaml"
+        ]
+    },
     "symfony/monolog-bundle": {
         "version": "3.10",
         "recipe": {
@@ -182,15 +182,6 @@
             "./tests/bootstrap.php"
         ]
     },
-    "symfony/resend-mailer": {
-        "version": "7.1",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "7.1",
-            "ref": "487735bc20cbd1547ec311692ef0261a7687a3f0"
-        }
-    },
     "symfony/routing": {
         "version": "7.1",
         "recipe": {
@@ -218,7 +209,7 @@
         ]
     },
     "symfony/stimulus-bundle": {
-        "version": "2.19",
+        "version": "2.20",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -258,7 +249,7 @@
         ]
     },
     "symfony/ux-turbo": {
-        "version": "v2.19.3"
+        "version": "v2.20.0"
     },
     "symfony/validator": {
         "version": "7.1",
@@ -284,9 +275,6 @@
             "./config/packages/web_profiler.yaml",
             "./config/routes/web_profiler.yaml"
         ]
-    },
-    "symfonycasts/verify-email-bundle": {
-        "version": "v1.17.0"
     },
     "twig/extra-bundle": {
         "version": "v3.13.0"
