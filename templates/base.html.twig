@@ -166,21 +166,27 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
+       
         <li class="nav-item dropdown">
+         {% if is_granted('ROLE_STUDENT') %}
           <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             École 
           </a>
-          <ul class="dropdown-menu">
+          {% endif %}
+          <ul class="dropdown-menu">    
             <li><a class="dropdown-item " href="/school/index">Listes des écoles</a></li>
+            
             {% if is_granted('ROLE_ADMIN') %}
             <li><a class="dropdown-item" href="/school/new">Ajouter une école</a></li>
             {% endif %}
           </ul>
         </li>
         <li class="nav-item dropdown">
+        {% if is_granted('ROLE_STUDENT') %}
           <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Entreprise 
           </a>
+          {% endif %}
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/company/">Listes des entreprises</a></li>
             {% if is_granted('ROLE_STUDENT') %}

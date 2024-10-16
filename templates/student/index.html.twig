@@ -9,11 +9,11 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Prénom</th>
-                <th>Nom</th>
-                <th>Adresse</th>
-                <th>Code Postale</th>
-                <th>Ville</th>
+                <th><a href="{{ path('app_student_index', {sort: 'firstname', direction: sort == 'firstname' and direction == 'asc' ? 'desc' : 'asc'}) }}">Prénom</a></th>
+                <th><a href="{{ path('app_student_index', {sort: 'lastname', direction: sort == 'lastname' and direction == 'asc' ? 'desc' : 'asc'}) }}">Nom</a></th>
+                <th><a href="{{ path('app_student_index', {sort: 'address', direction: sort == 'address' and direction == 'asc' ? 'desc' : 'asc'}) }}">Adresse</a></th>
+                <th><a href="{{ path('app_student_index', {sort: 'zipcode', direction: sort == 'zipcode' and direction == 'asc' ? 'desc' : 'asc'}) }}">Code Postale</a></th>
+                <th><a href="{{ path('app_student_index', {sort: 'town', direction: sort == 'town' and direction == 'asc' ? 'desc' : 'asc'}) }}">Ville</a></th>
                 <th>École(s)</th>
                 <th>Actions</th>
             </tr>

@@ -73,7 +73,7 @@ class CompanyController extends AbstractController
     #[Route('/add', name: 'company_add')]
     public function add(Request $request,): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_TEACHER');
+        $this->denyAccessUnlessGranted('ROLE_STUDENT');
         $company = new Company();
         $form = $this->formFactory->create(CompanyType::class, $company);
 
