@@ -20,6 +20,7 @@ final class StudentController extends AbstractController
     {
         $sort = $request->query->get('sort', 'firstname');
         $direction = $request->query->get('direction', 'desc');
+        
 
         $student = $studentRepository->findAllSorted($sort, $direction);
 

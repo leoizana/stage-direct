@@ -16,13 +16,20 @@ class StudentRepository extends ServiceEntityRepository
         parent::__construct($registry, Student::class);
     }
 
-    public function findAllSorted($sort = 'firstname', $direction = 'ASC')
-{
-    return $this->createQueryBuilder("s")
-        ->orderBy("s.$sort", $direction)
-        ->getQuery()
-        ->getResult();
-}
+    public function findAllSorted($sort, $direction)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        if ($sort === 'school') {
+            $qb->leftJoin('s.schools', 'sc')
+               ->addSelect('sc')
+               ->orderBy('sc.name', $direction);
+        } else {
+            $qb->orderBy("s.$sort", $direction);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 
     //    /**
     //     * @return Student[] Returns an array of Student objects

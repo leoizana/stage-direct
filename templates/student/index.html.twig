@@ -14,7 +14,11 @@
                 <th><a href="{{ path('app_student_index', {sort: 'address', direction: sort == 'address' and direction == 'asc' ? 'desc' : 'asc'}) }}">Adresse</a></th>
                 <th><a href="{{ path('app_student_index', {sort: 'zipcode', direction: sort == 'zipcode' and direction == 'asc' ? 'desc' : 'asc'}) }}">Code Postale</a></th>
                 <th><a href="{{ path('app_student_index', {sort: 'town', direction: sort == 'town' and direction == 'asc' ? 'desc' : 'asc'}) }}">Ville</a></th>
-                <th>École(s)</th>
+                <th>
+                    <a href="{{ path('app_student_index', {sort: 'school', direction: sort == 'school' and direction == 'asc' ? 'desc' : 'asc'}) }}">
+                        École(s)
+                    </a>
+                </th>
                 <th>Actions</th>
             </tr>
         </thead>
