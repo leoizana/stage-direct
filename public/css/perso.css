@@ -1,0 +1,21 @@
+.bouton-anim {
+    display: inline-block;
+    color: #000;
+    /* Couleur de base */
+    text-decoration: none;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.bouton-anim:hover {
+    color: #00f;
+    /* Bleu pétillant */
+    transform: translateY(-1px);
+}
+
+body {
+    background: rgb(220, 220, 223);
+    background: -moz-radial-gradient(circle, rgba(220, 220, 223, 1) 0%, rgba(228, 230, 231, 1) 90%);
+    background: -webkit-radial-gradient(circle, rgba(220, 220, 223, 1) 0%, rgba(228, 230, 231, 1) 90%);
+    background: radial-gradient(circle, rgba(220, 220, 223, 1) 0%, rgba(228, 230, 231, 1) 90%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#dcdcdf", endColorstr="#e4e6e7", GradientType=1);
+}
