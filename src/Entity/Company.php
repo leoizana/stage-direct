@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\StageRepository;
+use App\Repository\CompanyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: StageRepository::class)]
-#[ORM\Table(name: 'tbl_stage')]
-class Stage
+#[ORM\Entity(repositoryClass: CompanyRepository::class)]
+#[ORM\Table(name: 'tbl_company')]
+class Company
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
