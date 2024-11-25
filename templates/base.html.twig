@@ -2,8 +2,9 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<link rel="icon" type="image/png" href="images/stage2.png">
 		<title>
-			{% block title %}Welcome!
+			{% block title %}
 			{% endblock %}
 		</title>
 		{% block stylesheets %}
@@ -43,11 +44,11 @@
 				</div>
 				<div class="hidden lg:flex lg:flex-1 lg:justify-end">
 				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-					<a href="logout" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Se déconnecter
+					 <a href="{{ path('app_logout') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Se déconnecter
 						<span aria-hidden="true">&rarr;</span>
 					</a>
 					{% else %}
-		<a href="login" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Se connecter
+		 <a href="{{ path('app_login') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Se connecter
 						<span aria-hidden="true">&rarr;</span>
 					</a>
 						{% endif %}
@@ -81,9 +82,9 @@
 							</div>
 							<div class="py-6">
 							 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-									<a href="logout" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se déconnecter</a>
+									 <a href="{{ path('app_logout') }}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se déconnecter</a>
 								{% else %}
-									<a href="login" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se connecter</a>
+									 <a href="{{ path('app_login') }}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se connecter</a>
 							{% endif %}
 								
 							</div>
