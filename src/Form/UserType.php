@@ -1,61 +1,136 @@
 <?php
 
+// src/Form/UserType.php
+
 namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;  // Importation du EmailType
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-{
-    $builder
-        ->add('email', EmailType::class, [
-            'label' => 'Adresse Mail',
-            'label_attr' => [
-                'class' => 'text-white text-sm font-medium mb-4', // Ajout de classes pour la police
-            ],
-            'attr' => [
-                'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                'placeholder' => 'nom@mail.fr',
-            ],
-        ])
-        ->add('password', PasswordType::class, [
-            'label' => 'Mot de Passe',
-            'label_attr' => [
-                'class' => 'text-white text-sm font-medium mb-4', // Ajout de classes pour la police
-            ],
-            'attr' => [
-                'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                'placeholder' => '••••••••',
-            ],
-        ])
-        ->add('roles', ChoiceType::class, [
-            'choices' => [
-                'Utilisateur' => 'ROLE_USER',
-                'Étudiant' => 'ROLE_STUDENT',
-                'Professeur' => 'ROLE_TEACHER',
-                'Administrateur' => 'ROLE_ADMIN',
-                'Super-Administrateur' => 'ROLE_SUPER_ADMIN',
-            ],
-            'multiple' => true, // Permet de sélectionner plusieurs rôles
-            'expanded' => true, // Affiche sous forme de cases à cocher
-            'label' => 'Rôles',
-            'label_attr' => [
-                'class' => 'text-white text-sm font-medium mb-4', 
-            ],
-            'attr' => [
-                'class' => 'flex flex-col gap-2', 
-            ],
-        ])
-        ;
-}
+    private $authorizationChecker;
 
+    // Injection du service AuthorizationCheckerInterface dans le constructeur
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('firstName', TextType::class, [
+                'label' => 'Prénom',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => 'Prénom',
+                ],
+            ])
+            ->add('lastName', TextType::class, [
+                'label' => 'Nom',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => 'Nom',
+                ],
+            ])
+            ->add('birthDate', DateType::class, [
+                'label' => 'Date de naissance',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'widget' => 'single_text',
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                ],
+            ])
+            ->add('address', TextType::class, [
+                'label' => 'Adresse postale',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => 'Adresse',
+                ],
+            ])
+            ->add('postalCode', TextType::class, [
+                'label' => 'Code Postal',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => 'Code postal',
+                ],
+            ])
+            ->add('city', TextType::class, [
+                'label' => 'Ville',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => 'Ville',
+                ],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'Adresse Mail',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => 'nom@mail.fr',
+                ],
+            ])
+            ->add('password', PasswordType::class, [
+                'label' => 'Mot de Passe',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => '••••••••',
+                ],
+            ]);
+
+        // Vérification si l'utilisateur a le rôle ROLE_ADMIN
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $builder->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'Utilisateur' => 'ROLE_USER',
+                    'Étudiant' => 'ROLE_STUDENT',
+                    'Professeur' => 'ROLE_TEACHER',
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Super-Administrateur' => 'ROLE_SUPER_ADMIN',
+                ],
+                'multiple' => true, // Permet de sélectionner plusieurs rôles
+                'expanded' => true, // Affiche sous forme de cases à cocher
+                'label' => 'Rôles',
+                'label_attr' => [
+                    'class' => 'text-white text-sm font-medium mb-4',
+                ],
+                'attr' => [
+                    'class' => 'flex flex-col gap-2',
+                ],
+            ]);
+        }
+    }
 
     public function configureOptions(OptionsResolver $resolver): void
     {

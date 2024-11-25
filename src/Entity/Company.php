@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Company
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\GeneratedValue(strategy: "AUTO")]  // Utilisation de la stratégie "AUTO" pour PostgreSQL
+    #[ORM\Column(type: "integer")]  // Spécification du type pour PostgreSQL
     private ?int $id = null;
 
     public function getId(): ?int

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Service\EmailService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,50 +28,66 @@ final class UserController extends AbstractController
     }
 
     #[Route('/inscription', name: 'app_user_new', methods: ['GET', 'POST'])]
-public function inscription(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
-{
-    $user = new User();
+    public function inscription(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, EmailService $emailService): Response
+    {
+        $user = new User();
 
-    // Vérifier si l'utilisateur est administrateur
-    $loginType = 'user'; // Valeur par défaut
-    if ($this->isGranted('ROLE_ADMIN')) {
-        $loginType = 'admin'; // Si l'utilisateur est admin, il peut choisir un rôle
-    }
-
-    // Créer le formulaire avec le bon type (admin ou user)
-    $form = $this->createForm(UserType::class, $user, [
-        'login_type' => $loginType // Passer 'admin' ou 'user' en fonction des droits de l'utilisateur
-    ]);
-
-    // Gestion de la soumission du formulaire
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Hachage du mot de passe
-        $hashedPassword = $passwordHasher->hashPassword(
-            $user,
-            $user->getPassword()  // Récupération du mot de passe depuis le formulaire
-        );
-        $user->setPassword($hashedPassword);
-
-        // Ajout d'un rôle par défaut si nécessaire
-        if (empty($user->getRoles())) {
-            $user->setRoles(['ROLE_USER']);
+        // Vérifier si l'utilisateur est administrateur
+        $loginType = 'user'; // Valeur par défaut
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $loginType = 'admin'; // Si l'utilisateur est admin, il peut choisir un rôle
         }
 
-        // Persist et flush
-        $entityManager->persist($user);
-        $entityManager->flush();
+        // Créer le formulaire avec le bon type (admin ou user)
+        $form = $this->createForm(UserType::class, $user, [
+            'login_type' => $loginType // Passer 'admin' ou 'user' en fonction des droits de l'utilisateur
+        ]);
 
-        // Redirection après inscription
-        return $this->redirectToRoute('app_login'); // Vous pouvez également rediriger vers la page de connexion
+        // Gestion de la soumission du formulaire
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Hachage du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $user->getPassword()  // Récupération du mot de passe depuis le formulaire
+            );
+            $user->setPassword($hashedPassword);
+
+            // Ajout d'un rôle par défaut si nécessaire
+            if (empty($user->getRoles())) {
+                $user->setRoles(['ROLE_USER']);
+            }
+
+            // Persist et flush
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // Envoyer l'email de confirmation
+            $emailSubject = "Confirmation de " . $user->getEmail();
+            $emailText = "Bonjour " . $user->getFirstName();
+            $destinataire = $user->getEmail();
+            $result = $emailService->sendEmail($emailSubject, $emailText, $destinataire);
+            if ($result == "00") {
+                // Succès 
+                $this->addFlash('success', 'Votre inscription a été réussie.');
+            } else {
+                // Échec
+                $this->addFlash('error', 'Une erreur est survenue.');
+            }
+            
+            
+            // Redirection après inscription avec un message de succès
+            $this->addFlash('success', 'Votre inscription a été réussie. Un email de confirmation vous a été envoyé.');
+
+            return $this->redirectToRoute('app_login'); // Vous pouvez également rediriger vers la page de connexion
+        }
+
+        return $this->render('user/new.html.twig', [
+            'user' => $user,
+            'form' => $form->createView(),
+        ]);
     }
-
-    return $this->render('user/new.html.twig', [
-        'user' => $user,
-        'form' => $form->createView(),
-    ]);
-}
 
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
