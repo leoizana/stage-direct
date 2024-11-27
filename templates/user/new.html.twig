@@ -1,34 +1,44 @@
-<title>S'inscrire | Stage-Direct </title>
+<title>S'inscrire | Stage-Direct
+</title>
 
 {% block stylesheets %}
-    <link href="/css/tailwind.min.css" rel="stylesheet">
+	<link href="/css/tailwind.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
-    <script src="/css/tailwind.js">
-        {% block importmap %}
-            {{ importmap('app') }}
-        {% endblock %}
-    </script>
+	<script src="/css/tailwind.js">
+		{% block importmap %}
+{{ importmap('app') }}
+{% endblock %}
+	</script>
 {% endblock %}
 
 {% block body %}
-<section class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto w-full flex-1">
-    <a href="{{ path('app_default') }}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-        <img class="w-1/2 mx-auto" src="{{ asset('images/stage2.png') }}" alt="logo">
-    </a>
-    <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Créer un compte
-            </h1>
-            {{ include('user/_form.html.twig') }}
-            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                Déjà un compte? <a href="{{ path('app_login') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Se connecter ici</a>
-            </p>
-        </div>
-    </div>
-  </div>
-</section>
+	{% for type, messages in app.flashes %}
+		{% for message in messages %}
+			<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endfor %}
+	{% endfor %}
+	<section class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+		<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto w-full flex-1">
+			<a href="{{ path('app_default') }}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+				<img class="w-1/2 mx-auto" src="{{ asset('images/stage2.png') }}" alt="logo">
+			</a>
+			<div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+				<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+					<h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+						Créer un compte
+					</h1>
+					{{ include('user/_form.html.twig') }}
+					<p class="text-sm font-light text-gray-500 dark:text-gray-400">
+						Déjà un compte?
+						<a href="{{ path('app_login') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Se connecter ici</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
 {% endblock %}

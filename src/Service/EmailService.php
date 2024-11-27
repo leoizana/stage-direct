@@ -30,13 +30,13 @@ class EmailService {
             ->text($text)
             // ->html('<p>See Twig integration for better HTML integration!</p>')
             ;
-        $this->mailer->send($email);
-        return $result; 
-    } catch (TransportExceptionInterface $e) {
-        // Erreur lors de l'envoi de l'email
-        return "01"; // Error sending email
-    }
-    }
+            $this->mailer->send($email);
+            return "00"; // Succès
+        } catch (TransportExceptionInterface $e) {
+            // Log de l'erreur pour diagnostic
+            error_log('Erreur d\'envoi d\'e-mail : ' . $e->getMessage());
+            return "01"; // Échec
+        }
 
-
+    }
 }

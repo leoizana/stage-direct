@@ -70,17 +70,14 @@ final class UserController extends AbstractController
             $result = $emailService->sendEmail($emailSubject, $emailText, $destinataire);
             if ($result == "00") {
                 // Succès 
-                $this->addFlash('success', 'Votre inscription a été réussie.');
+                $this->addFlash('success', 'Votre inscription a été réussie. Un email de confirmation vous a été envoyé.');
             } else {
                 // Échec
                 $this->addFlash('error', 'Une erreur est survenue.');
             }
             
+            return $this->redirectToRoute('app_login');
             
-            // Redirection après inscription avec un message de succès
-            $this->addFlash('success', 'Votre inscription a été réussie. Un email de confirmation vous a été envoyé.');
-
-            return $this->redirectToRoute('app_login'); // Vous pouvez également rediriger vers la page de connexion
         }
 
         return $this->render('user/new.html.twig', [

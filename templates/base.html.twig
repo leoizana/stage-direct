@@ -14,7 +14,6 @@
 
 		{% block javascripts %}
     <script src="/css/tailwind.js">
-		/*<link href="/css/tailwind.css"rel="stylesheet">*/
 			{% block importmap %}
 				{{ importmap('app') }}
 			{% endblock %}
@@ -42,17 +41,64 @@
 					<a href="ecole" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Écoles</a>
 					<a href="etudiant" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Étudiants</a>
 				</div>
-				<div class="hidden lg:flex lg:flex-1 lg:justify-end">
-				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-					 <a href="{{ path('app_logout') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Se déconnecter
-						<span aria-hidden="true">&rarr;</span>
-					</a>
-					{% else %}
-		 <a href="{{ path('app_login') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Se connecter
-						<span aria-hidden="true">&rarr;</span>
-					</a>
-						{% endif %}
-				</div>
+<div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <button 
+            id="menu-button" 
+            class="flex items-center text-sm font-semibold text-gray-900 focus:outline-none hover:text-blue-500 transition-colors"
+            aria-haspopup="true" 
+            aria-expanded="false"
+        >
+            {{ app.user.firstname }}
+            <svg 
+                class="ml-2 h-4 w-4 text-gray-500" 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+            >
+                <path 
+                    fill-rule="evenodd" 
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" 
+                    clip-rule="evenodd" 
+                />
+            </svg>
+        </button>
+
+        <!-- Menu déroulant -->
+        <div 
+            id="dropdown-menu" 
+            class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden"
+        >
+            <div class="py-1">
+                <!-- Option -->
+                <a href="#" 
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                    Mon profil
+                </a>
+                <!-- Ligne de séparation -->
+                <div class="border-t border-gray-200 my-1"></div>
+                <!-- Déconnexion -->
+                <a href="{{ path('app_logout') }}" 
+                   class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition-colors"
+                >
+                    Se déconnecter
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <a href="{{ path('app_login') }}" 
+           class="text-sm font-semibold text-gray-900 hover:text-blue-500 transition-colors"
+        >
+            Se connecter
+        </a>
+    {% endif %}
+</div>
+
+
+
+
+
 			</nav>
 			<!-- Menu Mobile -->
 			<div
@@ -82,7 +128,22 @@
 							</div>
 							<div class="py-6">
 							 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-									 <a href="{{ path('app_logout') }}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se déconnecter</a>
+									 <button type="button" class="inline-flex w-full justify-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300" id="menu-button" aria-expanded="true" aria-haspopup="true">
+										{{ app.user.firstname }}
+										<svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+											<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+										</svg>
+									</button>
+									<div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+										<div class="py-1" role="none">
+											<!-- Option 1 -->
+											<a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Option 1</a>
+											<!-- Divider -->
+											<div class="border-t border-gray-200 my-1"></div>
+											<!-- Logout -->
+											<a href="{{ path('app_logout') }}" class="text-red-600 block px-4 py-2 text-sm hover:bg-red-100" role="menuitem">Se déconnecter</a>
+										</div>
+									</div>
 								{% else %}
 									 <a href="{{ path('app_login') }}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se connecter</a>
 							{% endif %}
@@ -96,3 +157,25 @@
 		{% block body %}{% endblock %}
 	</body>
 </html>
+<script>
+    // Sélectionner le bouton de menu et le menu déroulant
+const menuButton = document.getElementById('menu-button');
+const dropdownMenu = document.getElementById('dropdown-menu');
+
+// Ajouter un gestionnaire d'événements pour ouvrir/fermer le menu
+menuButton.addEventListener('click', function(event) {
+    // Empêcher l'événement de propagation pour éviter des conflits avec d'autres éléments
+    event.stopPropagation();
+
+    // Alterner la visibilité du menu (toggle)
+    dropdownMenu.classList.toggle('hidden');
+});
+
+// Fermer le menu si l'utilisateur clique n'importe où en dehors du menu
+document.addEventListener('click', function(event) {
+    if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        dropdownMenu.classList.add('hidden');
+    }
+});
+
+</script>

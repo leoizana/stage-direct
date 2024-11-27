@@ -19,3 +19,27 @@ body {
     background: radial-gradient(circle, rgba(220, 220, 223, 1) 0%, rgba(228, 230, 231, 1) 90%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#dcdcdf", endColorstr="#e4e6e7", GradientType=1);
 }
+
+.reussite {
+    color: #2883a7; /* Vert Bootstrap (ou personnalisez-le) */
+    background-color: #f6fff5; /* Léger fond vert pour contraste */
+    padding: 10px 15px;
+    border: 1px solid #285fa7; /* Bordure assortie */
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px auto;
+    width: fit-content; /* Ajuste à la taille du texte */
+    box-shadow: 0 0 10px rgba(10, 131, 179, 0.7); /* Glow vert */
+    animation: glowEffect 1.5s infinite alternate; /* Animation */
+}
+
+/* Animation pour l'effet de glow */
+@keyframes glowEffect {
+    from {
+        box-shadow: 0 0 10px rgba(40, 142, 167, 0.7);
+    }
+    to {
+        box-shadow: 0 0 20px rgb(40, 131, 167);
+    }
+}

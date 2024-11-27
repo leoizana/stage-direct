@@ -1,75 +1,90 @@
-<title>Se connecter | Stage-Direct </title>
+<title>Se connecter | Stage-Direct
+</title>
 
 {% block stylesheets %}
-    <link href="/css/perso.css" rel="stylesheet">
-    <link href="/css/tailwind.min.css" rel="stylesheet">
+	<link href="/css/perso.css" rel="stylesheet">
+	<link href="/css/tailwind.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
-    <script src="/css/tailwind.js"></script>
-    {% block importmap %}
-        {{ importmap('app') }}
-    {% endblock %}
+	<script src="/css/tailwind.js"></script>
+	{% block importmap %}
+		{{ importmap('app') }}
+	{% endblock %}
 {% endblock %}
 
 {% block body %}
-<section class="bg-gray-50 dark:bg-gray-900">
-  <div class="flex flex-col items-center justify-center mx-auto md:h-screen lg:py-0">
-      <a href="{{ path('app_default') }}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          <div class="flex justify-center">
-    <img class="w-1/2 mx-auto" src="{{ asset('images/stage2.png') }}" alt="logo">
-</div>
-            
-      </a>
-      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Se connecter
-              </h1>
-              
-              <form method="post">
-                  {% if error %}
-                      <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                  {% endif %}
+	<section class="bg-gray-50 dark:bg-gray-900">
+		<div class="flex flex-col items-center justify-center mx-auto md:h-screen lg:py-0">
+			<a href="{{ path('app_default') }}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+				<div class="flex justify-center">
+					<img class="w-1/2 mx-auto" src="{{ asset('images/stage2.png') }}" alt="logo">
+				</div>
 
-                  {% if app.user %}
-                      <div class="mb-3">
-                          Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
-                      </div>
-                  {% endif %}
 
-                  <div class="mb-4">
-                      <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                      <input type="email" value="{{ last_username }}" name="_username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autocomplete="email" required autofocus>
-                  </div>
+			</a>
 
-                  <div class="mb-4">
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mot de passe</label>
-                      <input type="password" name="_password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autocomplete="current-password" required>
-                  </div>
+			<div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+				<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+					{% for type, messages in app.flashes %}
+						{% for message in messages %}
+							<div class="reussite">
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endfor %}
 
-                  <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+					<h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+						Se connecter
+					</h1>
 
-                  {#
-                      Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-                      See https://symfony.com/doc/current/security/remember_me.html
+					<form method="post">
+						{% if error %}
+							<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+						{% endif %}
 
-                      <div class="checkbox mb-3">
-                          <input type="checkbox" name="_remember_me" id="_remember_me">
-                          <label for="_remember_me">Se souvenir de moi</label>
-                      </div>
-                  #}
+						{% if app.user %}
+							<div class="mb-3">
+								Vous êtes connecté en tant que
+								{{ app.user.userIdentifier }},
+								<a href="{{ path('app_logout') }}">Se déconnecter</a>
+							</div>
+						{% endif %}
 
-                  <button class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" type="submit">
-                      Se connecter
-                  </button>
-              </form>
+						<div class="mb-4">
+							<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+							<input type="email" value="{{ last_username }}" name="_username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autocomplete="email" required autofocus>
+						</div>
 
-              <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                 Pas encore de compte? <a href="{{ path('app_user_new') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Créer un compte ici</a>
-              </p>
-          </div>
-      </div>
-  </div>
-</section>
+						<div class="mb-4">
+							<label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mot de passe</label>
+							<input type="password" name="_password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autocomplete="current-password" required>
+						</div>
+
+						<input
+						type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+						{#
+												                      Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+												                      See https://symfony.com/doc/current/security/remember_me.html
+												
+												                      <div class="checkbox mb-3">
+												                          <input type="checkbox" name="_remember_me" id="_remember_me">
+												                          <label for="_remember_me">Se souvenir de moi</label>
+												                      </div>
+												                  #}
+
+						<button class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" type="submit">
+							Se connecter
+						</button>
+					</form>
+
+					<p class="text-sm font-light text-gray-500 dark:text-gray-400">
+						Pas encore de compte?
+						<a href="{{ path('app_user_new') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Créer un compte ici</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
 {% endblock %}
