@@ -59,13 +59,18 @@ final class UserController extends AbstractController
                 $user->setRoles(['ROLE_USER']);
             }
 
+            // Génération du token de vérification
+            $verificationToken = bin2hex(random_bytes(16));
+            $user->setVerificationToken($verificationToken);
+
             // Persist et flush
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Envoyer l'email de confirmation
-            $emailSubject = "Confirmation de " . $user->getEmail();
-            $emailText = "Bonjour " . $user->getFirstName();
+            // Envoyer l'email de confirmation avec le lien de vérification
+            $emailSubject = "Confirmation de votre inscription";
+            $emailText = "Bonjour " . $user->getFirstName() . ",\n\nVeuillez confirmer votre inscription en cliquant sur ce lien :\n\n" . 
+                $this->generateUrl('app_user_verify_email', ['token' => $verificationToken], 0);
             $destinataire = $user->getEmail();
             $result = $emailService->sendEmail($emailSubject, $emailText, $destinataire);
             if ($result == "00") {
@@ -85,7 +90,25 @@ final class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    
+    #[Route('/verifier-email/{token}', name: 'app_user_verify_email')]
+    public function verifyEmail(string $token, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Rechercher l'utilisateur en fonction du token
+        $user = $userRepository->findOneBy(['verificationToken' => $token]);
 
+        if (!$user) {
+            $this->addFlash('error', 'Le lien de vérification est invalide.');
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Si l'utilisateur est trouvé, marquer comme vérifié
+        $user->setIsVerified(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre compte a été vérifié avec succès !');
+        return $this->redirectToRoute('app_login');
+    }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(

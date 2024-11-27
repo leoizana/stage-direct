@@ -41,122 +41,72 @@
 					<a href="ecole" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Écoles</a>
 					<a href="etudiant" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Étudiants</a>
 				</div>
-<div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <button 
-            id="menu-button" 
-            class="flex items-center text-sm font-semibold text-gray-900 focus:outline-none hover:text-blue-500 transition-colors"
-            aria-haspopup="true" 
-            aria-expanded="false"
-        >
-            {{ app.user.firstname }}
-            <svg 
-                class="ml-2 h-4 w-4 text-gray-500" 
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-            >
-                <path 
-                    fill-rule="evenodd" 
-                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" 
-                    clip-rule="evenodd" 
-                />
-            </svg>
-        </button>
-
-        <!-- Menu déroulant -->
-        <div 
-            id="dropdown-menu" 
-            class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden"
-        >
-            <div class="py-1">
-                <!-- Option -->
-                <a href="#" 
-                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                    Mon profil
-                </a>
-                <!-- Ligne de séparation -->
-                <div class="border-t border-gray-200 my-1"></div>
-                <!-- Déconnexion -->
-                <a href="{{ path('app_logout') }}" 
-                   class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition-colors"
-                >
-                    Se déconnecter
-                </a>
-            </div>
-        </div>
-    {% else %}
-        <a href="{{ path('app_login') }}" 
-           class="text-sm font-semibold text-gray-900 hover:text-blue-500 transition-colors"
-        >
-            Se connecter
-        </a>
-    {% endif %}
-</div>
-
-
-
-
-
-			</nav>
-			<!-- Menu Mobile -->
-			<div
-				class="lg:hidden" role="dialog" aria-modal="true">
-				<div class="fixed inset-0 z-10"></div>
-				<div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-					<div class="flex items-center justify-between">
-						<a href="#" class="-m-1.5 p-1.5">
-							<span class="sr-only">Stage-Direct</span>
-							<img class="h-12 w-auto" src="/images/stage2.png" alt="">
-						</a>
-						<button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
-							<span class="sr-only">Fermer le menu</span>
-							<svg class="h-6 w-6" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
-							</svg>
-						</button>
-					</div>
-					<div class="mt-6 flow-root">
-						<div class="-my-6 divide-y divide-gray-500/10">
-							<div class="space-y-2 py-6">
-								<div class="-mx-3">
-								<a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Stages</a>
-								<a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Entreprises</a>
-								<a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Écoles</a>
-								<a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Étudiants</a>
-							</div>
-							<div class="py-6">
-							 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-									 <button type="button" class="inline-flex w-full justify-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300" id="menu-button" aria-expanded="true" aria-haspopup="true">
-										{{ app.user.firstname }}
-										<svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-											<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-										</svg>
-									</button>
-									<div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
-										<div class="py-1" role="none">
-											<!-- Option 1 -->
-											<a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Option 1</a>
-											<!-- Divider -->
-											<div class="border-t border-gray-200 my-1"></div>
-											<!-- Logout -->
-											<a href="{{ path('app_logout') }}" class="text-red-600 block px-4 py-2 text-sm hover:bg-red-100" role="menuitem">Se déconnecter</a>
-										</div>
-									</div>
-								{% else %}
-									 <a href="{{ path('app_login') }}" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Se connecter</a>
-							{% endif %}
-								
-							</div>
-						</div>
-					</div>
+				<div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
+    				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        				<button 
+            				id="menu-button" 
+            				class="flex items-center text-sm font-semibold text-gray-900 focus:outline-none hover:text-blue-500 transition-colors"
+            				aria-haspopup="true" 
+            				aria-expanded="false"
+            			>
+            				{{ app.user.firstname }}
+            				<svg 
+                				class="ml-2 h-4 w-4 text-gray-500" 
+                				xmlns="http://www.w3.org/2000/svg" 
+                				viewBox="0 0 20 20" 
+                				fill="currentColor"
+            				>
+                				<path 
+                    				fill-rule="evenodd" 
+                    				d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" 
+                    				clip-rule="evenodd" 
+                				/>
+            				</svg>
+        				</button>
+        				<!-- Menu déroulant -->
+        				<div 
+            				id="dropdown-menu" 
+            				class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden"
+        				>
+            				<div class="py-1">
+                				<a href="#" 
+                   					class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                				>
+                    				Mon profil
+                				</a>
+                				<div class="border-t border-gray-200 my-1"></div>
+                				<a href="{{ path('app_logout') }}" 
+                   					class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition-colors"
+                				>
+                    				Se déconnecter
+                				</a>
+            				</div>
+        				</div>
+    				{% else %}
+        				<a href="{{ path('app_login') }}" 
+            				class="text-sm font-semibold text-gray-900 hover:text-blue-500 transition-colors"
+        				>
+            				Se connecter
+        				</a>
+    				{% endif %}
 				</div>
-			</div>
+			</nav>
 		</header>
+
+		{# Affichage des messages flash en haut de la page #}
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-danger flex justify-between items-center bg-red-500 text-white p-4 rounded-lg mb-4">
+                    <span>{{ message }}</span>
+                    <button class="ml-4 text-white" id="closeAlert">&times;</button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
 		{% block body %}{% endblock %}
 	</body>
 </html>
+
 <script>
     // Sélectionner le bouton de menu et le menu déroulant
 const menuButton = document.getElementById('menu-button');

@@ -51,6 +51,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $city = null;
 
+    // --- Nouveau champ isVerified ---
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;  // Défaut à false
+
     // --- Getters et Setters pour les nouveaux champs ---
 
     public function getFirstName(): ?string
@@ -125,6 +129,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    // --- Nouveau getter et setter pour isVerified ---
+    public function getIsVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
     // --- Getters et setters déjà existants ---
 
     public function getId(): ?int
@@ -175,7 +192,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $verificationToken;
 
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(string $verificationToken): self
+    {
+        $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
     public function eraseCredentials(): void
     {
         // Si vous stockez des données sensibles, nettoyez-les ici

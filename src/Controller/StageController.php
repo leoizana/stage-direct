@@ -17,6 +17,13 @@ final class StageController extends AbstractController
     #[Route(name: 'app_stage_index', methods: ['GET'])]
     public function index(StageRepository $stageRepository): Response
     {
+        // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
+        $user = $this->getUser();
+        
+        if ($user && !$user->getIsVerified()) {
+            $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         return $this->render('stage/index.html.twig', [
             'stages' => $stageRepository->findAll(),
         ]);
