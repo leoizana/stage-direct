@@ -1,13 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Stage{% endblock %}
+{% block title %}Modifier un Stage{% endblock %}
 
 {% block body %}
-    <h1>Edit Stage</h1>
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">Modifier le Stage</h1>
 
-    {{ include('stage/_form.html.twig', {'button_label': 'Update'}) }}
+        <!-- Formulaire -->
+        <div class="bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Détails du Stage</h2>
 
-    <a href="{{ path('app_stage_index') }}">back to list</a>
+            <form method="post" class="space-y-4">
+                {{ include('stage/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    {{ include('stage/_delete_form.html.twig') }}
+                <!-- Boutons alignés -->
+                <div class="mt-6 flex justify-between items-center">
+                    <a href="{{ path('app_stage_index') }}" 
+                       class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+                        Retour à la liste
+                    </a>
+
+                    <div class="flex gap-4">
+                        <button type="submit" 
+                                class="px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
+                            Enregistrer les modifications
+                        </button>
+
+                        {{ include('stage/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

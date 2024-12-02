@@ -93,15 +93,15 @@
 			</nav>
 		</header>
 
-		{# Affichage des messages flash en haut de la page #}
-        {% for type, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-danger flex justify-between items-center bg-red-500 text-white p-4 rounded-lg mb-4">
-                    <span>{{ message }}</span>
-                    <button class="ml-4 text-white" id="closeAlert">&times;</button>
-                </div>
-            {% endfor %}
-        {% endfor %}
+		{% for label, messages in app.flashes %}
+    <div class="flash-message {{ label }} flex justify-between items-center bg-red-500 text-white p-4 rounded-lg mb-4">
+        <span>{{ messages|first }}</span>
+        <button type="button" class="close-btn text-white" onclick="this.parentElement.style.display='none'">
+            &times;
+        </button>
+    </div>
+{% endfor %}
+
 
 		{% block body %}{% endblock %}
 	</body>

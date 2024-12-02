@@ -12,6 +12,8 @@ class DefaultController extends AbstractController
     public function index(): Response
     {
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
+
+
         $user = $this->getUser();
         
         if ($user && !$user->getIsVerified()) {
@@ -21,5 +23,9 @@ class DefaultController extends AbstractController
         return $this->render('default/index.html.twig', [
             'controller_name' => 'DefaultController',
         ]);
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
     }
+
 }

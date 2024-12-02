@@ -7,7 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;  // Utilisation de DateType au lieu de DateTimeType
 
 class StageType extends AbstractType
 {
@@ -17,13 +17,13 @@ class StageType extends AbstractType
             ->add('classeEleve', TextType::class, [
                 'label' => 'Classe de l\'élève',
             ])
-            ->add('dateDebut', DateTimeType::class, [
+            ->add('dateDebut', DateType::class, [
                 'label' => 'Date de début',
-                'widget' => 'single_text',
+                'widget' => 'single_text',  // Affiche un champ de date simple sans heure
             ])
-            ->add('dateFin', DateTimeType::class, [
+            ->add('dateFin', DateType::class, [
                 'label' => 'Date de fin',
-                'widget' => 'single_text',
+                'widget' => 'single_text',  // Affiche un champ de date simple sans heure
             ])
             ->add('session', TextType::class, [
                 'label' => 'Session',
