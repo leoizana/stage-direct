@@ -1,11 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Student{% endblock %}
+{% block title %}New Student
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Student</h1>
+	<h1>Create new Student</h1>
 
-    {{ include('student/_form.html.twig') }}
+	{% for message in app.session.flashbag.get('error') %}
+		<div class="alert alert-danger">{{ message }}</div>
+	{% endfor %}
 
-    <a href="{{ path('app_student_index') }}">back to list</a>
+	{% for message in app.session.flashbag.get('success') %}
+		<div class="alert alert-success">{{ message }}</div>
+	{% endfor %}
+
+
+	{{ include('student/_form.html.twig') }}
+
+	<a href="{{ path('app_student_index') }}">back to list</a>
 {% endblock %}

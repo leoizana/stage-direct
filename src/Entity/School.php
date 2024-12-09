@@ -1,8 +1,9 @@
 <?php
 
+// src/Entity/School.php
+
 namespace App\Entity;
 
-use App\Repository\SchoolRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,15 +32,22 @@ class School
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     #[ORM\ManyToMany(targetEntity: Grade::class, inversedBy: 'schools')]
     #[ORM\JoinTable(name: 'school_grades')]
     private Collection $grades;
+
+    // Propriété virtuelle pour gérer l'ajout de nouvelles classes (non persistée)
+    private ?string $newGrade = null;
 
     public function __construct()
     {
         $this->grades = new ArrayCollection();
     }
 
+    // Getters et setters pour les propriétés persistantes
     public function getId(): ?int
     {
         return $this->id;
@@ -100,6 +108,17 @@ class School
         return $this;
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
     /**
      * @return Collection<int, Grade>
      */
@@ -121,6 +140,18 @@ class School
     {
         $this->grades->removeElement($grade);
 
+        return $this;
+    }
+
+    // Getter et Setter pour la propriété virtuelle 'newGrade'
+    public function getNewGrade(): ?string
+    {
+        return $this->newGrade;
+    }
+
+    public function setNewGrade(?string $newGrade): self
+    {
+        $this->newGrade = $newGrade;
         return $this;
     }
 }

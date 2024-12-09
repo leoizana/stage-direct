@@ -1,20 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SchoolController!{% endblock %}
+{% block title %}School index{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1>School index</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Address</th>
+                <th>Zipcode</th>
+                <th>City</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for school in schools %}
+            <tr>
+                <td>{{ school.id }}</td>
+                <td>{{ school.address }}</td>
+                <td>{{ school.zipcode }}</td>
+                <td>{{ school.city }}</td>
+                <td>{{ school.phone }}</td>
+                <td>{{ school.email }}</td>
+                <td>{{ school.name }}</td>
+                <td>
+                    <a href="{{ path('app_school_show', {'id': school.id}) }}">show</a>
+                    <a href="{{ path('app_school_edit', {'id': school.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/germleo/Documents/stage-direct/src/Controller/SchoolController.php</code></li>
-        <li>Your template at <code>C:/Users/germleo/Documents/stage-direct/templates/school/index.html.twig</code></li>
-    </ul>
-</div>
+    <a href="{{ path('app_school_new') }}">Create new</a>
 {% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\Student;
 use App\Form\StudentType;
 use App\Repository\StudentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,22 +24,34 @@ final class StudentController extends AbstractController
     }
 
     #[Route('/new', name: 'app_student_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
         $student = new Student();
         $form = $this->createForm(StudentType::class, $student);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Validation de l'email pour s'assurer qu'il n'est pas déjà utilisé
+            $email = $student->getUser()->getEmail(); // On récupère l'email de l'utilisateur
+            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+
+            if ($existingUser) {
+                $this->addFlash('error', 'Cet email est déjà associé à un utilisateur.');
+                return $this->redirectToRoute('app_student_new');
+            }
+
+            // Persister le Student dans la base de données
             $entityManager->persist($student);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_student_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'L\'étudiant a été ajouté avec succès.');
+
+            return $this->redirectToRoute('app_student_index');
         }
 
         return $this->render('student/new.html.twig', [
             'student' => $student,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

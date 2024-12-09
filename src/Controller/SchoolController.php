@@ -2,17 +2,115 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Grade;
+use App\Entity\School;
+use App\Form\SchoolType;
+use App\Repository\SchoolRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class SchoolController extends AbstractController
+#[Route('/school')]
+final class SchoolController extends AbstractController
 {
-    #[Route('/ecole', name: 'app_school')]
-    public function index(): Response
+    #[Route(name: 'app_school_index', methods: ['GET'])]
+    public function index(SchoolRepository $schoolRepository): Response
     {
         return $this->render('school/index.html.twig', [
-            'controller_name' => 'SchoolController',
+            'schools' => $schoolRepository->findAll(),
         ]);
+    }
+
+    #[Route('/new', name: 'app_school_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Création d'une nouvelle instance de l'entité School
+        $school = new School();
+        
+        // Création du formulaire en liant le formulaire à l'entité School
+        $form = $this->createForm(SchoolType::class, $school);
+    
+        // Traitement de la requête pour vérifier si le formulaire a été soumis
+        $form->handleRequest($request);
+    
+        // Vérification si le formulaire est soumis mais invalide
+        if ($form->isSubmitted() && !$form->isValid()) {
+            // Si le formulaire est soumis mais invalide, afficher les erreurs dans la barre de débogage Symfony
+            dump($form->getErrors(true)); // Affiche les erreurs dans la barre de débogage Symfony
+        }
+    
+        // Vérification si le formulaire est soumis et valide
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Vérification si un nom de classe a été soumis
+            $newGradeName = $form->get('newGrade')->getData();
+            if ($newGradeName) {
+                // Vérifier si la classe existe déjà
+                $existingGrade = $entityManager->getRepository(Grade::class)->findOneBy(['className' => $newGradeName]);
+                if (!$existingGrade) {
+                    // Créer une nouvelle classe si elle n'existe pas
+                    $newGrade = new Grade();
+                    $newGrade->setClassName($newGradeName);
+                    $entityManager->persist($newGrade);
+                    $school->addGrade($newGrade);  // Ajouter la nouvelle classe à l'école
+                } else {
+                    // Ajouter la classe existante à l'école
+                    $school->addGrade($existingGrade);
+                }
+            }
+    
+            // Sauvegarde de l'école et de ses classes
+            $entityManager->persist($school);
+            $entityManager->flush();
+    
+            // Redirection après soumission réussie
+            return $this->redirectToRoute('app_school_index');
+        }
+    
+        // Si le formulaire n'est pas encore soumis ou invalide, on le passe à la vue
+        return $this->render('school/new.html.twig', [
+            'form' => $form->createView(), // Passe la vue du formulaire à Twig
+        ]);
+    }
+    
+    
+
+    #[Route('/{id}', name: 'app_school_show', methods: ['GET'])]
+    public function show(School $school): Response
+    {
+        return $this->render('school/show.html.twig', [
+            'school' => $school,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_school_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, School $school, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(SchoolType::class, $school);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // After editing, flush changes to the database
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_school_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('school/edit.html.twig', [
+            'school' => $school,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_school_delete', methods: ['POST'])]
+    public function delete(Request $request, School $school, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$school->getId(), $request->get('_token'))) {
+            $entityManager->remove($school);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_school_index', [], Response::HTTP_SEE_OTHER);
     }
 }

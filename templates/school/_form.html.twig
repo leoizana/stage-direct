@@ -1,0 +1,81 @@
+{% block form %}
+    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+    <!-- Affichage des erreurs globales -->
+    {% if form.vars.errors|length > 0 %}
+        <div class="bg-red-100 text-red-700 border border-red-500 p-4 rounded mb-4">
+            <ul>
+                {% for error in form.vars.errors %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="space-y-4">
+        {{ form_row(form.name, {
+            'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+            'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+            'label': 'Nom'
+        }) }}
+        {{ form_errors(form.name) }}
+
+        {{ form_row(form.address, {
+            'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+            'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+            'label': 'Adresse'
+        }) }}
+        {{ form_errors(form.address) }}
+
+        {{ form_row(form.zipcode, {
+            'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+            'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+            'label': 'Code Postal'
+        }) }}
+        {{ form_errors(form.zipcode) }}
+
+        {{ form_row(form.city, {
+            'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+            'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+            'label': 'Ville'
+        }) }}
+        {{ form_errors(form.city) }}
+
+        {{ form_row(form.phone, {
+            'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+            'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+            'label': 'Téléphone'
+        }) }}
+        {{ form_errors(form.phone) }}
+
+        {{ form_row(form.email, {
+            'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+            'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+            'label': 'Email'
+        }) }}
+        {{ form_errors(form.email) }}
+
+        <!-- Classes -->
+        <div class="space-y-2">
+            <label class="text-gray-700 font-medium">Classes</label>
+            <div class="flex flex-wrap gap-4">
+                {{ form_widget(form.grades, {
+                    'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+                    'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+                }) }}
+            </div>
+        </div>
+
+        <!-- Nouvelle classe -->
+        <div>
+            {{ form_row(form.newGrade, {
+                'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+                'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
+                'label': 'Nouvelle Classe (Facultatif)'
+            }) }}
+            {{ form_errors(form.newGrade) }}
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

@@ -37,53 +37,11 @@ class Student
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
     private ?User $user = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(?string $firstName): self
-    {
-        $this->firstName = $firstName;
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(?string $lastName): self
-    {
-        $this->lastName = $lastName;
-        return $this;
-    }
-
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(?string $phone): self
-    {
-        $this->phone = $phone;
-        return $this;
-    }
+    // Getter and setters ...
 
     public function getClassName(): ?string
     {
         return $this->className;
-    }
-
-    public function setClassName(?string $className): self
-    {
-        $this->className = $className;
-        return $this;
     }
 
     public function getSchool(): ?School
@@ -91,20 +49,59 @@ class Student
         return $this->school;
     }
 
-    public function setSchool(?School $school): self
-    {
-        $this->school = $school;
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
     }
+    public function getFirstName(): ?string
+{
+    return $this->firstName;
+}
 
-    public function setUser(?User $user): self
+public function setFirstName(?string $firstName): self
+{
+    $this->firstName = $firstName;
+    return $this;
+}
+// For lastName
+public function getLastName(): ?string
+{
+    return $this->lastName;
+}
+
+public function setLastName(?string $lastName): self
+{
+    $this->lastName = $lastName;
+    return $this;
+}
+
+// For phone
+public function getPhone(): ?string
+{
+    return $this->phone;
+}
+
+public function setPhone(?string $phone): self
+{
+    $this->phone = $phone;
+    return $this;
+}
+
+    /**
+     * Récupérer la classe, le nom de l'établissement et l'email de l'utilisateur
+     */
+    public function getClassAndSchoolInfo(): string
     {
-        $this->user = $user;
-        return $this;
+        // Récupérer le nom de la classe
+        $class = $this->getClassName();
+
+        // Récupérer le nom de l'établissement
+        $schoolName = $this->getSchool() ? $this->getSchool()->getName() : 'Etablissement inconnu';
+
+        // Récupérer l'email de l'utilisateur
+        $userEmail = $this->getUser() ? $this->getUser()->getEmail() : 'Email inconnu';
+
+        // Retourner un format lisible
+        return "Classe: $class, Etablissement: $schoolName, Email: $userEmail";
     }
 }
