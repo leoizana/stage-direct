@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\StudentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
 #[ORM\Table(name: 'tbl_student')]
@@ -15,16 +16,15 @@ class Student
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $phone = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $email = null;
 
     #[ORM\Column(length: 50)]
     private ?string $className = null;
@@ -32,6 +32,10 @@ class Student
     #[ORM\ManyToOne(targetEntity: School::class, inversedBy: 'students')]
     #[ORM\JoinColumn(name: 'school_id', referencedColumnName: 'id', nullable: false)]
     private ?School $school = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'students')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -71,17 +75,6 @@ class Student
         return $this;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-        return $this;
-    }
-
     public function getClassName(): ?string
     {
         return $this->className;
@@ -101,6 +94,17 @@ class Student
     public function setSchool(?School $school): self
     {
         $this->school = $school;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 }

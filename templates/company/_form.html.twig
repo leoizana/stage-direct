@@ -1,0 +1,37 @@
+<div class="flex flex-col space-y-4">
+    {{ form_row(form.name, {
+        'label': 'Nom de l\'entreprise',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+    {{ form_row(form.street, {
+        'label': 'Rue',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+    {{ form_row(form.zipCode, {
+        'label': 'Code Postal',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+    {{ form_row(form.city, {
+        'label': 'Ville',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+    {{ form_row(form.country, {
+        'label': 'Pays',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+    {{ form_row(form.phone, {
+        'label': 'Téléphone',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+    {{ form_row(form.email, {
+        'label': 'E-mail',
+        'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
+        'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+    }) }}
+</div>

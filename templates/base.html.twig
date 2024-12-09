@@ -37,9 +37,10 @@
 				</div>
 				<div class="hidden lg:flex lg:gap-x-12">
 					<a href="{{ path('app_internship_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Stages</a>
-					<a href="{{ path('app_company') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Entreprises</a>
+					<a href="{{ path('app_company_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Entreprises</a>
 					<a href="{{ path('app_school') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Écoles</a>
-					<a href="{{ path('app_student') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Étudiants</a>
+					<a href="{{ path('app_student_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Étudiants</a>
+					<a href="{{ path('app_report') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Rapport</a>
 				</div>
 				<div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
     				{% if is_granted('IS_AUTHENTICATED_FULLY') %}

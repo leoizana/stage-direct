@@ -1,20 +1,80 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Entreprises - StageDirect {% endblock %}
+{% block title %}Liste des Entreprises{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container mx-auto p-6">
+    <!-- Titre principal -->
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Liste des Entreprises</h1>
 
-<div class="example-wrapper">
-    <h1>Listes des entreprises</h1>
-    <ul>
-    <a href="">show</a>
+    <!-- Barre de recherche -->
+    <div class="mb-6">
+        <input type="text" id="search-bar" placeholder="Rechercher par nom ou ville" 
+               class="px-4 py-2 border border-gray-300 rounded-lg w-full max-w-md"
+               onkeyup="searchCompanies()">
+    </div>
 
-        <li>Your controller at <code>C:/Users/germleo/Documents/stage-direct/src/Controller/CompanyController.php</code></li>
-        <li>Your template at <code>C:/Users/germleo/Documents/stage-direct/templates/company/index.html.twig</code></li>
-    </ul>
+    <!-- Tableau des entreprises -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow-lg">
+        <table class="min-w-full text-left table-auto">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="py-3 px-6 text-sm font-medium">Id</th>
+                    <th class="py-3 px-6 text-sm font-medium">Nom</th>
+                    <th class="py-3 px-6 text-sm font-medium">Rue</th>
+                    <th class="py-3 px-6 text-sm font-medium">Code Postal</th>
+                    <th class="py-3 px-6 text-sm font-medium">Ville</th>
+                    <th class="py-3 px-6 text-sm font-medium">Pays</th>
+                    <th class="py-3 px-6 text-sm font-medium">Téléphone</th>
+                    <th class="py-3 px-6 text-sm font-medium">Email</th>
+                    <th class="py-3 px-6 text-sm font-medium">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="companies-tbody">
+                {% for company in companies %}
+                    <tr class="border-b border-gray-200">
+                        <td class="py-3 px-6">{{ company.id }}</td>
+                        <td class="py-3 px-6">{{ company.name }}</td>
+                        <td class="py-3 px-6">{{ company.street }}</td>
+                        <td class="py-3 px-6">{{ company.zipCode }}</td>
+                        <td class="py-3 px-6">{{ company.city }}</td>
+                        <td class="py-3 px-6">{{ company.country }}</td>
+                        <td class="py-3 px-6">{{ company.phone }}</td>
+                        <td class="py-3 px-6">{{ company.email }}</td>
+                        <td class="py-3 px-6 space-x-4">
+                            <a href="{{ path('app_company_show', {'id': company.id}) }}" 
+                               class="text-blue-600 hover:text-blue-800 font-medium">Voir</a>
+                            <a href="{{ path('app_company_edit', {'id': company.id}) }}" 
+                               class="text-yellow-600 hover:text-yellow-800 font-medium">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="py-3 px-6 text-center text-gray-500">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<!-- Script de filtrage -->
+<script>
+    function searchCompanies() {
+        const filter = document.getElementById("search-bar").value.toLowerCase();
+        const rows = document.querySelectorAll("#companies-tbody tr");
+
+        rows.forEach(row => {
+            const nameCell = row.cells[1].textContent.toLowerCase();
+            const cityCell = row.cells[4].textContent.toLowerCase();
+
+            // Filtrage par nom ou ville
+            if (nameCell.includes(filter) || cityCell.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+</script>
 {% endblock %}
