@@ -1,6 +1,6 @@
-<form method="post" action="{{ path('app_stage_delete', {'id': stage.id}) }}" 
+<form method="post" action="{{ path('app_internship_delete', {'id': internship.id}) }}" 
       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ stage.id) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ internship.id) }}">
     <button type="submit" 
             class="px-6 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium">
         Supprimer

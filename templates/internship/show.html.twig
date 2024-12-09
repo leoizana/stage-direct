@@ -12,23 +12,23 @@
                 <tbody>
                     <tr>
                         <th class="px-4 py-2 border border-gray-300 font-medium">Classe de l'élève</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ stage.classeEleve }}</td>
+                        <td class="px-4 py-2 border border-gray-300">{{ internship.classeEleve }}</td>
                     </tr>
                     <tr class="bg-gray-100">
                         <th class="px-4 py-2 border border-gray-300 font-medium">Date de début</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ stage.dateDebut|date('d/m/Y') }}</td>
+                        <td class="px-4 py-2 border border-gray-300">{{ internship.dateDebut|date('d/m/Y') }}</td>
                     </tr>
                     <tr>
                         <th class="px-4 py-2 border border-gray-300 font-medium">Date de fin</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ stage.dateFin|date('d/m/Y') }}</td>
+                        <td class="px-4 py-2 border border-gray-300">{{ internship.dateFin|date('d/m/Y') }}</td>
                     </tr>
                     <tr class="bg-gray-100">
                         <th class="px-4 py-2 border border-gray-300 font-medium">Session</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ stage.session }}</td>
+                        <td class="px-4 py-2 border border-gray-300">{{ internship.session }}</td>
                     </tr>
                     <tr>
                         <th class="px-4 py-2 border border-gray-300 font-medium">Thèmes</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ stage.themes }}</td>
+                        <td class="px-4 py-2 border border-gray-300">{{ internship.themes }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -36,7 +36,7 @@
 
         <!-- Bouton retour -->
         <div class="mt-6">
-            <a href="{{ path('app_stage_index') }}" 
+            <a href="{{ path('app_internship_index') }}" 
                class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
                 Retour à la liste
             </a>

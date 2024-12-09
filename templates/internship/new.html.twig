@@ -8,14 +8,14 @@
         <div class="bg-white p-8 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4">Détails du Stage</h2>
 
-            <form method="post" action="{{ path('app_stage_new') }}" class="space-y-6">
+            <form method="post" action="{{ path('app_internship_new') }}" class="space-y-6">
                 {{ form_start(form) }}
 
                 <!-- Appliquer les styles pour chaque champ via le fichier _form.html.twig -->
-                {{ include('stage/_form.html.twig') }}
+                {{ include('internship/_form.html.twig') }}
 
                 <div class="mt-6 flex justify-between">
-                    <a href="{{ path('app_stage_index') }}" class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+                    <a href="{{ path('app_internship_index') }}" class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
                         Retour à la liste
                     </a>
                     <button type="submit" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">

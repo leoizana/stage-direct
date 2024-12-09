@@ -4,11 +4,11 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Repository\StageRepository;
+use App\Repository\InternshipRepository;
 
-#[ORM\Entity(repositoryClass: StageRepository::class)]
-#[ORM\Table(name: 'tbl_stage')]
-class Stage
+#[ORM\Entity(repositoryClass: InternshipRepository::class)]
+#[ORM\Table(name: 'tbl_internship')]
+class Internship
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]  // Définir l'auto-incrémentation pour la base de données
