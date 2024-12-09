@@ -6,6 +6,7 @@ use App\Repository\ReportRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
+#[ORM\Table(name: 'tbl_report')]
 class Report
 {
     #[ORM\Id]
