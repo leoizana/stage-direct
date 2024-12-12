@@ -6,6 +6,16 @@
 <div class="container mx-auto py-8 px-4">
     <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Écoles</h1>
 
+    <!-- Barres de recherche -->
+    <div class="mb-6 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+        <input type="text" id="search-bar-name" placeholder="Rechercher par nom"
+               class="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+               onkeyup="searchSchools()">
+        <input type="text" id="search-bar-city" placeholder="Rechercher par ville"
+               class="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+               onkeyup="searchSchoolsByCity()">
+    </div>
+
     <!-- Tableau -->
     <div class="overflow-x-auto shadow-md sm:rounded-lg">
         <table class="min-w-full text-sm text-gray-800 bg-white border border-gray-300 rounded-lg">
@@ -21,7 +31,7 @@
                     <th class="py-3 px-6 font-semibold">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="schools-tbody">
                 {% for school in schools %}
                     <tr class="border-b hover:bg-gray-100">
                         <td class="py-3 px-6">{{ school.id }}</td>
@@ -38,14 +48,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
                                 </svg>
                             </a>
-                        
                             <a href="{{ path('app_school_edit', {'id': school.id}) }}" 
                                class="text-yellow-600 hover:text-yellow-800 font-medium">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.181 3.181l-11.42 11.42a2.25 2.25 0 01-.849.564l-4.25 1.585a.75.75 0 01-.96-.96l1.585-4.25a2.25 2.25 0 01.564-.849l11.42-11.42z" />
                                 </svg>
                             </a>
-                               {{ include('school/_delete_form.html.twig') }}
+                            {{ include('school/_delete_form.html.twig') }}
                         </td>
                     </tr>
                 {% else %}
@@ -65,4 +74,36 @@
         </a>
     </div>
 </div>
+
+<script>
+    function searchSchools() {
+        const filter = document.getElementById("search-bar-name").value.toLowerCase();
+        const rows = document.querySelectorAll("#schools-tbody tr");
+
+        rows.forEach(row => {
+            const nameCell = row.cells[6]?.textContent.toLowerCase();
+
+            if (nameCell.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    function searchSchoolsByCity() {
+        const filter = document.getElementById("search-bar-city").value.toLowerCase();
+        const rows = document.querySelectorAll("#schools-tbody tr");
+
+        rows.forEach(row => {
+            const cityCell = row.cells[3]?.textContent.toLowerCase();
+
+            if (cityCell.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+</script>
 {% endblock %}
