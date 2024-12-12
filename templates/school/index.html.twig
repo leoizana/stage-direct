@@ -22,12 +22,12 @@
             <thead class="bg-blue-600 text-white">
                 <tr>
                     <th class="py-3 px-6 font-semibold">Id</th>
+                    <th class="py-3 px-6 font-semibold">Nom</th>
                     <th class="py-3 px-6 font-semibold">Adresse</th>
                     <th class="py-3 px-6 font-semibold">Code Postal</th>
                     <th class="py-3 px-6 font-semibold">Ville</th>
                     <th class="py-3 px-6 font-semibold">Téléphone</th>
                     <th class="py-3 px-6 font-semibold">Email</th>
-                    <th class="py-3 px-6 font-semibold">Nom</th>
                     <th class="py-3 px-6 font-semibold">Actions</th>
                 </tr>
             </thead>
@@ -35,12 +35,12 @@
                 {% for school in schools %}
                     <tr class="border-b hover:bg-gray-100">
                         <td class="py-3 px-6">{{ school.id }}</td>
+                        <td class="py-3 px-6">{{ school.name }}</td>
                         <td class="py-3 px-6">{{ school.address }}</td>
                         <td class="py-3 px-6">{{ school.zipcode }}</td>
                         <td class="py-3 px-6">{{ school.city }}</td>
                         <td class="py-3 px-6">{{ school.phone }}</td>
                         <td class="py-3 px-6">{{ school.email }}</td>
-                        <td class="py-3 px-6">{{ school.name }}</td>
                         <td class="py-3 px-6 space-x-2 flex items-center justify-center">
                             <a href="{{ path('app_school_show', {'id': school.id}) }}" 
                                class="text-blue-600 hover:text-blue-800 font-medium">
