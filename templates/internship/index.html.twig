@@ -37,10 +37,10 @@
                         <td class="py-3 px-6">{{ internship.session }}</td>
                         <td class="py-3 px-6">{{ internship.themes }}</td>
                         <td class="py-3 px-6 space-x-2 flex items-center justify-center">
-                            <a href="{{ path('app_internship_show', {'id': internship.id}) }}"
+                            <a href="{{ path('app_internship_show', {'id': internship.id}) }}" 
                                class="text-blue-600 hover:text-blue-800 font-medium">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75L8.25 8.25m0 7.5l7.5-7.5" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
                                 </svg>
                             </a>
                             <a href="{{ path('app_internship_edit', {'id': internship.id}) }}"
@@ -49,13 +49,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.181 3.181l-11.42 11.42a2.25 2.25 0 01-.849.564l-4.25 1.585a.75.75 0 01-.96-.96l1.585-4.25a2.25 2.25 0 01.564-.849l11.42-11.42z" />
                                 </svg>
                             </a>
-                            <a href="{{ path('app_internship_delete', {'id': internship.id}) }}"
-                               class="text-red-600 hover:text-red-800 font-medium"
-                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce stage ?')">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </a>
+                            {{ include('internship/_delete_form.html.twig') }}
                         </td>
                     </tr>
                 {% else %}

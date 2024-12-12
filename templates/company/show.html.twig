@@ -1,50 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Company{% endblock %}
+{% block title %}Détails de l'entreprise {% endblock %}
 
 {% block body %}
-    <h1>Company</h1>
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">Détails de l'entreprise</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ company.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ company.name }}</td>
-            </tr>
-            <tr>
-                <th>Street</th>
-                <td>{{ company.street }}</td>
-            </tr>
-            <tr>
-                <th>ZipCode</th>
-                <td>{{ company.zipCode }}</td>
-            </tr>
-            <tr>
-                <th>City</th>
-                <td>{{ company.city }}</td>
-            </tr>
-            <tr>
-                <th>Country</th>
-                <td>{{ company.country }}</td>
-            </tr>
-            <tr>
-                <th>Phone</th>
-                <td>{{ company.phone }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ company.email }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Table des informations -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <table class="table-auto w-full text-left border-collapse border border-gray-300">
+                <tbody>
+                    <tr>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Id</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.id }}</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Name</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Street</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.street }}</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 border border-gray-300 font-medium">ZipCode</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.zipCode }}</td>
+                    </tr>
+                    <tr>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">City</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.city }}</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Country</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.country }}</td>
+                    </tr>
+                    <tr>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Phone</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.phone }}</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Email</th>
+                        <td class="px-4 py-2 border border-gray-300">{{ company.email }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <a href="{{ path('app_company_index') }}">back to list</a>
-
-    <a href="{{ path('app_company_edit', {'id': company.id}) }}">edit</a>
-
-    {{ include('company/_delete_form.html.twig') }}
+        <!-- Boutons d'action -->
+        <div class="mt-6">
+            <a href="{{ path('app_company_index') }}" 
+               class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+                Retour à la liste
+            </a>
+        </div>
+    </div>
 {% endblock %}

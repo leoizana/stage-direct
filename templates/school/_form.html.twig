@@ -44,15 +44,21 @@
         {{ form_errors(form.email) }}
 
         <!-- Classes -->
-        <div class="space-y-2">
-            <label class="text-gray-700 font-medium">Classes</label>
-            <div class="flex flex-wrap gap-4">
-                {{ form_widget(form.grades, {
-                    'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
-                    'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'}
+       <div class="space-y-2">
+    <label class="text-gray-700 font-medium">Classes</label>
+    <div class="flex flex-wrap gap-4">
+        {% for child in form.grades %}
+            <div class="flex items-center">
+                {{ form_widget(child, {
+                    'attr': {'class': 'mr-2'}
+                }) }}
+                {{ form_label(child, null, {
+                    'label_attr': {'class': 'text-sm font-medium text-gray-700'}
                 }) }}
             </div>
-        </div>
+        {% endfor %}
+    </div>
+</div>
 
         <!-- Classes Facultatives -->
         <div class="space-y-2">
@@ -64,12 +70,15 @@
 
         <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded" id="add-class-button">Ajouter une classe</button>
 
-        <div class="mt-4">
-            <button type="submit" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
-                Sauvegarder
-            </button>
-        </div>
-    </div>
+       <div class="flex justify-between items-center mt-6">
+    <a href="{{ path('app_school_index') }}" 
+       class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+        Retour à la liste
+    </a>
+    <button type="submit" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
+        Enregistrer
+    </button>
+</div>
 
     {{ form_end(form) }}
 

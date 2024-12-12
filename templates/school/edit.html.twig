@@ -1,13 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit School{% endblock %}
+{% block title %}Modifier une École
+{% endblock %}
 
 {% block body %}
-    <h1>Edit School</h1>
+	<div class="container mx-auto p-6">
+		<h1 class="text-3xl font-bold mb-6">Modifier l'École</h1>
 
-    {{ include('school/_form.html.twig', {'button_label': 'Update'}) }}
+		<!-- Formulaire -->
+		<div class="bg-white p-8 rounded-lg shadow-md">
+			<h2 class="text-xl font-semibold mb-4">Détails de l'École</h2>
 
-    <a href="{{ path('app_school_index') }}">back to list</a>
+			<form method="post" action="{{ path('app_school_edit', {'id': school.id}) }}" class="space-y-4">
+				{{ form_start(form) }}
+				{{ form_row(form._token) }}
+				{# Si vous avez un champ CSRF pour la sécurité #}
 
-    {{ include('school/_delete_form.html.twig') }}
-{% endblock %}
+				{# Inclure le formulaire dans un fichier séparé pour éviter la répétition et ajouter des styles à chaque champ #}
+				{{ include('school/_form.html.twig', {'button_label': 'Enregistrer les modifications'}) }}
+
+					
+				{{ form_end(form) }}
+			</form>
+        </div>
+		</div>
+	{% endblock %}
