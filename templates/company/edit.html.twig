@@ -1,12 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Company{% endblock %}
+{% block title %}Modifier une Entreprise{% endblock %}
 
 {% block body %}
-    <h1>Edit Company</h1>
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">Modifier l'Entreprise</h1>
 
-    {{ include('company/_form.html.twig', {'button_label': 'Update'}) }}
+        <!-- Formulaire -->
+        <div class="bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Détails de l'Entreprise</h2>
 
-    <a href="{{ path('app_company_index') }}">back to list</a>
+            <form method="post" action="{{ path('app_company_edit', {'id': company.id}) }}" class="space-y-4">
+                {{ form_start(form) }}
+                {{ form_row(form._token) }}  {# Si vous avez un champ CSRF pour la sécurité #}
 
+                {# Inclure le formulaire dans un fichier séparé pour éviter la répétition et ajouter des styles à chaque champ #}
+                {{ include('company/_form.html.twig', {'button_label': 'Enregistrer les modifications'}) }}
+                
+                <div class="mt-6 flex justify-between items-center">
+                    <a href="{{ path('app_company_index') }}" 
+                       class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+                        Retour à la liste
+                    </a>
+
+                    <div class="flex gap-4">
+                        <button type="submit" 
+                                class="px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
+            </form>
+        </div>
+    </div>
 {% endblock %}
