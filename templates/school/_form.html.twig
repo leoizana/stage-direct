@@ -1,17 +1,5 @@
 {% block form %}
     {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-
-    <!-- Affichage des erreurs globales -->
-    {% if form.vars.errors|length > 0 %}
-        <div class="bg-red-100 text-red-700 border border-red-500 p-4 rounded mb-4">
-            <ul>
-                {% for error in form.vars.errors %}
-                    <li>{{ error.message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
     <div class="space-y-4">
         {{ form_row(form.name, {
             'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
@@ -66,16 +54,36 @@
             </div>
         </div>
 
-        <!-- Nouvelle classe -->
-        <div>
-            {{ form_row(form.newGrade, {
-                'attr': {'class': 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'},
-                'label_attr': {'class': 'mb-2 text-sm font-medium text-gray-700'},
-                'label': 'Nouvelle Classe (Facultatif)'
-            }) }}
-            {{ form_errors(form.newGrade) }}
+        <!-- Classes Facultatives -->
+        <div class="space-y-2">
+            <label class="text-gray-700 font-medium">Ajouter des Classes (facultatif)</label>
+            <div class="flex flex-wrap gap-4">
+                {{ form_widget(form.newGrade) }}
+            </div>
+        </div>
+
+        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded" id="add-class-button">Ajouter une classe</button>
+
+        <div class="mt-4">
+            <button type="submit" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
+                Sauvegarder
+            </button>
         </div>
     </div>
 
     {{ form_end(form) }}
+
+    <script>
+    let i = 0;
+
+    document.getElementById('add-class-button').addEventListener('click', function() {
+    i++;
+    const newField = document.createElement('input');
+    newField.type = 'text';
+    newField.name = 'school[newGrade]['+i+']'; // Correspond au champ CollectionType du formulaire
+    newField.classList.add('px-4', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:outline-none');
+    document.querySelector('.flex.flex-wrap.gap-4').appendChild(newField);
+});
+
+    </script>
 {% endblock %}

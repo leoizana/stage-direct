@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class SchoolType extends AbstractType
 {
@@ -29,11 +30,14 @@ class SchoolType extends AbstractType
                 'multiple' => true,
                 'expanded' => true, // Pour afficher les cases à cocher
             ])
-            // Champ pour saisir une nouvelle classe
-            ->add('newGrade', TextType::class, [
+            // Utilisation de CollectionType pour permettre l'ajout de plusieurs nouvelles classes
+            ->add('newGrade', CollectionType::class, [
+                'entry_type' => TextType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'mapped' => false, // Ce champ n'est pas persisté directement dans l'entité
                 'required' => false,
-                'label' => 'Ajouter une nouvelle classe',
-                'attr' => ['placeholder' => 'Nom de la classe'],
+                'label' => 'Nouvelles Classes',
             ]);
     }
 

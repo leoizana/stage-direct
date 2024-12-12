@@ -4,6 +4,7 @@
 
 namespace App\Entity;
 
+use App\Repository\SchoolRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,6 +35,8 @@ class School
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    private array $newGrades = [];
 
     #[ORM\ManyToMany(targetEntity: Grade::class, inversedBy: 'schools')]
     #[ORM\JoinTable(name: 'school_grades')]
@@ -143,15 +146,15 @@ class School
         return $this;
     }
 
-    // Getter et Setter pour la propriété virtuelle 'newGrade'
-    public function getNewGrade(): ?string
-    {
-        return $this->newGrade;
-    }
+    // Getter et Setter
+public function getNewGrades(): array
+{
+    return $this->newGrades;
+}
 
-    public function setNewGrade(?string $newGrade): self
-    {
-        $this->newGrade = $newGrade;
-        return $this;
-    }
+public function setNewGrades(array $newGrades): self
+{
+    $this->newGrades = $newGrades;
+    return $this;
+}
 }

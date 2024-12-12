@@ -24,55 +24,57 @@ final class SchoolController extends AbstractController
     }
 
     #[Route('/new', name: 'app_school_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Création d'une nouvelle instance de l'entité School
-        $school = new School();
-        
-        // Création du formulaire en liant le formulaire à l'entité School
-        $form = $this->createForm(SchoolType::class, $school);
-    
-        // Traitement de la requête pour vérifier si le formulaire a été soumis
-        $form->handleRequest($request);
-    
-        // Vérification si le formulaire est soumis mais invalide
-        if ($form->isSubmitted() && !$form->isValid()) {
-            // Si le formulaire est soumis mais invalide, afficher les erreurs dans la barre de débogage Symfony
-            dump($form->getErrors(true)); // Affiche les erreurs dans la barre de débogage Symfony
-        }
-    
-        // Vérification si le formulaire est soumis et valide
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification si un nom de classe a été soumis
-            $newGradeName = $form->get('newGrade')->getData();
-            if ($newGradeName) {
-                // Vérifier si la classe existe déjà
-                $existingGrade = $entityManager->getRepository(Grade::class)->findOneBy(['className' => $newGradeName]);
-                if (!$existingGrade) {
-                    // Créer une nouvelle classe si elle n'existe pas
-                    $newGrade = new Grade();
-                    $newGrade->setClassName($newGradeName);
-                    $entityManager->persist($newGrade);
-                    $school->addGrade($newGrade);  // Ajouter la nouvelle classe à l'école
-                } else {
-                    // Ajouter la classe existante à l'école
-                    $school->addGrade($existingGrade);
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    // Création d'une nouvelle instance de l'entité School
+    $school = new School();
+
+    // Création du formulaire en liant le formulaire à l'entité School
+    $form = $this->createForm(SchoolType::class, $school);
+
+    // Traitement de la requête pour vérifier si le formulaire a été soumis
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Récupération des nouvelles classes ajoutées dynamiquement
+        $newGrades = $form->get('newGrade')->getData();
+        dump($newGrades);
+
+        // Vérification et ajout des nouvelles classes
+        if (is_array($newGrades)) {
+            foreach ($newGrades as $newGradeName) {
+                if ($newGradeName) {
+                    $existingGrade = $entityManager->getRepository(Grade::class)->findOneBy(['className' => $newGradeName]);
+
+                    // Si la classe n'existe pas, on la crée
+                    if (!$existingGrade) {
+                        $newGrade = new Grade();
+                        $newGrade->setClassName($newGradeName);
+                        $entityManager->persist($newGrade);
+                        $school->addGrade($newGrade);
+                    } else {
+                        // Sinon, on associe la classe existante à l'école
+                        $school->addGrade($existingGrade);
+                    }
                 }
             }
-    
-            // Sauvegarde de l'école et de ses classes
-            $entityManager->persist($school);
-            $entityManager->flush();
-    
-            // Redirection après soumission réussie
-            return $this->redirectToRoute('app_school_index');
         }
-    
-        // Si le formulaire n'est pas encore soumis ou invalide, on le passe à la vue
-        return $this->render('school/new.html.twig', [
-            'form' => $form->createView(), // Passe la vue du formulaire à Twig
-        ]);
+
+        // Enregistrement de l'école et des relations
+        $entityManager->persist($school);
+        $entityManager->flush();
+
+        // Redirection après soumission réussie
+     return $this->redirectToRoute('app_school_index');
     }
+
+    // Si le formulaire n'est pas encore soumis ou invalide, on le passe à la vue
+    return $this->render('school/new.html.twig', [
+        'form' => $form->createView(), // Passe la vue du formulaire à Twig
+    ]);
+}
+
+    
     
     
 
