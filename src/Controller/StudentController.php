@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/student')]
 final class StudentController extends AbstractController
@@ -24,31 +24,33 @@ final class StudentController extends AbstractController
     }
 
     #[Route('/new', name: 'app_student_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+    #[Route('/new', name: 'app_student_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Create a new Student object
         $student = new Student();
+        
+        // Create the form
         $form = $this->createForm(StudentType::class, $student);
         $form->handleRequest($request);
 
+        // Check if the form is submitted and valid
         if ($form->isSubmitted() && $form->isValid()) {
-            // Validation de l'email pour s'assurer qu'il n'est pas déjà utilisé
-            $email = $student->getUser()->getEmail(); // On récupère l'email de l'utilisateur
-            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+            // Get the Grade object from the form and set it
+            $grade = $student->getGrade();  // This is the grade selected in the form
 
-            if ($existingUser) {
-                $this->addFlash('error', 'Cet email est déjà associé à un utilisateur.');
-                return $this->redirectToRoute('app_student_new');
-            }
+            // If needed, you can do additional checks or processing here.
 
-            // Persister le Student dans la base de données
+            // Persist the Student entity
             $entityManager->persist($student);
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'étudiant a été ajouté avec succès.');
-
+            // Add a success message and redirect
+            $this->addFlash('success', 'Student added successfully.');
             return $this->redirectToRoute('app_student_index');
         }
 
+        // Render the form
         return $this->render('student/new.html.twig', [
             'student' => $student,
             'form' => $form->createView(),
@@ -84,7 +86,7 @@ final class StudentController extends AbstractController
     #[Route('/{id}', name: 'app_student_delete', methods: ['POST'])]
     public function delete(Request $request, Student $student, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$student->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$student->getId(), $request->request->get('_token'))) {
             $entityManager->remove($student);
             $entityManager->flush();
         }

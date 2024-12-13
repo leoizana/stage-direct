@@ -26,9 +26,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -56,7 +53,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;  // Défaut à false
 
     // --- Getters et Setters pour les nouveaux champs ---
-
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -143,7 +139,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     // --- Getters et setters déjà existants ---
-
     public function getId(): ?int
     {
         return $this->id;
@@ -166,6 +161,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+    // --- Role Handling ---
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -192,8 +188,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    // --- Verification Token ---
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $verificationToken;
+    private ?string $verificationToken = null;
 
     public function getVerificationToken(): ?string
     {
@@ -206,6 +204,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    // --- Clean up sensitive information ---
     public function eraseCredentials(): void
     {
         // Si vous stockez des données sensibles, nettoyez-les ici

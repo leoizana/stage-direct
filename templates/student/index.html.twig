@@ -37,7 +37,8 @@
                         <td class="py-3 px-6">{{ student.firstName }}</td>
                         <td class="py-3 px-6">{{ student.lastName }}</td>
                         <td class="py-3 px-6">{{ student.phone }}</td>
-                        <td class="py-3 px-6">{{ student.className }}</td>
+                        <td class="py-3 px-6">{{ student.grade.className }}</td>
+
                         <td class="py-3 px-6 space-x-2 flex items-center justify-center">
                             <a href="{{ path('app_student_show', {'id': student.id}) }}"
                                class="text-blue-600 hover:text-blue-800 font-medium">

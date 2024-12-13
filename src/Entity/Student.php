@@ -1,13 +1,12 @@
 <?php
 
+// src/Entity/Student.php
+
 namespace App\Entity;
 
-use App\Repository\StudentRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
-#[ORM\Table(name: 'tbl_student')]
 class Student
 {
     #[ORM\Id]
@@ -15,33 +14,72 @@ class Student
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $firstName = null;
 
-    #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $className = null;
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private ?string $email = null;  // Le champ email
 
     #[ORM\ManyToOne(targetEntity: School::class, inversedBy: 'students')]
-    #[ORM\JoinColumn(name: 'school_id', referencedColumnName: 'id', nullable: false)]
     private ?School $school = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'students')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
-    private ?User $user = null;
+    #[ORM\ManyToOne(targetEntity: Grade::class, inversedBy: 'students')]
+    private ?Grade $grade = null;
 
-    // Getter and setters ...
-
-    public function getClassName(): ?string
+    // Getter et Setter pour tous les champs
+    public function getId(): ?int
     {
-        return $this->className;
+        return $this->id;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+        return $this;
     }
 
     public function getSchool(): ?School
@@ -49,59 +87,20 @@ class Student
         return $this->school;
     }
 
-    public function getUser(): ?User
+    public function setSchool(?School $school): self
     {
-        return $this->user;
+        $this->school = $school;
+        return $this;
     }
-    public function getFirstName(): ?string
-{
-    return $this->firstName;
-}
 
-public function setFirstName(?string $firstName): self
-{
-    $this->firstName = $firstName;
-    return $this;
-}
-// For lastName
-public function getLastName(): ?string
-{
-    return $this->lastName;
-}
-
-public function setLastName(?string $lastName): self
-{
-    $this->lastName = $lastName;
-    return $this;
-}
-
-// For phone
-public function getPhone(): ?string
-{
-    return $this->phone;
-}
-
-public function setPhone(?string $phone): self
-{
-    $this->phone = $phone;
-    return $this;
-}
-
-    /**
-     * Récupérer la classe, le nom de l'établissement et l'email de l'utilisateur
-     */
-    public function getClassAndSchoolInfo(): string
+    public function getGrade(): ?Grade
     {
-        // Récupérer le nom de la classe
-        $class = $this->getClassName();
+        return $this->grade;
+    }
 
-        // Récupérer le nom de l'établissement
-        $schoolName = $this->getSchool() ? $this->getSchool()->getName() : 'Etablissement inconnu';
-
-        // Récupérer l'email de l'utilisateur
-        $userEmail = $this->getUser() ? $this->getUser()->getEmail() : 'Email inconnu';
-
-        // Retourner un format lisible
-        return "Classe: $class, Etablissement: $schoolName, Email: $userEmail";
+    public function setGrade(?Grade $grade): self
+    {
+        $this->grade = $grade;
+        return $this;
     }
 }
