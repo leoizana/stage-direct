@@ -1,20 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ReportController!{% endblock %}
+{% block title %}Créer un rapport de stage{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container mx-auto py-8 px-4">
+    <!-- Titre principal -->
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Créer un rapport de stage</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!-- Formulaire de création de rapport -->
+    <div class="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md border border-gray-300 mx-auto">
+        {{ form_start(form) }}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/germleo/Documents/stage-direct/src/Controller/ReportController.php</code></li>
-        <li>Your template at <code>C:/Users/germleo/Documents/stage-direct/templates/report/index.html.twig</code></li>
-    </ul>
+        <div class="mb-4">
+            {{ form_row(form.professorEmail, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg
+            shadow-sm focus:outline-none focus:ring focus:ring-blue-200'}}) }}
+        </div>
+        
+        <div class="mb-4">
+            {{ form_row(form.title, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200'}}) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_row(form.firstName, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200'}}) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_row(form.lastName, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200'}}) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_row(form.session, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200'}}) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_row(form.classe, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200'}}) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_row(form.content, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200', 'rows': 5}}) }}
+        </div>
+
+        <div class="flex justify-center mt-6">
+            <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Soumettre
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}
