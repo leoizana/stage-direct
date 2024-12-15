@@ -20,7 +20,11 @@ final class UserController extends AbstractController
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository, Security $security): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
 
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
@@ -118,7 +122,11 @@ final class UserController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         Security $security
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
@@ -147,7 +155,11 @@ final class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager, Security $security): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         // Vérification du token CSRF pour éviter les attaques
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $entityManager->remove($user);
@@ -161,7 +173,11 @@ final class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user, Security $security): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);

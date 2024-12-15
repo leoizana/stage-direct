@@ -18,15 +18,24 @@ final class StudentController extends AbstractController
     #[Route(name: 'app_student_index', methods: ['GET'])]
     public function index(StudentRepository $studentRepository): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         return $this->render('student/index.html.twig', [
             'students' => $studentRepository->findAll(),
         ]);
     }
 
     #[Route('/new', name: 'app_student_new', methods: ['GET', 'POST'])]
-    #[Route('/new', name: 'app_student_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         // Create a new Student object
         $student = new Student();
         
@@ -60,6 +69,11 @@ final class StudentController extends AbstractController
     #[Route('/{id}', name: 'app_student_show', methods: ['GET'])]
     public function show(Student $student): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         return $this->render('student/show.html.twig', [
             'student' => $student,
         ]);
@@ -68,6 +82,11 @@ final class StudentController extends AbstractController
     #[Route('/{id}/edit', name: 'app_student_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Student $student, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         $form = $this->createForm(StudentType::class, $student);
         $form->handleRequest($request);
 
@@ -86,6 +105,11 @@ final class StudentController extends AbstractController
     #[Route('/{id}', name: 'app_student_delete', methods: ['POST'])]
     public function delete(Request $request, Student $student, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         if ($this->isCsrfTokenValid('delete'.$student->getId(), $request->request->get('_token'))) {
             $entityManager->remove($student);
             $entityManager->flush();

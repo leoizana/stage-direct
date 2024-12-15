@@ -31,6 +31,11 @@ final class CompanyController extends AbstractController
     #[Route('/new', name: 'app_company_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
         $user = $this->getUser();
         
@@ -57,6 +62,7 @@ final class CompanyController extends AbstractController
     #[Route('/{id}', name: 'app_company_show', methods: ['GET'])]
     public function show(Company $company): Response
     {
+    
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
         $user = $this->getUser();
         
@@ -71,6 +77,11 @@ final class CompanyController extends AbstractController
     #[Route('/{id}/edit', name: 'app_company_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Company $company, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
         $user = $this->getUser();
         
@@ -95,6 +106,11 @@ final class CompanyController extends AbstractController
     #[Route('/{id}', name: 'app_company_delete', methods: ['POST'])]
     public function delete(Request $request, Company $company, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
         $user = $this->getUser();
         

@@ -17,6 +17,11 @@ final class InternshipController extends AbstractController
     #[Route(name: 'app_internship_index', methods: ['GET'])]
     public function index(InternshipRepository $internshipRepository): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
         $user = $this->getUser();
         
@@ -32,6 +37,11 @@ final class InternshipController extends AbstractController
     #[Route('/new', name: 'app_internship_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         $internship = new internship();
         $form = $this->createForm(internshipType::class, $internship);
         $form->handleRequest($request);
@@ -52,6 +62,11 @@ final class InternshipController extends AbstractController
     #[Route('/{id}', name: 'app_internship_show', methods: ['GET'])]
     public function show(internship $internship): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         return $this->render('internship/show.html.twig', [
             'internship' => $internship,
         ]);
@@ -60,6 +75,11 @@ final class InternshipController extends AbstractController
     #[Route('/{id}/edit', name: 'app_internship_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, internship $internship, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         $form = $this->createForm(internshipType::class, $internship);
         $form->handleRequest($request);
 
@@ -78,6 +98,11 @@ final class InternshipController extends AbstractController
     #[Route('/{id}', name: 'app_internship_delete', methods: ['POST'])]
     public function delete(Request $request, Internship $internship, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
+            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        }
+    
         if ($this->isCsrfTokenValid('delete' . $internship->getId(), $request->request->get('_token'))) {
             $entityManager->remove($internship);
             $entityManager->flush();
