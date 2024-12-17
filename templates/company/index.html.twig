@@ -41,21 +41,28 @@
                         <td class="py-3 px-6">{{ company.country }}</td>
                         <td class="py-3 px-6">{{ company.phone }}</td>
                         <td class="py-3 px-6">{{ company.email }}</td>
-                        <td class="py-3 px-6 space-x-2 flex items-center justify-center">
-                            <a href="{{ path('app_company_show', {'id': company.id}) }}"
-                               class="text-blue-600 hover:text-blue-800 font-medium">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
-                                </svg>
+                        <td class="py-3 px-6 flex items-center justify-center space-x-2">
+                            <!-- Icône de visualisation -->
+                            <a href="{{ path('app_company_show', {'id': company.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
                             </a>
-                            <a href="{{ path('app_company_edit', {'id': company.id}) }}"
-                               class="text-yellow-600 hover:text-yellow-800 font-medium">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.181 3.181l-11.42 11.42a2.25 2.25 0 01-.849.564l-4.25 1.585a.75.75 0 01-.96-.96l1.585-4.25a2.25 2.25 0 01.564-.849l11.42-11.42z" />
-                                </svg>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <!-- Icône d'édition -->
+                            <a href="{{ path('app_company_edit', {'id': company.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
                             </a>
-                            {{ include('company/_delete_form.html.twig') }}
-                        </td>
+                            
+                            <!-- Formulaire de suppression -->
+                            <form method="post" action="{{ path('app_company_delete', {'id': company.id}) }}" 
+                                  onsubmit="return confirm('Etes-vous sûr de vouloir supprimer cette entreprise ?');" 
+                                  class="flex items-center">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ company.id) }}">
+                                <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
+                                    <img src="{{ asset('svg/trash-svgrepo-com.svg') }}" alt="Supprimer" class="w-5 h-5">
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>  
                     </tr>
                 {% else %}
                     <tr>
@@ -65,7 +72,7 @@
             </tbody>
         </table>
     </div>
-
+    {% if is_granted('ROLE_STUDENT') %}
     <!-- Bouton pour créer une nouvelle entreprise -->
     <div class="mt-6 text-center">
         <a href="{{ path('app_company_new') }}"
@@ -74,6 +81,7 @@
         </a>
     </div>
 </div>
+{% endif %}
 
 <script>
     function searchCompanies() {

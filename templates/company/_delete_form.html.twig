@@ -1,6 +1,8 @@
-<form method="post" action="{{ path('app_company_delete', {'id': company.id}) }}" onsubmit="return confirm('Etes-vous sûr de vouloir supprimer cette entreprise ?');">
+<form method="post" action="{{ path('app_company_delete', {'id': company.id}) }}" 
+      onsubmit="return confirm('Etes-vous sûr de vouloir supprimer cette entreprise ?');" 
+      class="inline-block flex items-center justify-center">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ company.id) }}">
-    <button class="text-red-600 hover:text-red-800 font-medium">
+    <button class="text-red-600 hover:text-red-800 font-medium flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
