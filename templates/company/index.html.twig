@@ -41,12 +41,10 @@
                         <td class="py-3 px-6">{{ company.country }}</td>
                         <td class="py-3 px-6">{{ company.phone }}</td>
                         <td class="py-3 px-6">{{ company.email }}</td>
-                        <td class="py-3 px-6 space-x-2 flex items-center justify-center">
-                            <a href="{{ path('app_company_show', {'id': company.id}) }}"
-                               class="text-blue-600 hover:text-blue-800 font-medium">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
-                                </svg>
+                        <td class="py-3 px-6 flex items-center justify-center space-x-2">
+                            <!-- Icône de visualisation -->
+                            <a href="{{ path('app_company_show', {'id': company.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
                             </a>
                             {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_company_edit', {'id': company.id}) }}"
@@ -67,7 +65,7 @@
             </tbody>
         </table>
     </div>
-{% if is_granted('ROLE_ADMIN') %}
+{% if is_granted('ROLE_STUDENT') %}
     <!-- Bouton pour créer une nouvelle entreprise -->
     <div class="mt-6 text-center">
         <a href="{{ path('app_company_new') }}"

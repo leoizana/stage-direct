@@ -19,6 +19,16 @@ body {
     background: radial-gradient(circle, rgba(220, 220, 223, 1) 0%, rgba(228, 230, 231, 1) 90%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#dcdcdf", endColorstr="#e4e6e7", GradientType=1);
 }
+form {
+    margin: 0;
+    padding: 0;
+}
+button {
+    all: unset; /* Réinitialise tous les styles par défaut */
+    cursor: pointer;
+    display: inline-flex; /* Pour s'assurer que le bouton agit comme un conteneur flex */
+    align-items: center; /* Aligne le contenu verticalement */
+}
 
 .reussite {
     color: #2883a7; /* Vert Bootstrap (ou personnalisez-le) */

@@ -6,7 +6,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: StudentRepository::class)]
+#[ORM\Entity(repositoryClass: \App\Repository\StudentRepository::class)]
 class Student
 {
     #[ORM\Id]

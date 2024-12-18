@@ -36,15 +36,22 @@
 					</button>
 				</div>
 				<div class="hidden lg:flex lg:gap-x-12">
-					{% if is_granted('ROLE_ADMIN') %}
+					{% if is_granted('ROLE_STUDENT') %}
 					<a href="{{ path('app_internship_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Stages</a>
-					{% endif %}
 					<a href="{{ path('app_company_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Entreprises</a>
+					{% endif %}
 					{% if is_granted('ROLE_ADMIN') %}
 					<a href="{{ path('app_school_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Écoles</a>
+					{% endif %}
+					{% if is_granted('ROLE_TEACHER') %}
 					<a href="{{ path('app_student_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Étudiants</a>
 					{% endif %}
+					{% if is_granted('ROLE_ADMIN') %}
+					<a href="{{ path('app_user_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Utilisateurs</a>
+					{% endif %}
+					{% if is_granted('ROLE_STUDENT') %}
 					<a href="{{ path('app_report') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Rapport</a>
+					{% endif %}
 				</div>
 				<div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
     				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
