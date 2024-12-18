@@ -48,6 +48,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
                                 </svg>
                             </a>
+                            {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_company_edit', {'id': company.id}) }}"
                                class="text-yellow-600 hover:text-yellow-800 font-medium">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -55,6 +56,7 @@
                                 </svg>
                             </a>
                             {{ include('company/_delete_form.html.twig') }}
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
@@ -65,7 +67,7 @@
             </tbody>
         </table>
     </div>
-
+{% if is_granted('ROLE_ADMIN') %}
     <!-- Bouton pour créer une nouvelle entreprise -->
     <div class="mt-6 text-center">
         <a href="{{ path('app_company_new') }}"
@@ -74,7 +76,7 @@
         </a>
     </div>
 </div>
-
+{% endif %}
 <script>
     function searchCompanies() {
         const filter = document.getElementById("search-bar").value.toLowerCase();
