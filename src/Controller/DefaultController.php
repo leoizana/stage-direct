@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-    #[Route('/', name: 'app_default')]
+    #[Route('/', name: 'app_index')]
     public function index(): Response
     {
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte

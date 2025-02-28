@@ -30,6 +30,10 @@ class Internship
     #[ORM\Column(type: 'text')]
     private $themes;
 
+    #[ORM\ManyToOne(inversedBy: 'internships')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $relation = null;
+
     // Getters et setters
 
     public function getId(): ?int
@@ -93,6 +97,18 @@ class Internship
     public function setThemes(string $themes): self
     {
         $this->themes = $themes;
+
+        return $this;
+    }
+
+    public function getRelation(): ?User
+    {
+        return $this->relation;
+    }
+
+    public function setRelation(?User $relation): static
+    {
+        $this->relation = $relation;
 
         return $this;
     }

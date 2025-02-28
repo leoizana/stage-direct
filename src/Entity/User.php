@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -193,6 +195,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $verificationToken = null;
 
+    /**
+     * @var Collection<int, Internship>
+     */
+    #[ORM\OneToMany(targetEntity: Internship::class, mappedBy: 'relation', orphanRemoval: true)]
+    private Collection $internships;
+
+    public function __construct()
+    {
+        $this->internships = new ArrayCollection();
+    }
+
     public function getVerificationToken(): ?string
     {
         return $this->verificationToken;
@@ -209,5 +222,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // Si vous stockez des données sensibles, nettoyez-les ici
+    }
+
+    /**
+     * @return Collection<int, Internship>
+     */
+    public function getInternships(): Collection
+    {
+        return $this->internships;
+    }
+
+    public function addInternship(Internship $internship): static
+    {
+        if (!$this->internships->contains($internship)) {
+            $this->internships->add($internship);
+            $internship->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInternship(Internship $internship): static
+    {
+        if ($this->internships->removeElement($internship)) {
+            // set the owning side to null (unless already changed)
+            if ($internship->getRelation() === $this) {
+                $internship->setRelation(null);
+            }
+        }
+
+        return $this;
     }
 }

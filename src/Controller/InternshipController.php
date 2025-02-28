@@ -17,10 +17,6 @@ final class InternshipController extends AbstractController
     #[Route(name: 'app_internship_index', methods: ['GET'])]
     public function index(InternshipRepository $internshipRepository): Response
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
-        }
     
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
         $user = $this->getUser();
@@ -37,22 +33,24 @@ final class InternshipController extends AbstractController
     #[Route('/new', name: 'app_internship_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour créer un stage.');
+            return $this->redirectToRoute('app_login');
         }
     
-        $internship = new internship();
-        $form = $this->createForm(internshipType::class, $internship);
+        $internship = new Internship();
+        $internship->setRelation($user); // Associe l'utilisateur connecté
+        $form = $this->createForm(InternshipType::class, $internship);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($internship);
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_internship_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('internship/new.html.twig', [
             'internship' => $internship,
             'form' => $form,
