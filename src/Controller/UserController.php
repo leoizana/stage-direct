@@ -24,7 +24,7 @@ final class UserController extends AbstractController
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
             return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
         }
-    
+
 
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
@@ -73,7 +73,7 @@ final class UserController extends AbstractController
 
             // Envoyer l'email de confirmation avec le lien de vérification
             $emailSubject = "Confirmation de votre inscription";
-            $emailText = "Bonjour " . $user->getFirstName() . ",\n\nVeuillez confirmer votre inscription en cliquant sur ce lien :\n\n" . 
+            $emailText = "Bonjour " . $user->getFirstName() . ",\n\nVeuillez confirmer votre inscription en cliquant sur ce lien :\n\n" .
                 $this->generateUrl('app_user_verify_email', ['token' => $verificationToken], 0);
             $destinataire = $user->getEmail();
             $result = $emailService->sendEmail($emailSubject, $emailText, $destinataire);
@@ -84,9 +84,9 @@ final class UserController extends AbstractController
                 // Échec
                 $this->addFlash('error', 'Une erreur est survenue.');
             }
-            
+
             return $this->redirectToRoute('app_login');
-            
+
         }
 
         return $this->render('user/new.html.twig', [
@@ -94,7 +94,7 @@ final class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    
+
     #[Route('/verifier-email/{token}', name: 'app_user_verify_email')]
     public function verifyEmail(string $token, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
@@ -126,22 +126,20 @@ final class UserController extends AbstractController
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
             return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
         }
-    
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, ['is_edit' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Si le mot de passe a été modifié, on le hache avant de persister
-            if ($user->getPassword()) {
-                $hashedPassword = $passwordHasher->hashPassword(
-                    $user,
-                    $user->getPassword()
-                );
+            $newPassword = $form->get('password')->getData(); // ✅ On récupère directement le champ du formulaire
+
+            if ($newPassword) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
                 $user->setPassword($hashedPassword);
             }
 
-            // Sauvegarder les changements
             $entityManager->flush();
+
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -159,7 +157,7 @@ final class UserController extends AbstractController
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
             return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
         }
-    
+
         // Vérification du token CSRF pour éviter les attaques
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $entityManager->remove($user);
@@ -177,10 +175,10 @@ final class UserController extends AbstractController
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
             return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
         }
-    
+
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
     }
-        
+
 }

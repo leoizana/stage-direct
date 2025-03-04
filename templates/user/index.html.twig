@@ -3,6 +3,14 @@
 {% block title %}Liste des Utilisateurs{% endblock %}
 
 {% block body %}
+{% set roleNames = {
+    'ROLE_ADMIN': 'Administrateur',
+    'ROLE_TEACHER': 'Professeur',
+    'ROLE_STUDENT': 'Étudiant',
+    'ROLE_USER': 'Utilisateur'
+} %}
+
+{% set roleHierarchy = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'] %}
 <div class="container mx-auto py-8 px-4">
     <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Utilisateurs</h1>
 
@@ -22,7 +30,11 @@
                 <tr class="border-b hover:bg-gray-100">
                     <td class="py-3 px-6">{{ user.id }}</td>
                     <td class="py-3 px-6">{{ user.email }}</td>
-                    <td class="py-3 px-6">{{ user.roles ? user.roles|json_encode : '' }}</td>
+                    <td class="py-3 px-6">
+                        {% set sortedRoles = user.roles|sort((a, b) => roleHierarchy|reverse|index(a) <=> roleHierarchy|reverse|index(b)) %}
+                        
+                        {{ sortedRoles|map(role => roleNames[role] ?? role)|join(', ') }}
+                    </td>
                     <td class="py-3 px-6 flex items-center justify-center space-x-2">
                         <a href="{{ path('app_user_show', {'id': user.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
                             <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
