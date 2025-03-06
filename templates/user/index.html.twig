@@ -4,6 +4,7 @@
 
 {% block body %}
 {% set roleNames = {
+    'ROLE_SUPER_ADMIN': 'Super Administrateur',
     'ROLE_ADMIN': 'Administrateur',
     'ROLE_TEACHER': 'Professeur',
     'ROLE_STUDENT': 'Étudiant',
@@ -30,11 +31,9 @@
                 <tr class="border-b hover:bg-gray-100">
                     <td class="py-3 px-6">{{ user.id }}</td>
                     <td class="py-3 px-6">{{ user.email }}</td>
-                    <td class="py-3 px-6">
-                        {% set sortedRoles = user.roles|sort((a, b) => roleHierarchy|reverse|index(a) <=> roleHierarchy|reverse|index(b)) %}
-                        
-                        {{ sortedRoles|map(role => roleNames[role] ?? role)|join(', ') }}
-                    </td>
+                   <td class="py-3 px-6">
+    {{ roleNames[user.highestRole] ?? user.highestRole }}
+</td>
                     <td class="py-3 px-6 flex items-center justify-center space-x-2">
                         <a href="{{ path('app_user_show', {'id': user.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
                             <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">

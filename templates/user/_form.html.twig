@@ -1,49 +1,47 @@
 {{ form_start(form) }}
 
 <div class="mb-6">
-    {{ form_label(form.email, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
-    {{ form_widget(form.email, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
+    {{ form_label(form.email, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.email, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.password, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
-    {{ form_widget(form.password, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
+    {{ form_label(form.password, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.password, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.firstName, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
-    {{ form_widget(form.firstName, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
+    {{ form_label(form.firstName, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.firstName, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.lastName, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
-    {{ form_widget(form.lastName, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
+    {{ form_label(form.lastName, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.lastName, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.birthDate, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
-    {{ form_widget(form.birthDate, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
+    {{ form_label(form.birthDate, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.birthDate, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.address, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
-    {{ form_widget(form.address, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
+    {{ form_label(form.address, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.address, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.postalCode, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
+    {{ form_label(form.postalCode, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
     {{ form_widget(form.postalCode, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
 </div>
 
 <div class="mb-6">
-    {{ form_label(form.city, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2'}}) }}
+    {{ form_label(form.city, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
     {{ form_widget(form.city, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}}) }}
 </div>
 
 {% if is_granted('ROLE_ADMIN') %}
-<div class="mb-6">
-    <label for="roles-dropdown" class="text-white text-sm font-medium mb-2">Rôles</label>
-
+<div class="mb-6 text-center">
     <div class="relative">
         <button id="roles-dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
             Choisir un rôle
@@ -85,8 +83,11 @@
 </script>
 {% endif %}
 
-<button class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 transition-all duration-300">
-    {{ button_label|default('Créer votre compte') }}
-</button>
+
+<div class="flex justify-center items-center">
+    <button class="w-full max-w-xs flex justify-center items-center bg-blue-500 text-white border-2 border-blue-500 font-semibold rounded-lg text-sm px-6 py-3 transition-all duration-300 ease-in-out hover:bg-blue-600 hover:border-blue-600 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+        {{ button_label|default('Créer votre compte') }}
+    </button>
+</div>
 
 {{ form_end(form) }}

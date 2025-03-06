@@ -150,7 +150,6 @@ class UserType extends AbstractType
         'is_edit' => false, // Définit la valeur par défaut
     ]);
 
-    // Définir explicitement l'option "is_edit"
-    $resolver->setDefined('is_edit');
+    $resolver->setDefined(['is_edit', 'login_type']);
 }
 }

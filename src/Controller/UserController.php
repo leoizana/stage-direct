@@ -18,16 +18,30 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class UserController extends AbstractController
 {
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository, Security $security): Response
+    public function index(UserRepository $userRepository): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+            return $this->redirectToRoute('app_index');
         }
 
+        $roleHierarchy = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
+
+        $users = $userRepository->findAll();
+
+        foreach ($users as $user) {
+            $userRoles = $user->getRoles();
+
+            // Trier les rôles selon la hiérarchie et récupérer le plus élevé
+            usort($userRoles, function ($a, $b) use ($roleHierarchy) {
+                return array_search($b, $roleHierarchy) <=> array_search($a, $roleHierarchy);
+            });
+
+            $user->highestRole = $userRoles[0] ?? 'ROLE_USER'; // Par défaut, on met "ROLE_USER" si vide
+        }
 
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
         ]);
     }
 
