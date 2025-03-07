@@ -65,10 +65,13 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récupérer le mot de passe depuis le formulaire directement
+            $plainPassword = $form->get('password')->getData();
+            
             // Hachage du mot de passe
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
-                $user->getPassword()  // Récupération du mot de passe depuis le formulaire
+                $plainPassword
             );
             $user->setPassword($hashedPassword);
 

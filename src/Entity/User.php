@@ -201,6 +201,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Internship::class, mappedBy: 'relation', orphanRemoval: true)]
     private Collection $internships;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?grade $grades = null;
+
     public function __construct()
     {
         $this->internships = new ArrayCollection();
@@ -250,6 +253,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $internship->setRelation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGrades(): ?grade
+    {
+        return $this->grades;
+    }
+
+    public function setGrades(?grade $grades): static
+    {
+        $this->grades = $grades;
 
         return $this;
     }
