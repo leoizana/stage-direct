@@ -202,7 +202,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $internships;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?grade $grades = null;
+    private ?Grade $grades = null;
+
+    #[ORM\Column]
+    private ?int $phone = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?School $school = null;
 
     public function __construct()
     {
@@ -265,6 +271,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGrades(?grade $grades): static
     {
         $this->grades = $grades;
+
+        return $this;
+    }
+
+    public function getPhone(): ?int
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(int $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getSchool(): ?School
+    {
+        return $this->school;
+    }
+
+    public function setSchool(?School $school): static
+    {
+        $this->school = $school;
 
         return $this;
     }

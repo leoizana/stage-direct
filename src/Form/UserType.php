@@ -62,6 +62,14 @@ class UserType extends AbstractType
                     'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
                 ],
             ])
+            ->add('phone', TextType::class, [
+                'required' => false,
+                'label' => 'Numéro de téléphone',
+                'attr' => [
+                    'class' => 'phone-input',
+                    'placeholder' => 'Numéro de téléphone'
+                ]
+            ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse postale',
                 'label_attr' => [
@@ -102,6 +110,7 @@ class UserType extends AbstractType
                     'placeholder' => 'nom@mail.fr',
                 ],
             ]);
+            
             if ($options['is_edit']) {
                 $builder->add('password', PasswordType::class, [
                     'label' => 'Mot de passe',

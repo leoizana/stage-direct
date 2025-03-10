@@ -23,12 +23,6 @@ class Grade
     private Collection $schools;
 
     /**
-     * @var Collection<int, Student>
-     */
-    #[ORM\OneToMany(targetEntity: Student::class, mappedBy: 'classe')]
-    private Collection $students;
-
-    /**
      * @var Collection<int, User>
      */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'grades')]
@@ -37,7 +31,6 @@ class Grade
     public function __construct()
     {
         $this->schools = new ArrayCollection();
-        $this->students = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -84,36 +77,7 @@ class Grade
         return $this;
     }
 
-    /**
-     * @return Collection<int, Student>
-     */
-    public function getStudents(): Collection
-    {
-        return $this->students;
-    }
-
-    public function addStudent(Student $student): static
-    {
-        if (!$this->students->contains($student)) {
-            $this->students->add($student);
-            $student->setClasse($this);
-        }
-
-        return $this;
-    }
-
-    public function removeStudent(Student $student): static
-    {
-        if ($this->students->removeElement($student)) {
-            // set the owning side to null (unless already changed)
-            if ($student->getClasse() === $this) {
-                $student->setClasse(null);
-            }
-        }
-
-        return $this;
-    }
-
+   
     /**
      * @return Collection<int, User>
      */

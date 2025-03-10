@@ -4,12 +4,14 @@
     {{ form_label(form.email, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
     {{ form_widget(form.email, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
-
 <div class="mb-6">
     {{ form_label(form.password, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
     {{ form_widget(form.password, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
 </div>
-
+<div class="mb-6">
+    {{ form_label(form.phone, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
+    {{ form_widget(form.phone, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}
+</div>
 <div class="mb-6">
     {{ form_label(form.firstName, null, {'label_attr': {'class': 'text-white text-sm font-medium mb-2 text-center'}}) }}
     {{ form_widget(form.firstName, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 '}}) }}

@@ -1,6 +1,0 @@
-<form method="post" action="{{ path('app_student_delete', {'id': student.id}) }}" onsubmit="return confirm('Etes-vous sûr de vouloir supprimer cet étudiant ?');" class="flex items-center">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ student.id) }}">
-    <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
-        <img src="{{ asset('svg/trash-svgrepo-com.svg') }}" alt="Supprimer" class="w-5 h-5">
-    </button>
-</form>

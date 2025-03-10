@@ -45,9 +45,16 @@ class School
     // Propriété virtuelle pour gérer l'ajout de nouvelles classes (non persistée)
     private ?string $newGrade = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'school')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->grades = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     // Getters et setters pour les propriétés persistantes
@@ -155,6 +162,36 @@ public function getNewGrades(): array
 public function setNewGrades(array $newGrades): self
 {
     $this->newGrades = $newGrades;
+    return $this;
+}
+
+/**
+ * @return Collection<int, User>
+ */
+public function getUsers(): Collection
+{
+    return $this->users;
+}
+
+public function addUser(User $user): static
+{
+    if (!$this->users->contains($user)) {
+        $this->users->add($user);
+        $user->setSchool($this);
+    }
+
+    return $this;
+}
+
+public function removeUser(User $user): static
+{
+    if ($this->users->removeElement($user)) {
+        // set the owning side to null (unless already changed)
+        if ($user->getSchool() === $this) {
+            $user->setSchool(null);
+        }
+    }
+
     return $this;
 }
 }

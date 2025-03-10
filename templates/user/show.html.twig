@@ -18,6 +18,10 @@
                         <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Email</th>
                         <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.email }}</td>
                     </tr>
+                    <tr class="border-b dark:border-gray-700"></tr>
+                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Numéro de téléphone</th>
+                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.phone }}</td>
+                    </tr>
                     <tr class="border-b dark:border-gray-700">
                         <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Rôles</th>
                         <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.roles ? user.roles|join(', ') : '' }}</td>
