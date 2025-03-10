@@ -201,11 +201,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Internship::class, mappedBy: 'relation', orphanRemoval: true)]
     private Collection $internships;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Grade $grades = null;
 
     #[ORM\Column]
     private ?int $phone = null;
+
+    /**
+     * @var Collection<int, Grade>
+     */
+    #[ORM\ManyToMany(targetEntity: Grade::class, inversedBy: 'users')]
+    private Collection $grade;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?School $school = null;
@@ -213,6 +217,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->internships = new ArrayCollection();
+        $this->grade = new ArrayCollection();
     }
 
     public function getVerificationToken(): ?string
@@ -263,18 +268,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getGrades(): ?grade
-    {
-        return $this->grades;
-    }
-
-    public function setGrades(?grade $grades): static
-    {
-        $this->grades = $grades;
-
-        return $this;
-    }
-
     public function getPhone(): ?int
     {
         return $this->phone;
@@ -283,6 +276,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhone(int $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Grade>
+     */
+    public function getGrade(): Collection
+    {
+        return $this->grade;
+    }
+
+    public function addGrade(Grade $grade): static
+    {
+        if (!$this->grade->contains($grade)) {
+            $this->grade->add($grade);
+        }
+
+        return $this;
+    }
+
+    public function removeGrade(Grade $grade): static
+    {
+        $this->grade->removeElement($grade);
 
         return $this;
     }

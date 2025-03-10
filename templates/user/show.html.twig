@@ -1,69 +1,84 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de l'Utilisateur{% endblock %}
-
-{% block body %}
-<div class="container mx-auto p-6 bg-gray-50 dark:bg-gray-900">
-    <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center dark:text-white">Détails de l'Utilisateur</h1>
-
-    <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-2xl mx-auto dark:bg-gray-800 dark:border-gray-700">
-        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <table class="min-w-full text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg">
-                <tbody>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Id</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.id }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Email</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.email }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700"></tr>
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Numéro de téléphone</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.phone }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Rôles</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.roles ? user.roles|join(', ') : '' }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Prénom</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.firstName }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Nom</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.lastName }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Date de naissance</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.birthDate ? user.birthDate|date('d/m/Y') : '' }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Adresse</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.address }}</td>
-                    </tr>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Code postal</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.postalCode }}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Ville</th>
-                        <td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.city }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="flex justify-between items-center mt-6">
-                <a href="{{ path('app_user_index') }}" 
-                   class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                    Retour à la liste
-                </a>
-                <a href="{{ path('app_user_edit', {'id': user.id}) }}" 
-                   class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                    Modifier
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+{% block title %}Détails de l'Utilisateur
 {% endblock %}
+{% set roleNames = {
+    'ROLE_SUPER_ADMIN': 'Super Administrateur',
+    'ROLE_ADMIN': 'Administrateur',
+    'ROLE_TEACHER': 'Professeur',
+    'ROLE_STUDENT': 'Étudiant',
+    'ROLE_USER': 'Utilisateur'
+} %}
+{% set roleHierarchy = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN'] %}
+{% block body %}
+	<div class="container mx-auto p-6 bg-gray-50 dark:bg-gray-900">
+		<h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center dark:text-white">Détails de l'Utilisateur</h1>
+
+		<div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-2xl mx-auto dark:bg-gray-800 dark:border-gray-700">
+			<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+				<table class="min-w-full text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg">
+					<tbody>
+						<tr class="border-b dark:border-gray-700">
+							<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Id</th>
+							<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.id }}</td>
+						</tr>
+						<tr class="border-b dark:border-gray-700">
+							<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Prénom</th>
+							<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.firstName }}</td>
+						</tr>
+						<tr class="border-b dark:border-gray-700">
+							<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Nom</th>
+							<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.lastName }}</td>
+						</tr>
+						<tr class="border-b dark:border-gray-700">
+							<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Classe</th>
+							<td class="py-3 px-6 text-gray-900 dark:text-gray-400">
+								{% if user.grade is not empty %}
+									{{ user.grade|map(g => g.classname)|join(', ') }}
+								{% else %}
+									Aucune classe
+								{% endif %}
+							</td>
+						</tr>
+						<tr class="border-b dark:border-gray-700">
+							<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Email</th>
+							<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.email }}</td>
+						</tr>
+						<tr class="border-b dark:border-gray-700"></tr>
+						<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Numéro de téléphone</th>
+						<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.phone }}</td>
+					</tbody>
+				</tr>
+				<tr class="border-b dark:border-gray-700">
+					<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Rôles</th>
+					<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ roleNames[highestRole] ?? highestRole }}</td>
+				</tr>
+				<tr class="border-b dark:border-gray-700">
+					<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Date de naissance</th>
+					<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.birthDate ? user.birthDate|date('d/m/Y') : '' }}</td>
+				</tr>
+				<tr class="border-b dark:border-gray-700">
+					<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Adresse</th>
+					<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.address }}</td>
+				</tr>
+				<tr class="border-b dark:border-gray-700">
+					<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Code postal</th>
+					<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.postalCode }}</td>
+				</tr>
+				<tr>
+					<th class="py-3 px-6 text-left bg-gray-50 font-medium text-gray-900 dark:text-white dark:bg-gray-700">Ville</th>
+					<td class="py-3 px-6 text-gray-900 dark:text-gray-400">{{ user.city }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="flex justify-between items-center mt-6">
+			<a href="{{ path('app_user_index') }}" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+				Retour à la liste
+			</a>
+			<a href="{{ path('app_user_edit', {'id': user.id}) }}" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-6 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+				Modifier
+			</a>
+		</div>
+	</div>
+</div></div>{% endblock %}

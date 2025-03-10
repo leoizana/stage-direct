@@ -5,6 +5,8 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Grade;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;  // Importation du EmailType
@@ -110,6 +112,21 @@ class UserType extends AbstractType
                     'placeholder' => 'nom@mail.fr',
                 ],
             ]);
+             // Ajout du champ grade
+        $builder->add('grade', EntityType::class, [
+            'class' => Grade::class,
+            'choice_label' => 'className',
+            'multiple' => true,
+            'expanded' => false, // true si tu veux des cases à cocher
+            'label' => 'Classe',
+            'label_attr' => ['class' => 'text-white text-sm font-medium mb-4'],
+            'attr' => [
+                'class' => 'bg-gray-50 border border-gray-300 text-white text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+            ],
+            'query_builder' => function (\App\Repository\GradeRepository $repo) {
+                return $repo->createQueryBuilder('g')->orderBy('g.className', 'ASC');
+            },
+        ]);
             
             if ($options['is_edit']) {
                 $builder->add('password', PasswordType::class, [

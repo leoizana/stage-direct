@@ -190,12 +190,26 @@ final class UserController extends AbstractController
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+            return $this->redirectToRoute('app_index');
         }
-
+    
+        // Définition de la hiérarchie des rôles
+        $roleHierarchy = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
+    
+        $userRoles = $user->getRoles();
+    
+        // Trier les rôles et récupérer le plus élevé
+        usort($userRoles, function ($a, $b) use ($roleHierarchy) {
+            return array_search($b, $roleHierarchy) <=> array_search($a, $roleHierarchy);
+        });
+    
+        $highestRole = $userRoles[0] ?? 'ROLE_USER'; // Par défaut, "ROLE_USER" si vide
+    
         return $this->render('user/show.html.twig', [
             'user' => $user,
+            'highestRole' => $highestRole, // Utilisation du rôle calculé
         ]);
     }
+    
 
 }

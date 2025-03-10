@@ -25,7 +25,7 @@ class Grade
     /**
      * @var Collection<int, User>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'grades')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'grade')]
     private Collection $users;
 
     public function __construct()
@@ -77,7 +77,6 @@ class Grade
         return $this;
     }
 
-   
     /**
      * @return Collection<int, User>
      */
@@ -90,7 +89,7 @@ class Grade
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->setGrades($this);
+            $user->addGrade($this);
         }
 
         return $this;
@@ -99,10 +98,7 @@ class Grade
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getGrades() === $this) {
-                $user->setGrades(null);
-            }
+            $user->removeGrade($this);
         }
 
         return $this;
