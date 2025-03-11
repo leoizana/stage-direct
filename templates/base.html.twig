@@ -1,140 +1,114 @@
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<link rel="icon" type="image/png" href="images/stage2.png">
-		<title>
-			{# {% block title %} #}
-			StageDirect - La meilleure application de stage
-			{# {% endblock %} #}
-		</title>
-		{% block stylesheets %}
-			<link href="/css/perso.css" rel="stylesheet">
-			<link href="/css/tailwind.min.css" rel="stylesheet">
-		{% endblock %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/stage2.png">
+    <title>StageDirect - La meilleure application de stage</title>
+    <link href="/css/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900">
+    <header class="shadow-md bg-white">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between p-4">
+            <a href="/" class="flex items-center">
+                <img src="/images/stage2.png" class="h-10" alt="StageDirect Logo">
+            </a>
 
-		{% block javascripts %}
-    <script src="/css/tailwind.js"></script> <!-- Fermeture correcte -->
-    {% block importmap %}
-        {{ importmap('app') }}
-    {% endblock %}
-{% endblock %}
-	</head>
-	<body>
-		<header class="bg-grey">
-			<nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-				<div class="flex lg:flex-1">
-					<a href="/" class="-m-1.5 p-1.5">
-						<img class="h-12 w-auto" src="/images/stage2.png" alt="">
-					</a>
-				</div>
-				<div class="flex lg:hidden">
-					<button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
-						<span class="sr-only">Ouvrir le menu</span>
-						<svg class="h-6 w-6" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
-						</svg>
-					</button>
-				</div>
-				<div class="hidden lg:flex lg:gap-x-12">
-					{% if is_granted('ROLE_STUDENT') %}
-					<a href="{{ path('app_internship_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Stages</a>
-					<a href="{{ path('app_company_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Entreprises</a>
-					{% endif %}
-					{% if is_granted('ROLE_ADMIN') %}
-					<a href="{{ path('app_school_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Écoles</a>
-					{% endif %}
-					{% if is_granted('ROLE_ADMIN') %}
-					<a href="{{ path('app_user_index') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Utilisateurs</a>
-					{% endif %}
-					{% if is_granted('ROLE_STUDENT') %}
-					<a href="{{ path('app_report') }}" class="text-sm font-semibold leading-6 text-gray-900 bouton-anim">Rapport</a>
-					{% endif %}
-				</div>
-				<div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
-    				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        				<button 
-            				id="menu-button" 
-            				class="flex items-center text-sm font-semibold text-gray-900 focus:outline-none hover:text-blue-500 transition-colors"
-            				aria-haspopup="true" 
-            				aria-expanded="false"
-            			>
-            				{{ app.user.firstname }}
-            				<svg 
-                				class="ml-2 h-4 w-4 text-gray-500" 
-                				xmlns="http://www.w3.org/2000/svg" 
-                				viewBox="0 0 20 20" 
-                				fill="currentColor"
-            				>
-                				<path 
-                    				fill-rule="evenodd" 
-                    				d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" 
-                    				clip-rule="evenodd" 
-                				/>
-            				</svg>
-        				</button>
-        				<!-- Menu déroulant -->
-        				<div 
-            				id="dropdown-menu" 
-            				class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden"
-        				>
-            				<div class="py-1">
-                				<a href="#" 
-                   					class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                				>
-                    				Mon profil
-                				</a>
-                				<div class="border-t border-gray-200 my-1"></div>
-                				<a href="{{ path('app_logout') }}" 
-                   					class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition-colors"
-                				>
-                    				Se déconnecter
-                				</a>
-            				</div>
-        				</div>
-    				{% else %}
-        				<a href="{{ path('app_login') }}" 
-            				class="text-sm font-semibold text-gray-900 hover:text-blue-500 transition-colors"
-        				>
-            				Se connecter
-        				</a>
-    				{% endif %}
-				</div>
-			</nav>
-		</header>
+            <!-- Menu desktop -->
+            <div class="hidden md:flex space-x-8">
+                {% if is_granted('ROLE_STUDENT') %}
+                <a href="{{ path('app_internship_index') }}" class="hover:text-blue-500 transition-colors">Stages</a>
+                <a href="{{ path('app_company_index') }}" class="hover:text-blue-500 transition-colors">Entreprises</a>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_school_index') }}" class="hover:text-blue-500 transition-colors">Écoles</a>
+                <a href="{{ path('app_user_index') }}" class="hover:text-blue-500 transition-colors">Utilisateurs</a>
+                {% endif %}
+                {% if is_granted('ROLE_STUDENT') %}
+                <a href="{{ path('app_report') }}" class="hover:text-blue-500 transition-colors">Rapport</a>
+                {% endif %}
+            </div>
 
-		{% for label, messages in app.flashes %}
+            <!-- Bouton burger (visible uniquement sur mobile) -->
+            <div class="md:hidden flex items-center">
+                <button id="burger-menu" class="text-gray-700 hover:text-blue-500 focus:outline-none">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12h18M3 6h18M3 18h18"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Section utilisateur connecté -->
+            <div>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <div class="relative">
+                    <button id="menu-button" class="flex items-center space-x-2 hover:text-blue-500 transition-colors">
+                        <span>{{ app.user.firstname }}</span>
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Mon profil</a>
+                        <a href="{{ path('app_logout') }}" class="block px-4 py-2 text-red-600 hover:bg-red-100">Se déconnecter</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ path('app_login') }}" class="hover:text-blue-500 transition-colors">Se connecter</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <!-- Menu mobile (affiché quand le burger est cliqué) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg absolute top-0 left-0 right-0 p-4 space-y-4">
+            {% if is_granted('ROLE_STUDENT') %}
+            <a href="{{ path('app_internship_index') }}" class="block text-gray-800 hover:text-blue-500 transition-colors">Stages</a>
+            <a href="{{ path('app_company_index') }}" class="block text-gray-800 hover:text-blue-500 transition-colors">Entreprises</a>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_school_index') }}" class="block text-gray-800 hover:text-blue-500 transition-colors">Écoles</a>
+            <a href="{{ path('app_user_index') }}" class="block text-gray-800 hover:text-blue-500 transition-colors">Utilisateurs</a>
+            {% endif %}
+            {% if is_granted('ROLE_STUDENT') %}
+            <a href="{{ path('app_report') }}" class="block text-gray-800 hover:text-blue-500 transition-colors">Rapport</a>
+            {% endif %}
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <a href="{{ path('app_logout') }}" class="block text-red-600 hover:bg-red-100 transition-colors">Se déconnecter</a>
+            {% else %}
+            <a href="{{ path('app_login') }}" class="block text-gray-800 hover:text-blue-500 transition-colors">Se connecter</a>
+            {% endif %}
+        </div>
+    </header>
+
+    {% for label, messages in app.flashes %}
     <div class="flash-message {{ label }} flex justify-between items-center bg-red-500 text-white p-4 rounded-lg mb-4">
         <span>{{ messages|first }}</span>
         <button type="button" class="close-btn text-white" onclick="this.parentElement.style.display='none'">
             &times;
         </button>
     </div>
-{% endfor %}
+    {% endfor %}
 
+    {% block body %}{% endblock %}
 
-		{% block body %}{% endblock %}
-	</body>
+    <script>
+        // Menu burger
+        document.getElementById('burger-menu').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Dropdown menu (utilisateur connecté)
+        document.getElementById('menu-button').addEventListener('click', function(event) {
+            event.stopPropagation();
+            document.getElementById('dropdown-menu').classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!document.getElementById('menu-button').contains(event.target) &&
+                !document.getElementById('dropdown-menu').contains(event.target)) {
+                document.getElementById('dropdown-menu').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
 </html>
-
-<script>
-    // Sélectionner le bouton de menu et le menu déroulant
-const menuButton = document.getElementById('menu-button');
-const dropdownMenu = document.getElementById('dropdown-menu');
-
-// Ajouter un gestionnaire d'événements pour ouvrir/fermer le menu
-menuButton.addEventListener('click', function(event) {
-    // Empêcher l'événement de propagation pour éviter des conflits avec d'autres éléments
-    event.stopPropagation();
-
-    // Alterner la visibilité du menu (toggle)
-    dropdownMenu.classList.toggle('hidden');
-});
-
-// Fermer le menu si l'utilisateur clique n'importe où en dehors du menu
-document.addEventListener('click', function(event) {
-    if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-        dropdownMenu.classList.add('hidden');
-    }
-});
-
-</script>
