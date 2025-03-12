@@ -65,59 +65,30 @@
 					{{ form_label(form.grade, null, {'label_attr': {'class': 'text-black text-sm font-medium mb-2'}}) }}
 					{{ form_widget(form.grade, {'attr': {'class': 'bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3'}}) }}
 				</div>
-   {% if is_granted('ROLE_ADMIN') %}
-                    <div class="mb-6">
-                        <h2 class="text-xl font-semibold mb-4 text-black">Rôles</h2>
+   
+                {% if is_granted('ROLE_ADMIN') %}
+                <div class="mb-6">
+                    <label for="roles-dropdown" class="text-white text-sm font-medium mb-2">Rôles</label>
 
-                        <div class="relative">
-                            <button id="roles-dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center" type="button">
-                                Choisir un rôle
-                                <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
+                    <div class="relative">
+                        <button id="roles-dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                            Choisir un rôle
+                            <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                            </svg>
+                        </button>
 
-                            <div id="roles-dropdown-menu" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute bottom-full mb-1">
-                                <ul class="p-3 space-y-3 text-sm text-black">
-                                    {% for role in form.roles %}
-                                        {% if role.vars.value != 'ROLE_SUPER_ADMIN' %}
-                                            <li>
-                                                <div class="flex items-center">
-                                                    {% set role_widget = form_widget(role, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) %}
-                                                    {{ role_widget }}
-                                                    {{ form_label(role, null, {'label_attr': {'class': 'ms-2 text-sm font-medium text-black'}}) }}
-                                                </div>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                {% elseif is_granted('ROLE_SUPER_ADMIN') %}
-                    <!-- Si l'utilisateur est un super admin, il voit tous les rôles -->
-                    <div class="mb-6">
-                        <h2 class="text-xl font-semibold mb-4 text-black">Rôles</h2>
+                        <div id="roles-dropdown-menu" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute mt-1">
+                            <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200">
+                                {% for role in form.roles %}
+                                    <li>
+                                        <div class="flex items-center">
+                                            {{ form_widget(role, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500'}}) }}
+                                            {{ form_label(role, null, {'label_attr': {'class': 'ms-2 text-sm font-medium text-gray-900 dark:text-gray-300'}}) }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
 
-                        <div class="relative">
-                            <button id="roles-dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center" type="button">
-                                Choisir un rôle
-                                <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
-
-                            <div id="roles-dropdown-menu" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute bottom-full mb-1">
-                                <ul class="p-3 space-y-3 text-sm text-black">
-                                    {% for role in form.roles %}
-                                        <li>
-                                            <div class="flex items-center">
-                                                {% set role_widget = form_widget(role, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) %}
-                                                {{ role_widget }}
-                                                {{ form_label(role, null, {'label_attr': {'class': 'ms-2 text-sm font-medium text-black'}}) }}
-                                            </div>
-                                        </li>
-                                    {% endfor %}
                                 </ul>
                             </div>
                         </div>

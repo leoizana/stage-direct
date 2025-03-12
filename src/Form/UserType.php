@@ -112,7 +112,7 @@ class UserType extends AbstractType
                     'placeholder' => 'nom@mail.fr',
                 ],
             ]);
-             // Ajout du champ grade
+        // Ajout du champ grade
         $builder->add('grade', EntityType::class, [
             'class' => Grade::class,
             'choice_label' => 'className',
@@ -127,30 +127,32 @@ class UserType extends AbstractType
                 return $repo->createQueryBuilder('g')->orderBy('g.className', 'ASC');
             },
         ]);
-            
-            if ($options['is_edit']) {
-                $builder->add('password', PasswordType::class, [
-                    'label' => 'Mot de passe',
-                    'mapped' => false, // Symfony ne va pas lier ce champ à l'entité User
-                    'required' => false, // L'utilisateur n'est pas obligé de le remplir
-                    'attr' => [
-                        'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                        'placeholder' => '••••••••',
-                    ],
-                ]);
-            } else {
-                $builder->add('password', PasswordType::class, [
-                    'label' => 'Mot de Passe',
-                    'mapped' => false,
-                    'required' => true,
-                    'attr' => [
-                        'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                        'placeholder' => '••••••••',
-                    ],
-                ]);
-            }
-        // Vérification si l'utilisateur a le rôle ROLE_ADMIN
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+
+        if ($options['is_edit']) {
+            $builder->add('password', PasswordType::class, [
+                'label' => 'Mot de passe',
+                'mapped' => false, // Symfony ne va pas lier ce champ à l'entité User
+                'required' => false, // L'utilisateur n'est pas obligé de le remplir
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => '••••••••',
+                ],
+            ]);
+        } else {
+            $builder->add('password', PasswordType::class, [
+                'label' => 'Mot de Passe',
+                'mapped' => false,
+                'required' => true,
+                'attr' => [
+                    'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                    'placeholder' => '••••••••',
+                ],
+            ]);
+        }
+
+
+        // Vérification si l'utilisateur a le rôle ROLE_SUPER_ADMIN
+        if ($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
             $builder->add('roles', ChoiceType::class, [
                 'choices' => [
                     'Utilisateur' => 'ROLE_USER',
@@ -166,16 +168,34 @@ class UserType extends AbstractType
                 'attr' => ['class' => 'flex flex-col gap-2'],
                 'data' => array_values($options['data']->getRoles()), // S'assure que les rôles sont sous forme d'un simple tableau
             ]);
+
+        } else {
+            // Vérification si l'utilisateur a le rôle ROLE_ADMIN
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $builder->add('roles', ChoiceType::class, [
+                    'choices' => [
+                        'Utilisateur' => 'ROLE_USER',
+                        'Étudiant' => 'ROLE_STUDENT',
+                        'Professeur' => 'ROLE_TEACHER',
+                    ],
+                    'multiple' => true,
+                    'expanded' => true,
+                    'label' => 'Rôles',
+                    'label_attr' => ['class' => 'text-white text-sm font-medium mb-4'],
+                    'attr' => ['class' => 'flex flex-col gap-2'],
+                    'data' => array_values($options['data']->getRoles()), // S'assure que les rôles sont sous forme d'un simple tableau
+                ]);
+            }
         }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
-{
-    $resolver->setDefaults([
-        'data_class' => User::class,
-        'is_edit' => false, // Définit la valeur par défaut
-    ]);
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+            'is_edit' => false, // Définit la valeur par défaut
+        ]);
 
-    $resolver->setDefined(['is_edit', 'login_type']);
-}
+        $resolver->setDefined(['is_edit', 'login_type']);
+    }
 }

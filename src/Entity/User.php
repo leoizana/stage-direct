@@ -163,13 +163,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+    private function getHighestRole($roles) {
+        $roleHierarchy = [
+            'ROLE_SUPER_ADMIN' => 5,
+            'ROLE_ADMIN' => 4,
+            'ROLE_TEACHER' => 3,
+            'ROLE_STUDENT' => 2,
+            'ROLE_USER' => 1
+        ];
+    
+        $highestRole = 'ROLE_USER';
+        $highestPriority = 0;
+    
+        foreach ($roles as $role) {
+            if (isset($roleHierarchy[$role]) && $roleHierarchy[$role] > $highestPriority) {
+                $highestRole = $role;
+                $highestPriority = $roleHierarchy[$role];
+            }
+        }
+    
+        return $highestRole;
+    }
+
+    
     // --- Role Handling ---
     public function getRoles(): array
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER'; // Assurer que tous les utilisateurs ont au moins le rôle ROLE_USER
 
-        return array_unique($roles);
+        $roles = $this->getHighestRole($roles);
+
+        return array_unique([$roles]);
     }
 
     public function setRoles(array $roles): static
