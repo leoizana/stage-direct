@@ -22,6 +22,8 @@
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('app_school_index') }}" class="hover:text-blue-500 transition-colors">Écoles</a>
+                {% endif %}
+                {% if is_granted('ROLE_TEACHER') %}
                 <a href="{{ path('app_user_index') }}" class="hover:text-blue-500 transition-colors">Utilisateurs</a>
                 {% endif %}
                 {% if is_granted('ROLE_STUDENT') %}
@@ -81,13 +83,16 @@
     </header>
 
     {% for label, messages in app.flashes %}
-    <div class="flash-message {{ label }} flex justify-between items-center bg-red-500 text-white p-4 rounded-lg mb-4">
+    <div class="flash-message 
+        {% if label == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}
+        text-white p-4 rounded-lg mb-4 flex justify-between items-center">
         <span>{{ messages|first }}</span>
         <button type="button" class="close-btn text-white" onclick="this.parentElement.style.display='none'">
             &times;
         </button>
     </div>
     {% endfor %}
+
 
     {% block body %}{% endblock %}
 

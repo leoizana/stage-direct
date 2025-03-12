@@ -38,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true, options: ["default" => false])]
+    private ?bool $isApprovedByTeacher = null;
+
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $birthDate = null;
 
@@ -157,13 +160,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getIsApprovedByTeacher(): bool
+    {
+        return $this->isApprovedByTeacher ?? false;
+    }
+
+
+    public function setIsApprovedByTeacher(bool $isApprovedByTeacher): static
+    {
+        $this->isApprovedByTeacher = $isApprovedByTeacher;
+
+        return $this;
+    }
+
 
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    private function getHighestRole($roles) {
+    private function getHighestRole($roles)
+    {
         $roleHierarchy = [
             'ROLE_SUPER_ADMIN' => 5,
             'ROLE_ADMIN' => 4,
@@ -171,29 +188,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'ROLE_STUDENT' => 2,
             'ROLE_USER' => 1
         ];
-    
+
         $highestRole = 'ROLE_USER';
         $highestPriority = 0;
-    
+
         foreach ($roles as $role) {
             if (isset($roleHierarchy[$role]) && $roleHierarchy[$role] > $highestPriority) {
                 $highestRole = $role;
                 $highestPriority = $roleHierarchy[$role];
             }
         }
-    
+
         return $highestRole;
     }
 
-    
+
     // --- Role Handling ---
     public function getRoles(): array
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER'; // Assurer que tous les utilisateurs ont au moins le rôle ROLE_USER
-
+        if ($this->getIsApprovedByTeacher()) {
+            $roles[] = 'ROLE_STUDENT';
+        }
         $roles = $this->getHighestRole($roles);
-
         return array_unique([$roles]);
     }
 

@@ -53,3 +53,26 @@ button {
         box-shadow: 0 0 20px rgb(40, 131, 167);
     }
 }
+/* Message flash de succès */
+.flash-success {
+    background-color: #28a745; /* Vert pour le succès */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Message flash d'erreur */
+.flash-error {
+    background-color: #dc3545; /* Rouge pour l'erreur */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Autres types de messages (info, warning, etc.) */
+.flash-info {
+    background-color: #17a2b8;
+    color: white;
+}

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Utilisateurs{% endblock %}
+{% block title %}Liste des utilisateurs non validés{% endblock %}
 
 {% block body %}
 {% set roleNames = {
@@ -10,23 +10,27 @@
     'ROLE_STUDENT': 'Étudiant',
     'ROLE_USER': 'Utilisateur'
 } %}
-
+{% for message in app.flashes('success') %}
+    <div class="flash-success">
+        {{ message }}
+    </div>
+{% endfor %}
 <div class="container mx-auto py-8 px-4">
-    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Utilisateurs</h1>
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des utilisateurs non validés</h1>
 
     <div class="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <input type="text" id="searchName" placeholder="Rechercher par nom/prénom..." 
-           class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
-           onkeyup="filterUsers()">
-    
-    <input type="text" id="searchClass" placeholder="Rechercher par classe..." 
-           class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
-           onkeyup="filterUsers()">
-    
-    <input type="text" id="searchRole" placeholder="Rechercher par rôle..." 
-           class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
-           onkeyup="filterUsers()">
-</div>
+        <input type="text" id="searchName" placeholder="Rechercher par nom/prénom..." 
+               class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+               onkeyup="filterUsers()">
+        
+        <input type="text" id="searchClass" placeholder="Rechercher par classe..." 
+               class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+               onkeyup="filterUsers()">
+        
+        <input type="text" id="searchRole" placeholder="Rechercher par rôle..." 
+               class="w-full sm:w-1/4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+               onkeyup="filterUsers()">
+    </div>
 
     <!-- Tableau -->
     <div class="overflow-x-auto shadow-md sm:rounded-lg">
@@ -57,22 +61,26 @@
                     <td class="py-3 px-6">
                         {{ roleNames[user.highestRole] ?? user.highestRole }}
                     </td>
+                          
                     <td class="py-3 px-6 flex items-center justify-center space-x-2">
-                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                            <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
-                        </a>
-                         {% if is_granted('ROLE_ADMIN') %}
+                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
                             <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
                         </a>
-                            
-                        <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');" class="flex items-center">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                            <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
-                                <img src="{{ asset('svg/trash-svgrepo-com.svg') }}" alt="Supprimer" class="w-5 h-5">
+                               {% endif %}
+
+                        <form method="post" action="{{ path('app_user_approve', {'id': user.id}) }}" class="inline-flex">
+                            <button type="submit" class="text-green-600 hover:text-green-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/checkmark-svgrepo-com.svg') }}" alt="Valider" class="w-5 h-5">
                             </button>
                         </form>
-                        {% endif %}
+
+                        
+                        <form method="post" action="{{ path('app_user_reject', {'id': user.id}) }}" class="inline-flex" onsubmit="return confirm('Voulez-vous vraiment refuser et supprimer cet utilisateur ?');">
+                            <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/x-mark-svgrepo-com.svg') }}" alt="Refuser" class="w-5 h-5">
+                            </button>
+                        </form>
                     </td>
                 </tr>
             {% else %}
@@ -83,15 +91,6 @@
             </tbody>
         </table>
     </div>
-     {% if is_granted('ROLE_ADMIN') %}
-    <!-- Bouton pour créer un nouvel utilisateur -->
-    <div class="mt-6 text-center">
-        <a href="{{ path('app_user_new') }}" 
-           class="inline-block px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium shadow-lg">
-            Créer un nouvel utilisateur
-        </a>
-    </div>
-    {% endif %}
 </div>
 
 <script>

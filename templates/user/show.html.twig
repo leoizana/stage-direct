@@ -19,10 +19,12 @@
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
             <table class="w-full text-sm border border-gray-300 rounded-lg bg-white">
                 <tbody>
+                 {% if is_granted('ROLE_ADMIN') %}
                     <tr class="border-b">
                         <th class="py-3 px-6 text-left bg-gray-50 font-medium">Id</th>
                         <td class="py-3 px-6">{{ user.id }}</td>
                     </tr>
+                    {% endif %}
                     <tr class="border-b">
                         <th class="py-3 px-6 text-left bg-gray-50 font-medium">Prénom</th>
                         <td class="py-3 px-6">{{ user.firstName }}</td>
