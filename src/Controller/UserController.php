@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -20,69 +21,53 @@ final class UserController extends AbstractController
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
-        // Vérification des rôles
         $user = $this->getUser();
-        
-        // Si l'utilisateur n'a pas le bon rôle, on le redirige
+    
         if (!$user) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
             return $this->redirectToRoute('app_index');
         }
     
-        // Récupération des rôles de l'utilisateur
         $roles = $user->getRoles();
-        
-        // Cas où l'utilisateur est un Super Administrateur (accès complet à tout le monde)
+    
         if (in_array('ROLE_SUPER_ADMIN', $roles)) {
-            $users = $userRepository->findAll();
-        }
-        // Cas où l'utilisateur est un Administrateur (accès à tous sauf les Super Admins)
-        elseif (in_array('ROLE_ADMIN', $roles)) {
+            $users = $userRepository->createQueryBuilder('u')
+                ->where('u.isApprovedByTeacher = true')
+                ->getQuery()
+                ->getResult();
+        } elseif (in_array('ROLE_ADMIN', $roles)) {
             $users = $userRepository->createQueryBuilder('u')
                 ->where('u.roles NOT LIKE :role')
+                ->andWhere('u.isApprovedByTeacher = true')
                 ->setParameter('role', '%ROLE_SUPER_ADMIN%')
                 ->getQuery()
                 ->getResult();
-        }
-        // Cas où l'utilisateur est un Professeur (accès uniquement aux élèves validés de ses classes)
-        elseif (in_array('ROLE_TEACHER', $roles)) {
-            // Récupérer l'utilisateur connecté (le professeur)
-            $teacherGrades = $user->getGrade();  // Cela retourne la collection de grades associée au professeur
+        } elseif (in_array('ROLE_TEACHER', $roles)) {
+            $teacherGrades = $user->getGrade();
     
-            // Filtrer les utilisateurs (élèves) qui sont dans les mêmes classes que le professeur
-            // et qui ont été approuvés par un professeur (isApprovedByTeacher = true)
             $users = $userRepository->createQueryBuilder('u')
                 ->innerJoin('u.grade', 'g')
                 ->where('g IN (:grades)')
-                ->andWhere('u.isApprovedByTeacher = :approved')
+                ->andWhere('u.isApprovedByTeacher = true')
                 ->setParameter('grades', $teacherGrades)
-                ->setParameter('approved', true) // Filtrer uniquement les utilisateurs approuvés
                 ->getQuery()
                 ->getResult();
-        }
-        // Si aucun rôle ne correspond, on ne renvoie aucun utilisateur
-        else {
+        } else {
             $users = [];
         }
     
-        // Trier les utilisateurs par rôle
         $roleHierarchy = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_TEACHER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
         foreach ($users as $user) {
             $userRoles = $user->getRoles();
-    
-            // Trier les rôles selon la hiérarchie et récupérer le plus élevé
-            usort($userRoles, function ($a, $b) use ($roleHierarchy) {
-                return array_search($b, $roleHierarchy) <=> array_search($a, $roleHierarchy);
-            });
-    
-            $user->highestRole = $userRoles[0] ?? 'ROLE_USER'; // Par défaut, on met "ROLE_USER" si vide
+            usort($userRoles, fn($a, $b) => array_search($b, $roleHierarchy) <=> array_search($a, $roleHierarchy));
+            $user->highestRole = $userRoles[0] ?? 'ROLE_USER';
         }
     
-        // Retourner la vue avec les utilisateurs filtrés
         return $this->render('user/index.html.twig', [
             'users' => $users,
         ]);
     }
+    
     
     #[Route('/validation', name: 'app_user_validation', methods: ['GET'])]
 public function validation(UserRepository $userRepository): Response
