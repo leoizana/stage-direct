@@ -17,7 +17,8 @@ class Company
     #[ORM\Column(type: "string", length: 255)]
     private ?string $name = null;  // Nom de l'entreprise
 
-    #[ORM\Column(type: "string", length: 255)]
+    
+    #[ORM\Column(type: "string", length: 255,  nullable: true)]
     private ?string $street = null;  // Rue
 
     #[ORM\Column(type: "string", length: 20)]
@@ -29,11 +30,20 @@ class Company
     #[ORM\Column(type: "string", length: 255)]
     private ?string $country = null;  // Pays
 
-    #[ORM\Column(type: "string", length: 20)]
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
     private ?string $phone = null;  // Téléphone
 
-    #[ORM\Column(type: "string", length: 255)]
-    private ?string $email = null;  // Email
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $size = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fax = null;
+
+    #[ORM\ManyToOne(inversedBy: 'relation')]
+    private ?Activity $activity = null;  // Email
 
     // Getter et setter pour chaque propriété
 
@@ -116,6 +126,42 @@ class Company
     public function setEmail(string $email): self
     {
         $this->email = $email;
+        return $this;
+    }
+
+    public function getSize(): ?string
+    {
+        return $this->size;
+    }
+
+    public function setSize(?string $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function getFax(): ?string
+    {
+        return $this->fax;
+    }
+
+    public function setFax(?string $fax): static
+    {
+        $this->fax = $fax;
+
+        return $this;
+    }
+
+    public function getActivity(): ?Activity
+    {
+        return $this->activity;
+    }
+
+    public function setActivity(?Activity $activity): static
+    {
+        $this->activity = $activity;
+
         return $this;
     }
 }
