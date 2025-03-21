@@ -29,6 +29,7 @@
                     <th class="py-3 px-6 font-semibold">Pays</th>
                     <th class="py-3 px-6 font-semibold">Téléphone</th>
                     <th class="py-3 px-6 font-semibold">Email</th>
+                    <th class="py-3 px-6 font-semibold">Domaines d'activités</th>
                     <th class="py-3 px-6 font-semibold">Actions</th>
                 </tr>
             </thead>
@@ -45,6 +46,7 @@
                         <td class="py-3 px-6">{{ company.country }}</td>
                         <td class="py-3 px-6">{{ company.phone }}</td>
                         <td class="py-3 px-6">{{ company.email }}</td>
+                        <td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
                             <!-- Icône de visualisation -->
                             <a href="{{ path('app_company_show', {'id': company.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">

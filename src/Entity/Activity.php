@@ -77,4 +77,8 @@ class Activity
 
         return $this;
     }
+    public function __toString(): string
+{
+    return $this->name ?? 'Undefined'; // Assurez-vous que `name` est bien défini dans `Activity`
+}
 }

@@ -15,27 +15,31 @@
                         <td class="px-4 py-2 border border-gray-300">{{ company.id }}</td>
                     </tr>
                     <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Name</th>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Nom de l'entreprise</th>
                         <td class="px-4 py-2 border border-gray-300">{{ company.name }}</td>
                     </tr>
                     <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Street</th>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Domaine d'activité</th>
+                        <td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Rue</th>
                         <td class="px-4 py-2 border border-gray-300">{{ company.street }}</td>
                     </tr>
                     <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">ZipCode</th>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Code postal</th>
                         <td class="px-4 py-2 border border-gray-300">{{ company.zipCode }}</td>
                     </tr>
                     <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">City</th>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Ville</th>
                         <td class="px-4 py-2 border border-gray-300">{{ company.city }}</td>
                     </tr>
                     <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Country</th>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Pays</th>
                         <td class="px-4 py-2 border border-gray-300">{{ company.country }}</td>
                     </tr>
                     <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Phone</th>
+                        <th class="px-4 py-2 border border-gray-300 font-medium">Numéro de téléphone</th>
                         <td class="px-4 py-2 border border-gray-300">{{ company.phone }}</td>
                     </tr>
                     <tr class="bg-gray-100">
