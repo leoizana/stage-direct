@@ -40,19 +40,6 @@ class Internship
     {
         return $this->id;
     }
-
-    public function getClasseEleve(): ?string
-    {
-        return $this->classeEleve;
-    }
-
-    public function setClasseEleve(string $classeEleve): self
-    {
-        $this->classeEleve = $classeEleve;
-
-        return $this;
-    }
-
     public function getDateDebut(): ?\DateTimeInterface
     {
         return $this->dateDebut;

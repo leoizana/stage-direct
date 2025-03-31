@@ -16,11 +16,14 @@
 						<td class="px-4 py-2 border border-gray-300">
 							{{ internship.relation.firstName }}
 							{{ internship.relation.lastName }}
+							
 						</td>
 					</tr>
 					<tr>
 						<th class="px-4 py-2 border border-gray-300 font-medium">Classe de l'élève</th>
-						<td class="px-4 py-2 border border-gray-300">{{ internship.classeEleve }}</td>
+						<td class="px-4 py-2 border border-gray-300">{% for grade in internship.relation.grade %}
+            {{ grade.classname }}{% if not loop.last %}, {% endif %}
+        {% endfor %}</td>
 					</tr>
 					<tr class="bg-gray-100">
 						<th class="px-4 py-2 border border-gray-300 font-medium">Date de début</th>

@@ -14,9 +14,6 @@ class InternshipType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('classeEleve', TextType::class, [
-                'label' => 'Classe de l\'élève',
-            ])
             ->add('dateDebut', DateType::class, [
                 'label' => 'Date de début',
                 'widget' => 'single_text',  // Affiche un champ de date simple sans heure
