@@ -2,15 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Grade;
-use App\Entity\School;
-use App\Form\SchoolType;
-use App\Repository\SchoolRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Session;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\School;
+use App\Form\SchoolType;
+use App\Entity\Grade;
+use App\Repository\SchoolRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/school')]
 final class SchoolController extends AbstractController
@@ -81,12 +82,9 @@ final class SchoolController extends AbstractController
         // Si le formulaire n'est pas encore soumis ou invalide, on le passe à la vue
         return $this->render('school/new.html.twig', [
             'form' => $form->createView(), // Passe la vue du formulaire à Twig
+            'sessions' => $entityManager->getRepository(Session::class)->findAll(), 
         ]);
     }
-
-
-
-
 
     #[Route('/{id}', name: 'app_school_show', methods: ['GET'])]
     public function show(School $school): Response
@@ -148,6 +146,7 @@ final class SchoolController extends AbstractController
         return $this->render('school/edit.html.twig', [
             'school' => $school,
             'form' => $form->createView(),
+            'sessions' => $entityManager->getRepository(Session::class)->findAll(), // Ajout des sessions
         ]);
     }
 

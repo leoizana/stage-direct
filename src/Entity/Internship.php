@@ -24,15 +24,15 @@ class Internship
     #[ORM\Column(type: 'datetime')]
     private $dateFin;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $session;
-
     #[ORM\Column(type: 'text')]
     private $themes;
 
     #[ORM\ManyToOne(inversedBy: 'internships')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $relation = null;
+
+    #[ORM\ManyToOne(inversedBy: 'internship')]
+    private ?Session $session = null;
 
     // Getters et setters
 
@@ -64,18 +64,6 @@ class Internship
         return $this;
     }
 
-    public function getSession(): ?string
-    {
-        return $this->session;
-    }
-
-    public function setSession(string $session): self
-    {
-        $this->session = $session;
-
-        return $this;
-    }
-
     public function getThemes(): ?string
     {
         return $this->themes;
@@ -96,6 +84,18 @@ class Internship
     public function setRelation(?User $relation): static
     {
         $this->relation = $relation;
+
+        return $this;
+    }
+
+    public function getSession(): ?Session
+    {
+        return $this->session;
+    }
+
+    public function setSession(?Session $session): static
+    {
+        $this->session = $session;
 
         return $this;
     }

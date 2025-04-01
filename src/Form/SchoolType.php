@@ -6,9 +6,10 @@ namespace App\Form;
 
 use App\Entity\Grade;
 use App\Entity\School;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Session;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -24,6 +25,13 @@ class SchoolType extends AbstractType
             ->add('city')
             ->add('phone')
             ->add('email')
+            ->add('session', EntityType::class, [
+                'class' => Session::class,
+                'choice_label' => 'name',
+                'placeholder' => '-- Choisir une session --',
+                'required' => false,
+                'mapped' => false, // À ajuster si nécessaire
+            ])
             ->add('grades', EntityType::class, [
                 'class' => Grade::class,
                 'choice_label' => 'className',

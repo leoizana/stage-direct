@@ -51,10 +51,17 @@ class School
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'school')]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Session>
+     */
+    #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'school')]
+    private Collection $sessions;
+
     public function __construct()
     {
         $this->grades = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->sessions = new ArrayCollection();
     }
 
     // Getters et setters pour les propriétés persistantes
@@ -189,6 +196,36 @@ public function removeUser(User $user): static
         // set the owning side to null (unless already changed)
         if ($user->getSchool() === $this) {
             $user->setSchool(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Session>
+ */
+public function getSessions(): Collection
+{
+    return $this->sessions;
+}
+
+public function addSession(Session $session): static
+{
+    if (!$this->sessions->contains($session)) {
+        $this->sessions->add($session);
+        $session->setSchool($this);
+    }
+
+    return $this;
+}
+
+public function removeSession(Session $session): static
+{
+    if ($this->sessions->removeElement($session)) {
+        // set the owning side to null (unless already changed)
+        if ($session->getSchool() === $this) {
+            $session->setSchool(null);
         }
     }
 
