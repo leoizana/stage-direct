@@ -59,29 +59,59 @@
                 {% endfor %}
             </div>
         </div>
+  <div class="relative inline-block">
+    {{ form_widget(form.newGrade, {
+        'attr': {
+            'class': 'hidden',  
+        }
+    }) }}
 
-        <!-- Sessions -->
-        <div class="space-y-2">
-            <label class="text-gray-700 font-medium">Sélectionner une Session</label>
-            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" name="school[session]">
-                <option value="">-- Choisir une session --</option>
-                {% for session in sessions %}
-                <option value="{{ session.id }}">{{ session.session_list }}</option>
+    <button id="add-class-button" type="button" 
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 
+        font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 
+        dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        Nouvelles classes
+    </button>
+</div>
+
+{{ form_errors(form.newGrade) }}
+
+<!-- Sessions -->
+    <div class="space-y-2">
+        <label class="text-gray-700 font-medium">Sessions</label>
+        <div class="flex flex-wrap gap-4" id="session-list">
+            {% for child in form.session %}
+                <div class="flex items-center space-x-2" data-session-id="{{ loop.index }}">
+                    {{ form_widget(child) }}
+                    <button type="button" class="remove-session bg-red-500 hover:bg-red-600 text-white rounded-full px-2 py-1" data-session-id="{{ loop.index }}">
+                        &times;
+                    </button>
+                </div>
             {% endfor %}
-            
-            </select>
         </div>
 
-        <div class="flex justify-between items-center mt-6">
-            <a href="{{ path('app_school_index') }}" 
-               class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
-                Retour à la liste
-            </a>
-            <button type="submit" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
-                Enregistrer
+        <div class="relative inline-block">
+            {{ form_widget(form.session) }}
+            <button id="add-session-button" type="button" 
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 
+                font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2">
+                Nouvelle Session
             </button>
         </div>
     </div>
+
+    {{ form_errors(form.session) }}
+
+    <div class="flex justify-between items-center mt-6">
+        <a href="{{ path('app_school_index') }}" 
+           class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+            Retour à la liste
+        </a>
+        <button type="submit" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium">
+            Enregistrer
+        </button>
+    </div>
+      
     {{ form_end(form) }}
 
     <script>
@@ -95,6 +125,44 @@
     newField.classList.add('px-4', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:outline-none');
     document.querySelector('.flex.flex-wrap.gap-4').appendChild(newField);
 });
+let sessionCount = {{ form.session|length }}; // Compter le nombre de session existantes
 
+    document.getElementById('add-session-button').addEventListener('click', function() {
+        sessionCount++;
+        const newField = document.createElement('div');
+        newField.classList.add('flex', 'items-center', 'space-x-2');
+        newField.setAttribute('data-session-id', sessionCount);
+
+        // Créer un champ pour la nouvelle session
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.name = 'school[session][' + sessionCount + ']'; // Champs dynamique pour Symfony
+        inputField.classList.add('px-4', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:outline-none');
+        
+        // Créer le bouton pour supprimer la session
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.classList.add('remove-session', 'bg-red-500', 'hover:bg-red-600', 'text-white', 'rounded-full', 'px-2', 'py-1');
+        removeButton.textContent = '×';
+        removeButton.setAttribute('data-session-id', sessionCount);
+
+        // Ajouter le champ et le bouton au DOM
+        newField.appendChild(inputField);
+        newField.appendChild(removeButton);
+        document.querySelector('#session-list').appendChild(newField);
+
+        // Ajouter un événement de suppression pour la nouvelle session
+        removeButton.addEventListener('click', function() {
+            newField.remove();
+        });
+    });
+
+    // Gestion des événements de suppression pour les session existantes
+    document.querySelectorAll('.remove-session').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const sessionId = button.getAttribute('data-session-id');
+            document.querySelector('[data-session-id="' + sessionId + '"]').remove();
+        });
+    });
     </script>
 {% endblock %}

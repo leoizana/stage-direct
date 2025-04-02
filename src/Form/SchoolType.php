@@ -27,8 +27,7 @@ class SchoolType extends AbstractType
             ->add('email')
             ->add('session', EntityType::class, [
                 'class' => Session::class,
-                'choice_label' => 'name',
-                'placeholder' => '-- Choisir une session --',
+                'choice_label' => 'session_list',
                 'required' => false,
                 'mapped' => false, // À ajuster si nécessaire
             ])
@@ -45,7 +44,6 @@ class SchoolType extends AbstractType
                 'allow_add' => true,
                 'mapped' => false, // Ce champ n'est pas persisté directement dans l'entité
                 'required' => false,
-                'label' => 'Nouvelles Classes',
             ]);
     }
 
