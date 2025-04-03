@@ -25,11 +25,17 @@ class SchoolType extends AbstractType
             ->add('city')
             ->add('phone')
             ->add('email')
-            ->add('session', EntityType::class, [
+            ->add('sessions', EntityType::class, [
                 'class' => Session::class,
                 'choice_label' => 'session_list',
+                'multiple' => true,  // Vous pouvez permettre la sélection multiple si nécessaire
+                'expanded' => true,  // Par exemple, pour des cases à cocher
                 'required' => false,
-                'mapped' => false, // À ajuster si nécessaire
+                'mapped' => true,    // Lier cette propriété à l'entité School
+            ])
+            ->add('newSession', TextType::class, [
+                'mapped' => false, // Ce champ sert juste pour le JavaScript
+                'required' => false,
             ])
             ->add('grades', EntityType::class, [
                 'class' => Grade::class,

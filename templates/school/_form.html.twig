@@ -77,32 +77,40 @@
 {{ form_errors(form.newGrade) }}
 
 <!-- Sessions -->
-    <div class="space-y-2">
-        <label class="text-gray-700 font-medium">Sessions</label>
-        <div class="flex flex-wrap gap-4" id="session-list">
-            {% for child in form.session %}
-                <div class="flex items-center space-x-2" data-session-id="{{ loop.index }}">
-                    {{ form_widget(child) }}
-                    <button type="button" class="remove-session bg-red-500 hover:bg-red-600 text-white rounded-full px-2 py-1" data-session-id="{{ loop.index }}">
-                        &times;
-                    </button>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="relative inline-block">
-            {{ form_widget(form.session) }}
-            <button id="add-session-button" type="button" 
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 
-                font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2">
-                Nouvelle Session
-            </button>
-        </div>
+<div class="space-y-2">
+    <label class="text-gray-700 font-medium">Sessions</label>
+    <div class="border border-gray-300 rounded-lg divide-y divide-gray-200 p-2" id="session-list">
+        {% for child in form.sessions %}
+            <div class="flex justify-between items-center p-2" data-session-id="{{ loop.index }}">
+                {{ form_widget(child, {'attr': {'class': 'w-full px-2 py-1 focus:ring-blue-500 focus:border-blue-500 border rounded'}}) }}
+                <button type="button" class="remove-session text-red-500 ml-2" data-session-id="{{ loop.index }}">
+                    ✖
+                </button>
+            </div>
+        {% else %}
+            <div class="p-2 text-gray-500 text-sm text-center" id="no-session">Aucune session enregistrée.</div>
+        {% endfor %}
     </div>
+</div>
 
-    {{ form_errors(form.session) }}
+<!-- Ajout d'une nouvelle session -->
+<div class="relative inline-block">
+    {{ form_widget(form.newSession, {
+        'attr': {'class': 'hidden'}
+    }) }}
 
-    <div class="flex justify-between items-center mt-6">
+    <button id="add-session-button" type="button"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 
+        font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 
+        dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        Nouvelle session
+    </button>
+</div>
+
+{{ form_errors(form.newSession) }}
+
+{{ form_errors(form.sessions) }}
+      <div class="flex justify-between items-center mt-6">
         <a href="{{ path('app_school_index') }}" 
            class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
             Retour à la liste
@@ -125,44 +133,58 @@
     newField.classList.add('px-4', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:outline-none');
     document.querySelector('.flex.flex-wrap.gap-4').appendChild(newField);
 });
-let sessionCount = {{ form.session|length }}; // Compter le nombre de session existantes
+
+document.addEventListener('DOMContentLoaded', function() {
+    let sessionCount = {{ form.sessions|length }};
+
+    const sessionList = document.getElementById('session-list');
+    const noSessionText = document.getElementById('no-session');
 
     document.getElementById('add-session-button').addEventListener('click', function() {
         sessionCount++;
-        const newField = document.createElement('div');
-        newField.classList.add('flex', 'items-center', 'space-x-2');
-        newField.setAttribute('data-session-id', sessionCount);
 
-        // Créer un champ pour la nouvelle session
+        // Si c'était vide, on enlève le texte "Aucune session"
+        if (noSessionText) {
+            noSessionText.remove();
+        }
+
+        const listItem = document.createElement('li');
+        listItem.classList.add('flex', 'justify-between', 'items-center', 'p-2');
+        listItem.setAttribute('data-session-id', sessionCount);
+
         const inputField = document.createElement('input');
         inputField.type = 'text';
-        inputField.name = 'school[session][' + sessionCount + ']'; // Champs dynamique pour Symfony
-        inputField.classList.add('px-4', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:outline-none');
-        
-        // Créer le bouton pour supprimer la session
+        inputField.name = 'school[session][' + sessionCount + ']';
+        inputField.classList.add('w-full', 'px-2', 'py-1', 'focus:ring-blue-500', 'focus:border-blue-500', 'border', 'rounded');
+
         const removeButton = document.createElement('button');
         removeButton.type = 'button';
-        removeButton.classList.add('remove-session', 'bg-red-500', 'hover:bg-red-600', 'text-white', 'rounded-full', 'px-2', 'py-1');
-        removeButton.textContent = '×';
+        removeButton.classList.add('remove-session', 'text-red-500', 'ml-2');
+        removeButton.textContent = '✖';
         removeButton.setAttribute('data-session-id', sessionCount);
 
-        // Ajouter le champ et le bouton au DOM
-        newField.appendChild(inputField);
-        newField.appendChild(removeButton);
-        document.querySelector('#session-list').appendChild(newField);
+        listItem.appendChild(inputField);
+        listItem.appendChild(removeButton);
+        sessionList.appendChild(listItem);
 
-        // Ajouter un événement de suppression pour la nouvelle session
+        // Suppression de session
         removeButton.addEventListener('click', function() {
-            newField.remove();
+            listItem.remove();
+            if (sessionList.children.length === 0) {
+                sessionList.innerHTML = '<li class="p-2 text-gray-500 text-sm text-center" id="no-session">Aucune session enregistrée.</li>';
+            }
         });
     });
 
-    // Gestion des événements de suppression pour les session existantes
+    // Suppression des sessions existantes
     document.querySelectorAll('.remove-session').forEach(function(button) {
         button.addEventListener('click', function() {
-            const sessionId = button.getAttribute('data-session-id');
-            document.querySelector('[data-session-id="' + sessionId + '"]').remove();
+            document.querySelector('[data-session-id="' + button.getAttribute('data-session-id') + '"]').remove();
+            if (sessionList.children.length === 0) {
+                sessionList.innerHTML = '<li class="p-2 text-gray-500 text-sm text-center" id="no-session">Aucune session enregistrée.</li>';
+            }
         });
     });
+});
     </script>
 {% endblock %}
