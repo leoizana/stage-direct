@@ -60,7 +60,7 @@
             </div>
         </div>
   <div class="relative inline-block">
-    {{ form_widget(form.newGrade, {
+    {{ form_widget(form.newGrades, {
         'attr': {
             'class': 'hidden',  
         }
@@ -74,15 +74,14 @@
     </button>
 </div>
 
-{{ form_errors(form.newGrade) }}
+{{ form_errors(form.newGrades) }}
 
-<!-- Sessions -->
 <div class="space-y-2">
     <label class="text-gray-700 font-medium">Sessions</label>
     <div class="border border-gray-300 rounded-lg divide-y divide-gray-200 p-2" id="session-list">
-        {% for child in form.sessions %}
+        {% for child in form.sessions %}            
             <div class="flex justify-between items-center p-2" data-session-id="{{ loop.index }}">
-                {{ form_widget(child, {'attr': {'class': 'w-full px-2 py-1 focus:ring-blue-500 focus:border-blue-500 border rounded'}}) }}
+                {{ child.vars.label }}
                 <button type="button" class="remove-session text-red-500 ml-2" data-session-id="{{ loop.index }}">
                     ✖
                 </button>
@@ -92,10 +91,8 @@
         {% endfor %}
     </div>
 </div>
-
-<!-- Ajout d'une nouvelle session -->
 <div class="relative inline-block">
-    {{ form_widget(form.newSession, {
+    {{ form_widget(form.newSessions, {
         'attr': {'class': 'hidden'}
     }) }}
 
@@ -107,7 +104,8 @@
     </button>
 </div>
 
-{{ form_errors(form.newSession) }}
+{{ form_errors(form.newSessions) }}
+{{ form_row(form.sessions, {'attr': {'style': 'display:none;'}}) }}
 
 {{ form_errors(form.sessions) }}
       <div class="flex justify-between items-center mt-6">
@@ -133,28 +131,20 @@
     newField.classList.add('px-4', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:outline-none');
     document.querySelector('.flex.flex-wrap.gap-4').appendChild(newField);
 });
-
 document.addEventListener('DOMContentLoaded', function() {
     let sessionCount = {{ form.sessions|length }};
-
-    const sessionList = document.getElementById('session-list');
-    const noSessionText = document.getElementById('no-session');
-
+    
     document.getElementById('add-session-button').addEventListener('click', function() {
         sessionCount++;
 
-        // Si c'était vide, on enlève le texte "Aucune session"
-        if (noSessionText) {
-            noSessionText.remove();
-        }
-
-        const listItem = document.createElement('li');
+        // Crée un nouvel élément de session
+        const listItem = document.createElement('div');
         listItem.classList.add('flex', 'justify-between', 'items-center', 'p-2');
         listItem.setAttribute('data-session-id', sessionCount);
 
         const inputField = document.createElement('input');
         inputField.type = 'text';
-        inputField.name = 'school[session][' + sessionCount + ']';
+        inputField.name = 'school[newSessions][' + sessionCount + ']';
         inputField.classList.add('w-full', 'px-2', 'py-1', 'focus:ring-blue-500', 'focus:border-blue-500', 'border', 'rounded');
 
         const removeButton = document.createElement('button');
@@ -165,21 +155,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         listItem.appendChild(inputField);
         listItem.appendChild(removeButton);
+
+        const sessionList = document.getElementById('session-list');
         sessionList.appendChild(listItem);
 
-        // Suppression de session
         removeButton.addEventListener('click', function() {
             listItem.remove();
-            if (sessionList.children.length === 0) {
-                sessionList.innerHTML = '<li class="p-2 text-gray-500 text-sm text-center" id="no-session">Aucune session enregistrée.</li>';
-            }
-        });
-    });
-
-    // Suppression des sessions existantes
-    document.querySelectorAll('.remove-session').forEach(function(button) {
-        button.addEventListener('click', function() {
-            document.querySelector('[data-session-id="' + button.getAttribute('data-session-id') + '"]').remove();
             if (sessionList.children.length === 0) {
                 sessionList.innerHTML = '<li class="p-2 text-gray-500 text-sm text-center" id="no-session">Aucune session enregistrée.</li>';
             }

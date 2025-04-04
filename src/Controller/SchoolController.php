@@ -102,86 +102,75 @@ final class SchoolController extends AbstractController
     #[Route('/{id}/edit', name: 'app_school_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, School $school, EntityManagerInterface $entityManager): Response
     {
-        // Vérification des droits d'accès
         if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+            $this->addFlash('error', 'Accès refusé.');
+            return $this->redirectToRoute('app_index');
         }
     
-        // Création du formulaire
         $form = $this->createForm(SchoolType::class, $school);
         $form->handleRequest($request);
     
+        if ($form->isSubmitted()) {
+            dump($form->isValid()); // Vérifie si c'est bien `true`
+            dump($form->getErrors(true)); // Affiche toutes les erreurs
+            dump($form->get('newSessions')->getData()); // Vérifie les données envoyées dans newSessions
+        }
+    
         if ($form->isSubmitted() && $form->isValid()) {
-            // 1️⃣ Récupération des nouvelles classes ajoutées dynamiquement
-            $newGrades = $form->get('newGrade')->getData();
-            dump($newGrades);
-    
-            // 2️⃣ Vérification et ajout des nouvelles classes
-            if (is_array($newGrades)) {
+            // Gestion des nouvelles classes
+            $newGrades = $form->get('newGrades')->getData();
+            if ($newGrades) {
                 foreach ($newGrades as $newGradeName) {
-                    if ($newGradeName) {
-                        $existingGrade = $entityManager->getRepository(Grade::class)->findOneBy(['className' => $newGradeName]);
+                    $newGradeName = trim($newGradeName);
+                    if (!$newGradeName) continue;
     
-                        // Si la classe n'existe pas, on la crée
-                        if (!$existingGrade) {
-                            $newGrade = new Grade();
-                            $newGrade->setClassName($newGradeName);
-                            $entityManager->persist($newGrade);
-                            $school->addGrade($newGrade);
-                        } else {
-                            // Sinon, on associe la classe existante à l'école
-                            if (!$school->getGrades()->contains($existingGrade)) {
-                                $school->addGrade($existingGrade);
-                            }
-                        }
+                    $existingGrade = $entityManager->getRepository(Grade::class)->findOneBy(['className' => $newGradeName]);
+                    if (!$existingGrade) {
+                        $existingGrade = new Grade();
+                        $existingGrade->setClassName($newGradeName);
+                        $entityManager->persist($existingGrade);
+                    }
+                    if (!$school->getGrades()->contains($existingGrade)) {
+                        $school->addGrade($existingGrade);
                     }
                 }
             }
     
-            // 3️⃣ Récupération des nouvelles sessions ajoutées dynamiquement
-            $newSessions = $form->get('newSession')->getData();
-            dump($newSessions);
-    
+            // Gestion des nouvelles sessions
+            $newSessions = $form->get('newSessions')->getData();
             if ($newSessions) {
-                // On les sépare par virgule si l'utilisateur a ajouté plusieurs sessions
-                $sessionNames = explode(',', $newSessions);
-                foreach ($sessionNames as $sessionName) {
-                    $sessionName = trim($sessionName); // Enlever les espaces superflus
-                    if ($sessionName) {
-                        $existingSession = $entityManager->getRepository(Session::class)->findOneBy(['sessionList' => $sessionName]);
-            
-                        // Si la session n'existe pas, on la crée
-                        if (!$existingSession) {
-                            $newSession = new Session();
-                            $newSession->setSessionList($sessionName);
-                            $entityManager->persist($newSession);
-                            $school->addSession($newSession);
-                        } else {
-                            // Sinon, on associe la session existante à l'école
-                            if (!$school->getSessions()->contains($existingSession)) {
-                                $school->addSession($existingSession);
-                            }
-                        }
+                foreach ($newSessions as $sessionName) {
+                    $sessionName = trim($sessionName); // Retirer les espaces inutiles
+                    if (!$sessionName) continue;
+    
+                    $existingSession = $entityManager->getRepository(Session::class)->findOneBy(['session_list' => $sessionName]);
+                    if (!$existingSession) {
+                        $existingSession = new Session();
+                        $existingSession->setSessionList($sessionName);
+                        $entityManager->persist($existingSession);
+                    }
+                    if (!$school->getSessions()->contains($existingSession)) {
+                        $school->addSession($existingSession);
                     }
                 }
             }
-            
     
-            // 5️⃣ Enregistrement des modifications en base de données
+            // Sauvegarder l'école et les changements
+            $entityManager->persist($school);
             $entityManager->flush();
     
-            // Redirection après modification
+            // Redirection après soumission réussie
             return $this->redirectToRoute('app_school_index');
         }
     
-        // Retourner le formulaire avec la vue, et ajouter la liste des sessions
+        // Si le formulaire n'est pas soumis ou invalide, retourne la vue
         return $this->render('school/edit.html.twig', [
             'school' => $school,
             'form' => $form->createView(),
-            'sessions' => $school->getSessions(), 
+            'sessions' => $school->getSessions(),
         ]);
     }
+    
 
     #[Route('/{id}', name: 'app_school_delete', methods: ['POST'])]
     public function delete(Request $request, School $school, EntityManagerInterface $entityManager): Response

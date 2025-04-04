@@ -33,9 +33,13 @@ class SchoolType extends AbstractType
                 'required' => false,
                 'mapped' => true,    // Lier cette propriété à l'entité School
             ])
-            ->add('newSession', TextType::class, [
-                'mapped' => false, // Ce champ sert juste pour le JavaScript
-                'required' => false,
+            ->add('newSessions', CollectionType::class, [
+                'entry_type' => TextType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true, 
+                'by_reference' => false, 
+                'required' => false, 
             ])
             ->add('grades', EntityType::class, [
                 'class' => Grade::class,
@@ -44,7 +48,7 @@ class SchoolType extends AbstractType
                 'expanded' => true, // Pour afficher les cases à cocher
             ])
             // Utilisation de CollectionType pour permettre l'ajout de plusieurs nouvelles classes
-            ->add('newGrade', CollectionType::class, [
+            ->add('newGrades', CollectionType::class, [
                 'entry_type' => TextType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => true,

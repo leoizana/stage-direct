@@ -38,12 +38,16 @@ class School
 
     private array $newGrades = [];
 
+    private array $newSessions = [];
+
     #[ORM\ManyToMany(targetEntity: Grade::class, inversedBy: 'schools')]
     #[ORM\JoinTable(name: 'school_grades')]
     private Collection $grades;
 
     // Propriété virtuelle pour gérer l'ajout de nouvelles classes (non persistée)
     private ?string $newGrade = null;
+
+    private ?string $newSession = null;
 
     /**
      * @var Collection<int, User>
@@ -169,6 +173,17 @@ public function getNewGrades(): array
 public function setNewGrades(array $newGrades): self
 {
     $this->newGrades = $newGrades;
+    return $this;
+}
+
+public function getNewSessions(): array
+{
+    return $this->newSessions;
+}
+
+public function setNewSessions(array $newSessions): self
+{
+    $this->newSessions = $newSessions;
     return $this;
 }
 
