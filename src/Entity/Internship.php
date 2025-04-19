@@ -15,9 +15,6 @@ class Internship
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $classeEleve;
-
     #[ORM\Column(type: 'datetime')]
     private $dateDebut;
 
@@ -33,6 +30,13 @@ class Internship
 
     #[ORM\ManyToOne(inversedBy: 'internship')]
     private ?Session $session = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $IsVerified = null;
+
+    #[ORM\ManyToOne(inversedBy: 'internships')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Company $Company = null;
 
     // Getters et setters
 
@@ -75,7 +79,7 @@ class Internship
 
         return $this;
     }
-
+    
     public function getRelation(): ?User
     {
         return $this->relation;
@@ -96,6 +100,30 @@ class Internship
     public function setSession(?Session $session): static
     {
         $this->session = $session;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->IsVerified;
+    }
+
+    public function setVerified(?bool $IsVerified): static
+    {
+        $this->IsVerified = $IsVerified;
+
+        return $this;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->Company;
+    }
+
+    public function setCompany(?Company $Company): static
+    {
+        $this->Company = $Company;
 
         return $this;
     }

@@ -294,7 +294,7 @@ public function validation(UserRepository $userRepository): Response
     #[Route('/user/{id}/approve', name: 'app_user_approve', methods: ['POST'])]
 public function approveUser(User $user, EntityManagerInterface $em): Response
 {
-    // Mark the user as approved
+    $this->denyAccessUnlessGranted('ROLE_TEACHER');
     $user->setIsApprovedByTeacher(true);
     $em->flush();
 
@@ -304,7 +304,7 @@ public function approveUser(User $user, EntityManagerInterface $em): Response
 #[Route('/user/{id}/reject', name: 'app_user_reject', methods: ['POST'])]
 public function rejectUser(User $user, EntityManagerInterface $em): Response
 {
-    // Delete the user if rejected
+    $this->denyAccessUnlessGranted('ROLE_TEACHER');
     $em->remove($user);
     $em->flush();
 

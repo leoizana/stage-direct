@@ -1,5 +1,7 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        tiny_api_key: '%tiny_api_key%'
 
 when@test:
     twig:

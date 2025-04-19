@@ -135,4 +135,88 @@ final class CompanyController extends AbstractController
 
         return $this->redirectToRoute('app_company_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/company/export', name: 'app_company_export')]
+    public function export(Request $request, CompanyRepository $companyRepository): Response
+    {
+        $searchName = $request->query->get('name');
+        $searchCityOrZip = $request->query->get('city_zip');
+    
+        $limit = 15;
+        $page = max(1, (int) $request->query->get('page', 1));
+        $offset = ($page - 1) * $limit;
+    
+        $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, $limit, $offset);
+    
+        return $this->generatePdf($companies, 'entreprises_page_' . $page);
+    }
+    
+    #[Route('/company/export/all', name: 'app_company_export_all')]
+    public function exportAll(Request $request, CompanyRepository $companyRepository): Response
+    {
+        $searchName = $request->query->get('name');
+        $searchCityOrZip = $request->query->get('city_zip');
+    
+        $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, null, null);
+    
+        return $this->generatePdf($companies, 'entreprises_all');
+    }
+    
+    // 🛠️ Fonction privée partagée pour éviter de dupliquer le code
+    private function generatePdf(array $companies, string $filenamePrefix): Response
+    {
+        $pdf = new \TCPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('helvetica', 'B', 16);
+        $pdf->Cell(0, 10, 'Liste des Entreprises', 0, 1, 'C');
+        $pdf->Ln(5);
+        $pdf->SetFont('helvetica', '', 12);
+    
+        $html = '
+        <table border="1" cellpadding="4">
+            <thead>
+                <tr style="background-color:#f2f2f2;">
+                    <th><b>Nom</b></th>
+                    <th><b>Ville</b></th>
+                    <th><b>Rue</b></th>
+                    <th><b>Code Postal</b></th>
+                    <th><b>Pays</b></th>
+                    <th><b>Téléphone</b></th>
+                    <th><b>Email</b></th>
+                </tr>
+            </thead>
+            <tbody>';
+    
+        foreach ($companies as $company) {
+            $html .= sprintf('
+                <tr>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                </tr>',
+                htmlspecialchars($company->getName()),
+                htmlspecialchars($company->getCity()),
+                htmlspecialchars($company->getStreet()),
+                htmlspecialchars($company->getZipCode()),
+                htmlspecialchars($company->getCountry()),
+                htmlspecialchars($company->getPhone()),
+                htmlspecialchars($company->getEmail()),
+            );
+        }
+    
+        $html .= '</tbody></table>';
+        $pdf->writeHTML($html, true, false, true, false, '');
+    
+        $filename = $filenamePrefix . '_' . date('Ymd_His') . '.pdf';
+        return new Response($pdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+    
+
+    
 }

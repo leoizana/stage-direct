@@ -15,25 +15,30 @@ class CompanyRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Company::class);
     }
-    public function findFiltered(?string $name, ?string $cityZip, int $limit, int $offset): array
-    {
-        $qb = $this->createQueryBuilder('c');
-    
-        if ($name) {
-            $qb->andWhere('LOWER(c.name) LIKE :name')
-               ->setParameter('name', '%' . strtolower($name) . '%');
-        }
-    
-        if ($cityZip) {
-            $qb->andWhere('LOWER(c.city) LIKE :cityZip OR c.zipCode LIKE :cityZip')
-               ->setParameter('cityZip', '%' . strtolower($cityZip) . '%');
-        }
-    
-        return $qb->setMaxResults($limit)
-                  ->setFirstResult($offset)
-                  ->getQuery()
-                  ->getResult();
+    public function findFiltered(?string $name, ?string $cityZip, ?int $limit = null, ?int $offset = null): array
+{
+    $qb = $this->createQueryBuilder('c');
+
+    if ($name) {
+        $qb->andWhere('LOWER(c.name) LIKE :name')
+           ->setParameter('name', '%' . strtolower($name) . '%');
     }
+
+    if ($cityZip) {
+        $qb->andWhere('LOWER(c.city) LIKE :cityZip OR c.zipCode LIKE :cityZip')
+           ->setParameter('cityZip', '%' . strtolower($cityZip) . '%');
+    }
+
+    if ($limit !== null) {
+        $qb->setMaxResults($limit);
+    }
+
+    if ($offset !== null) {
+        $qb->setFirstResult($offset);
+    }
+
+    return $qb->getQuery()->getResult();
+}
     
     public function countFiltered(?string $name, ?string $cityZip): int
     {
@@ -52,6 +57,7 @@ class CompanyRepository extends ServiceEntityRepository
     
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
+    
 
 //    /**
 //     * @return Company[] Returns an array of Company objects

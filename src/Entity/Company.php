@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
@@ -43,7 +45,21 @@ class Company
     private ?string $fax = null;
 
     #[ORM\ManyToOne(inversedBy: 'relation')]
-    private ?Activity $activity = null;  // Email
+    private ?Activity $activity = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $IsVerified = null;
+
+    /**
+     * @var Collection<int, Internship>
+     */
+    #[ORM\OneToMany(targetEntity: Internship::class, mappedBy: 'company')]
+    private Collection $internships;
+
+    public function __construct()
+    {
+        $this->internships = new ArrayCollection();
+    }  // Email
 
     // Getter et setter pour chaque propriété
 
@@ -161,6 +177,48 @@ class Company
     public function setActivity(?Activity $activity): static
     {
         $this->activity = $activity;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->IsVerified;
+    }
+
+    public function setVerified(?bool $IsVerified): static
+    {
+        $this->IsVerified = $IsVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Internship>
+     */
+    public function getInternships(): Collection
+    {
+        return $this->internships;
+    }
+
+    public function addInternship(Internship $internship): static
+    {
+        if (!$this->internships->contains($internship)) {
+            $this->internships->add($internship);
+            $internship->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInternship(Internship $internship): static
+    {
+        if ($this->internships->removeElement($internship)) {
+            // set the owning side to null (unless already changed)
+            if ($internship->getCompany() === $this) {
+                $internship->setCompany(null);
+            }
+        }
 
         return $this;
     }

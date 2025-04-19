@@ -7,8 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Session;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;  // Utilisation de DateType au lieu de DateTimeType
 
 class InternshipType extends AbstractType
@@ -31,8 +31,8 @@ class InternshipType extends AbstractType
                 'placeholder' => 'Choisir une session',
                 'attr' => ['class' => 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'],
             ])
-            ->add('themes', TextType::class, [
-                'label' => 'Thèmes',
+            ->add('themes', TextareaType::class, [
+                'label' => 'Rapports',
                 'required' => false,
             ]);
     }

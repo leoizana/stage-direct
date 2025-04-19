@@ -5,12 +5,13 @@
 {% block body %}
 <div class="container mx-auto py-8 px-4">
     <!-- Titre principal -->
-    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Stages</h1>
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Stages non validés</h1>
     <div class="mt-6 text-center">
-        <a href="{{ path('app_internship_validation') }}" 
+        <a href="{{ path('app_internship_index') }}" 
         class="inline-block px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium shadow-lg mb-6">
-          Voir les stages non validés
-     </a></div>
+          Voir les stages validés
+     </a>
+    </div>
     <!-- Barre de recherche -->
     <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
         <input type="text" id="search-classe" placeholder="Rechercher par classe"
@@ -20,6 +21,7 @@
                class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
                onkeyup="searchInternships()">
     </div>
+
     <!-- Tableau des stages -->
     <div class="overflow-x-auto shadow-md sm:rounded-lg">
         <table class="min-w-full text-sm text-gray-800 bg-white border border-gray-300 rounded-lg">
@@ -46,22 +48,27 @@
                             {{ grade.classname }}{% if not loop.last %}, {% endif %}
                         {% endfor %}</td>
                         <td class="py-3 px-6">{{ internship.session }}</td>
-                        <td class="py-3 px-6">ENTREPRISE A FAIRE</td>
-                        <td class="py-3 px-6 space-x-2 flex items-center justify-center">
-                            <a href="{{ path('app_internship_show', {'id': internship.id}) }}" 
-                               class="text-blue-600 hover:text-blue-800 font-medium">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
-                                </svg>
-                            </a>
-                            <a href="{{ path('app_internship_edit', {'id': internship.id}) }}"
-                               class="text-yellow-600 hover:text-yellow-800 font-medium">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.181 3.181l-11.42 11.42a2.25 2.25 0 01-.849.564l-4.25 1.585a.75.75 0 01-.96-.96l1.585-4.25a2.25 2.25 0 01.564-.849l11.42-11.42z" />
-                                </svg>
-                            </a>
-                            {{ include('internship/_delete_form.html.twig') }}
-                        </td>
+                        <td class="py-3 px-6">{{ internship.themes }}</td>
+                        <td class="py-3 px-6 flex items-center justify-center space-x-2">
+                            {% if is_granted('ROLE_ADMIN') %}
+                               <a href="{{ path('app_internship_edit', {'id': internship.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
+                                   <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
+                               </a>
+                                      {% endif %}
+       
+                               <form method="post" action="{{ path('app_internship_approve', {'id': internship.id}) }}" class="inline-flex">
+                                   <button type="submit" class="text-green-600 hover:text-green-800 font-medium flex items-center">
+                                       <img src="{{ asset('svg/checkmark-svgrepo-com.svg') }}" alt="Valider" class="w-5 h-5">
+                                   </button>
+                               </form>
+       
+                               
+                               <form method="post" action="{{ path('app_internship_reject', {'id': internship.id}) }}" class="inline-flex" onsubmit="return confirm('Voulez-vous vraiment refuser et supprimer cet utilisateur ?');">
+                                   <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
+                                       <img src="{{ asset('svg/x-mark-svgrepo-com.svg') }}" alt="Refuser" class="w-5 h-5">
+                                   </button>
+                               </form>
+                           </td>
                     </tr>
                 {% else %}
                     <tr>
@@ -80,7 +87,6 @@
         </a>
     </div>
 </div>
-
 
 <script>
     function searchInternships() {
