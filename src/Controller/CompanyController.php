@@ -15,18 +15,33 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CompanyController extends AbstractController
 {
     #[Route(name: 'app_company_index', methods: ['GET'])]
-    public function index(CompanyRepository $companyRepository): Response
-    {
-        // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
-        $user = $this->getUser();
-        
-        if ($user && !$user->getIsVerified()) {
-            $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
-        }
-        return $this->render('company/index.html.twig', [
-            'companies' => $companyRepository->findAll(),
-        ]);
+    public function index(CompanyRepository $companyRepository, Request $request): Response
+{
+    $user = $this->getUser();
+    if ($user && !$user->getIsVerified()) {
+        $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
     }
+
+    $limit = 15;
+    $page = max(1, (int) $request->query->get('page', 1));
+    $offset = ($page - 1) * $limit;
+
+    $searchName = $request->query->get('name');
+    $searchCityOrZip = $request->query->get('city_zip');
+
+    $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, $limit, $offset);
+    $total = $companyRepository->countFiltered($searchName, $searchCityOrZip);
+
+    return $this->render('company/index.html.twig', [
+        'companies' => $companies,
+        'total' => $total,
+        'limit' => $limit,
+        'page' => $page,
+        'pages' => ceil($total / $limit),
+        'searchName' => $searchName,
+        'searchCityZip' => $searchCityOrZip,
+    ]);
+}
 
     #[Route('/new', name: 'app_company_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response

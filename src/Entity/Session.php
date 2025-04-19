@@ -32,6 +32,10 @@ class Session
     {
         $this->internship = new ArrayCollection();
     }
+    public function __toString(): string
+{
+    return $this->session_list;
+}
 
     public function getId(): ?int
     {

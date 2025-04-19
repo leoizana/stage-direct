@@ -21,7 +21,7 @@
                 <a href="{{ path('app_company_index') }}" class="hover:text-blue-500 transition-colors">Entreprises</a>
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('app_school_index') }}" class="hover:text-blue-500 transition-colors">Écoles</a>
+                <a href="{{ path('app_school_index') }}" class="hover:text-blue-500 transition-colors">École</a>
                 {% endif %}
                 {% if is_granted('ROLE_TEACHER') %}
                 <a href="{{ path('app_user_index') }}" class="hover:text-blue-500 transition-colors">Utilisateurs</a>

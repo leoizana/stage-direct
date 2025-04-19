@@ -9,9 +9,6 @@
 
     <!-- Barre de recherche -->
     <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <input type="text" id="search-name" placeholder="Rechercher par prénom ou nom"
-               class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-               onkeyup="searchInternships()">
         <input type="text" id="search-classe" placeholder="Rechercher par classe"
                class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
                onkeyup="searchInternships()">
@@ -25,54 +22,45 @@
         <table class="min-w-full text-sm text-gray-800 bg-white border border-gray-300 rounded-lg">
             <thead class="bg-blue-600 text-white">
                 <tr>
-                 {% if is_granted('ROLE_ADMIN') %}
-                    <th class="py-3 px-6 font-semibold text-center">Id</th>
-                 {% endif %}
-                    <th class="py-3 px-6 font-semibold text-center">Élèves</th>
-                    <th class="py-3 px-6 font-semibold text-center">Classe</th>
-                    <th class="py-3 px-6 font-semibold text-center">Session</th>
-                    <th class="py-3 px-6 font-semibold text-center">Thèmes</th>
-                    <th class="py-3 px-6 font-semibold text-center">Actions</th>
+                    <th class="py-3 px-6 font-semibold">Id</th>
+                    <th class="py-3 px-6 font-semibold">Classe</th>
+                    <th class="py-3 px-6 font-semibold">Session</th>
+                    <th class="py-3 px-6 font-semibold">Thèmes</th>
+                    <th class="py-3 px-6 font-semibold">Actions</th>
                 </tr>
             </thead>
             <tbody id="internships-tbody">
                 {% for internship in internships %}
                     <tr class="border-b hover:bg-gray-100">
-                     {% if is_granted('ROLE_ADMIN') %}
-                        <td class="py-3 px-6 text-center">{{ internship.id }}</td>
-                     {% endif %}
-                        <td class="py-3 px-6 text-center">{{ internship.relation.firstName }} {{ internship.relation.lastName }}</td>
-                        <td class="py-3 px-6 text-center">{% for grade in internship.relation.grade %}
-                            {{ grade.classname }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}</td>
-                        <td class="py-3 px-6 text-center">{{ internship.session }}</td>
-                        <td class="py-3 px-6 text-center">{{ internship.themes }}</td>
-                        <td class="py-3 px-6 flex items-center justify-center space-x-2">
+                        <td class="py-3 px-6">{{ internship.id }}</td>
+                        <td class="py-3 px-6">{{ internship.classeEleve }}</td>
+                        <td class="py-3 px-6">{{ internship.session }}</td>
+                        <td class="py-3 px-6">{{ internship.themes }}</td>
+                        <td class="py-3 px-6 space-x-2 flex items-center justify-center">
                             <a href="{{ path('app_internship_show', {'id': internship.id}) }}" 
-                               class="text-blue-600 hover:text-blue-800 font-medium flex items-center justify-center">
-                                <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
+                               class="text-blue-600 hover:text-blue-800 font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
+                                </svg>
                             </a>
-                            {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('app_internship_edit', {'id': internship.id}) }}" 
-                               class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center justify-center">
-                                <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
+                            <a href="{{ path('app_internship_edit', {'id': internship.id}) }}"
+                               class="text-yellow-600 hover:text-yellow-800 font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.181 3.181l-11.42 11.42a2.25 2.25 0 01-.849.564l-4.25 1.585a.75.75 0 01-.96-.96l1.585-4.25a2.25 2.25 0 01.564-.849l11.42-11.42z" />
+                                </svg>
                             </a>
-                            
                             {{ include('internship/_delete_form.html.twig') }}
-                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="{% if is_granted('ROLE_ADMIN') %}6{% else %}5{% endif %}" 
-                            class="py-3 px-6 text-center text-gray-500">Aucun enregistrement trouvé</td>
+                        <td colspan="5" class="py-3 px-6 text-center text-gray-500">Aucun enregistrement trouvé</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
-    {% if is_granted('ROLE_STUDENT') %}
     <!-- Bouton pour créer un nouveau stage -->
     <div class="mt-6 text-center">
         <a href="{{ path('app_internship_new') }}"
@@ -80,28 +68,19 @@
             Créer un nouveau stage
         </a>
     </div>
-    {% endif %}
 </div>
 
 <script>
     function searchInternships() {
-        const nameFilter = document.getElementById("search-name").value.toLowerCase();
         const classeFilter = document.getElementById("search-classe").value.toLowerCase();
         const sessionFilter = document.getElementById("search-session").value.toLowerCase();
         const rows = document.querySelectorAll("#internships-tbody tr");
 
         rows.forEach(row => {
-            const nameCell = row.cells[1]?.textContent.toLowerCase(); // Prénom et nom
-            const classeCell = row.cells[2]?.textContent.toLowerCase(); // Classe
-            const sessionCell = row.cells[3]?.textContent.toLowerCase(); // Session
+            const classeCell = row.cells[1]?.textContent.toLowerCase();
+            const sessionCell = row.cells[2]?.textContent.toLowerCase();
 
-            // Vérifie si chaque filtre correspond
-            const matchesName = nameCell.includes(nameFilter);
-            const matchesClasse = classeCell.includes(classeFilter);
-            const matchesSession = sessionCell.includes(sessionFilter);
-
-            // Affiche ou masque la ligne selon les filtres
-            if (matchesName && matchesClasse && matchesSession) {
+            if (classeCell.includes(classeFilter) && sessionCell.includes(sessionFilter)) {
                 row.style.display = "";
             } else {
                 row.style.display = "none";
