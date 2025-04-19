@@ -60,9 +60,14 @@
                         <td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
                             <!-- Icône de visualisation -->
-                            <a href="{{ path('app_company_show', {'id': company.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                                <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
-                            </a>
+                            <a href="{{ path('app_company_show', {'id': company.id}) }}"
+   class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M12 5c-7.5 0-10 7-10 7s2.5 7 10 7 10-7 10-7-2.5-7-10-7zm0 11a4 4 0 100-8 4 4 0 000 8z"/>
+    </svg>
+</a>
+
                             {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_company_edit', {'id': company.id}) }}"
                                class="text-yellow-600 hover:text-yellow-800 font-medium">
@@ -83,15 +88,20 @@
         </table>
     </div>
     {% if pages > 1 %}
-        <div class="mt-6 flex justify-center space-x-2">
-            {% for p in 1..pages %}
-                <a href="{{ path('app_company_index', {'page': p}) }}"
-                   class="px-4 py-2 rounded-lg border {{ page == p ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-100' }}">
-                    {{ p }}
-                </a>
-            {% endfor %}
-        </div>
-    {% endif %} 
+    <div class="mt-6 flex justify-center space-x-2">
+        {% for p in 1..pages %}
+            <a href="{{ path('app_company_index', {
+                page: p,
+                name: searchName|default(''),
+                city_zip: searchCityZip|default('')
+            }) }}"
+               class="px-4 py-2 rounded-lg border {{ page == p ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-100' }}">
+                {{ p }}
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if is_granted('ROLE_STUDENT') %}
     <!-- Bouton pour créer une nouvelle entreprise -->
     <div class="mt-6 text-center">
