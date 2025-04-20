@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Internship;
+use App\Entity\Company;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -34,7 +35,23 @@ class InternshipType extends AbstractType
             ->add('themes', TextareaType::class, [
                 'label' => 'Rapports',
                 'required' => false,
-            ]);
+            ])
+            ->add('company', EntityType::class, [
+                'class' => Company::class,
+                'choice_label' => function (Company $company) {
+                    return $company->getName() . ' (' . $company->getCity() . ')';
+                },
+                'label' => 'Entreprise',
+                'placeholder' => 'Choisir une entreprise',
+                'query_builder' => function (\App\Repository\CompanyRepository $repo) {
+                    return $repo->createQueryBuilder('c')
+                                ->orderBy('c.name', 'ASC');
+                },
+                'attr' => [
+                    'class' => 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none',
+                ],
+            ])
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

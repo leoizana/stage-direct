@@ -20,6 +20,12 @@
 						</td>
 					</tr>
 					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Entreprise</th>
+						<td class="px-4 py-2 border border-gray-300">
+							{{ internship.company.name }}
+						</td>
+					</tr>
+					<tr>
 						<th class="px-4 py-2 border border-gray-300 font-medium">Classe de l'élève</th>
 						<td class="px-4 py-2 border border-gray-300">{% for grade in internship.relation.grade %}
             {{ grade.classname }}{% if not loop.last %}, {% endif %}

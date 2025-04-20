@@ -26,9 +26,9 @@
                 {% if is_granted('ROLE_TEACHER') %}
                 <a href="{{ path('app_user_index') }}" class="hover:text-blue-500 transition-colors">Utilisateurs</a>
                 {% endif %}
-                {% if is_granted('ROLE_STUDENT') %}
+                <!--{% if is_granted('ROLE_STUDENT') %}
                 <a href="{{ path('app_report') }}" class="hover:text-blue-500 transition-colors">Rapport</a>
-                {% endif %}
+                {% endif %}-->
             </div>
 
             <!-- Bouton burger (visible uniquement sur mobile) -->

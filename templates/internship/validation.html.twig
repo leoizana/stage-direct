@@ -27,7 +27,9 @@
         <table class="min-w-full text-sm text-gray-800 bg-white border border-gray-300 rounded-lg">
             <thead class="bg-blue-600 text-white">
                 <tr>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <th class="py-3 px-6 font-semibold">Id</th>
+                    {% endif %}
                     <th class="py-3 px-6 font-semibold">Élève</th>
                     <th class="py-3 px-6 font-semibold">Classe</th>
                     <th class="py-3 px-6 font-semibold">Session</th>
@@ -38,7 +40,9 @@
             <tbody id="internships-tbody">
                 {% for internship in internships %}
                     <tr class="border-b hover:bg-gray-100">
+                        {% if is_granted('ROLE_ADMIN') %}
                         <td class="py-3 px-6">{{ internship.id }}</td>
+                        {% endif %}
                         <td class="py-3 px-6">
 							{{ internship.relation.firstName }}
 							{{ internship.relation.lastName }}
@@ -50,18 +54,16 @@
                         <td class="py-3 px-6">{{ internship.session }}</td>
                         <td class="py-3 px-6">{{ internship.themes }}</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
-                            {% if is_granted('ROLE_ADMIN') %}
                                <a href="{{ path('app_internship_edit', {'id': internship.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
                                    <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
                                </a>
-                                      {% endif %}
-       
+                            {% if is_granted('ROLE_TEACHER') %}
                                <form method="post" action="{{ path('app_internship_approve', {'id': internship.id}) }}" class="inline-flex">
                                    <button type="submit" class="text-green-600 hover:text-green-800 font-medium flex items-center">
                                        <img src="{{ asset('svg/checkmark-svgrepo-com.svg') }}" alt="Valider" class="w-5 h-5">
                                    </button>
                                </form>
-       
+                               
                                
                                <form method="post" action="{{ path('app_internship_reject', {'id': internship.id}) }}" class="inline-flex" onsubmit="return confirm('Voulez-vous vraiment refuser et supprimer cet utilisateur ?');">
                                    <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
@@ -69,6 +71,7 @@
                                    </button>
                                </form>
                            </td>
+                           {% endif %}
                     </tr>
                 {% else %}
                     <tr>

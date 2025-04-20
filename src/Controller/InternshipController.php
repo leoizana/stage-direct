@@ -58,13 +58,47 @@ public function index(InternshipRepository $internshipRepository): Response
     ]);
 }
 
-    #[Route('/internship/validation', name: 'app_internship_validation', methods: ['GET'])]
+#[Route('/internship/validation', name: 'app_internship_validation', methods: ['GET'])]
 public function validation(InternshipRepository $internshipRepository): Response
 {
-    $validationInternships = $internshipRepository->findBy(['IsVerified' => false]);
+    $user = $this->getUser();
+
+    if (!$user) {
+        $this->addFlash('error', 'Vous devez être connecté pour voir cette page.');
+        return $this->redirectToRoute('app_login');
+    }
+
+    $roles = $user->getRoles();
+    $queryBuilder = $internshipRepository->createQueryBuilder('i')
+        ->where('i.IsVerified = false');
+
+    if (in_array('ROLE_ADMIN', $roles) || in_array('ROLE_SUPER_ADMIN', $roles)) {
+        // Admins voient tout ce qui est non vérifié
+        $internships = $queryBuilder->getQuery()->getResult();
+
+    } elseif (in_array('ROLE_TEACHER', $roles)) {
+        // Profs : stages non vérifiés de leurs élèves
+        $classe = $user->getGrade();
+        $queryBuilder
+            ->join('i.relation', 'u')
+            ->join('u.grade', 'g')
+            ->andWhere('g = :grade')
+            ->setParameter('grade', $classe);
+
+        $internships = $queryBuilder->getQuery()->getResult();
+
+    } elseif (in_array('ROLE_STUDENT', $roles)) {
+        // Élèves : leurs stages non vérifiés
+        $internships = $internshipRepository->findBy([
+            'relation' => $user,
+            'IsVerified' => false
+        ]);
+    } else {
+        $internships = [];
+    }
 
     return $this->render('internship/validation.html.twig', [
-        'internships' => $validationInternships,
+        'internships' => $internships,
     ]);
 }
 

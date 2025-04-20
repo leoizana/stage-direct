@@ -25,7 +25,9 @@
         <table class="min-w-full text-sm text-gray-800 bg-white border border-gray-300 rounded-lg">
             <thead class="bg-blue-600 text-white">
                 <tr>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <th class="py-3 px-6 font-semibold">Id</th>
+                    {% endif %}
                     <th class="py-3 px-6 font-semibold">Élève</th>
                     <th class="py-3 px-6 font-semibold">Classe</th>
                     <th class="py-3 px-6 font-semibold">Session</th>
@@ -36,7 +38,9 @@
             <tbody id="internships-tbody">
                 {% for internship in internships %}
                     <tr class="border-b hover:bg-gray-100">
+                        {% if is_granted('ROLE_ADMIN') %}
                         <td class="py-3 px-6">{{ internship.id }}</td>
+                        {% endif %}
                         <td class="py-3 px-6">
 							{{ internship.relation.firstName }}
 							{{ internship.relation.lastName }}
@@ -46,7 +50,9 @@
                             {{ grade.classname }}{% if not loop.last %}, {% endif %}
                         {% endfor %}</td>
                         <td class="py-3 px-6">{{ internship.session }}</td>
-                        <td class="py-3 px-6">ENTREPRISE A FAIRE</td>
+                        <td class="py-3 px-6">
+							{{ internship.company.name }}
+						</td>
                         <td class="py-3 px-6 space-x-2 flex items-center justify-center">
                             <a href="{{ path('app_internship_show', {'id': internship.id}) }}" 
                                class="text-blue-600 hover:text-blue-800 font-medium">
@@ -54,6 +60,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12m0 0l-6 6m6-6l-6-6" />
                                 </svg>
                             </a>
+                            {% if is_granted('ROLE_TEACHER') %}
                             <a href="{{ path('app_internship_edit', {'id': internship.id}) }}"
                                class="text-yellow-600 hover:text-yellow-800 font-medium">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -61,6 +68,7 @@
                                 </svg>
                             </a>
                             {{ include('internship/_delete_form.html.twig') }}
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
