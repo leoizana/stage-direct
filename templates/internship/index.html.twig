@@ -11,15 +11,33 @@
         class="inline-block px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium shadow-lg mb-6">
           Voir les stages non validés
      </a></div>
-    <!-- Barre de recherche -->
-    <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <input type="text" id="search-classe" placeholder="Rechercher par classe"
-               class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-               onkeyup="searchInternships()">
-        <input type="text" id="search-session" placeholder="Rechercher par session"
-               class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-               onkeyup="searchInternships()">
+     <div class="mb-6">
+        <form method="GET" action="{{ path('app_internship_index') }}" class="flex space-x-4 justify-center">
+            <!-- Recherche par prénom et nom -->
+            <input type="text" name="search_name" value="{{ app.request.query.get('search_name') }}" placeholder="Rechercher par prénom/nom" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm">
+            
+            <!-- Recherche par classe -->
+<select name="search_class" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm">
+    <option value="">Sélectionner une classe</option>
+    {% for grade in grades %}
+        <option value="{{ grade.id }}" {% if app.request.query.get('search_class') == grade.id %}selected{% endif %}>
+            {{ grade.classname }}
+        </option>
+    {% endfor %}
+</select>
+
+            <!-- Recherche par session -->
+            <select name="search_session" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm">
+                <option value="">Sélectionner une session</option>
+                {% for session in sessions %}
+                    <option value="{{ session.id }}" {% if app.request.query.get('search_session') == session.id %}selected{% endif %}>{{ session.sessionList }}</option>
+                {% endfor %}
+            </select>
+    
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Rechercher</button>
+        </form>
     </div>
+    
     <!-- Tableau des stages -->
     <div class="overflow-x-auto shadow-md sm:rounded-lg">
         <table class="min-w-full text-sm text-gray-800 bg-white border border-gray-300 rounded-lg">
@@ -90,22 +108,4 @@
 </div>
 
 
-<script>
-    function searchInternships() {
-        const classeFilter = document.getElementById("search-classe").value.toLowerCase();
-        const sessionFilter = document.getElementById("search-session").value.toLowerCase();
-        const rows = document.querySelectorAll("#internships-tbody tr");
-
-        rows.forEach(row => {
-            const classeCell = row.cells[1]?.textContent.toLowerCase();
-            const sessionCell = row.cells[2]?.textContent.toLowerCase();
-
-            if (classeCell.includes(classeFilter) && sessionCell.includes(sessionFilter)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
-</script>
 {% endblock %}

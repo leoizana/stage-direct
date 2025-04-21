@@ -163,7 +163,7 @@ public function validation(CompanyRepository $companyRepository, Request $reques
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($company);
             $entityManager->flush();
-
+            $this->addFlash('success', message: 'Entreprise soumise, attente de validation.');
             return $this->redirectToRoute('app_company_index', [], Response::HTTP_SEE_OTHER);
         }
 

@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Internship;
+use App\Entity\Session;
+use App\Entity\Grade;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,7 +17,14 @@ class InternshipRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Internship::class);
     }
-
+    public function findAllSessions()
+    {
+        return $this->getEntityManager()->getRepository(Session::class)->findAll();
+    }
+    public function findAllGrades()
+    {
+        return $this->getEntityManager()->getRepository(Grade::class)->findAll();
+    }
 //    /**
 //     * @return Stage[] Returns an array of Stage objects
 //     */

@@ -12,14 +12,31 @@
           Voir les stages validés
      </a>
     </div>
-    <!-- Barre de recherche -->
-    <div class="mb-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <input type="text" id="search-classe" placeholder="Rechercher par classe"
-               class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-               onkeyup="searchInternships()">
-        <input type="text" id="search-session" placeholder="Rechercher par session"
-               class="w-full sm:w-auto max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-               onkeyup="searchInternships()">
+    <div class="mb-6">
+        <form method="GET" action="{{ path('app_internship_validation') }}" class="flex space-x-4 justify-center">
+            <!-- Recherche par prénom et nom -->
+            <input type="text" name="search_name" value="{{ app.request.query.get('search_name') }}" placeholder="Rechercher par prénom/nom" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm">
+            
+            <!-- Recherche par classe -->
+<select name="search_class" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm">
+    <option value="">Sélectionner une classe</option>
+    {% for grade in grades %}
+        <option value="{{ grade.id }}" {% if app.request.query.get('search_class') == grade.id %}selected{% endif %}>
+            {{ grade.classname }}
+        </option>
+    {% endfor %}
+</select>
+
+            <!-- Recherche par session -->
+            <select name="search_session" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm">
+                <option value="">Sélectionner une session</option>
+                {% for session in sessions %}
+                    <option value="{{ session.id }}" {% if app.request.query.get('search_session') == session.id %}selected{% endif %}>{{ session.sessionList }}</option>
+                {% endfor %}
+            </select>
+    
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Rechercher</button>
+        </form>
     </div>
 
     <!-- Tableau des stages -->
@@ -52,7 +69,9 @@
                             {{ grade.classname }}{% if not loop.last %}, {% endif %}
                         {% endfor %}</td>
                         <td class="py-3 px-6">{{ internship.session }}</td>
-                        <td class="py-3 px-6">{{ internship.themes }}</td>
+                        <td class="py-3 px-6">
+							{{ internship.company.name }}
+						</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
                                <a href="{{ path('app_internship_edit', {'id': internship.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
                                    <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">

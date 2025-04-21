@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\Session;
+use App\Entity\Grade;
 use App\Entity\Internship;
 use App\Form\InternshipType;
 use App\Repository\InternshipRepository;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class InternshipController extends AbstractController
 {
     #[Route('/', name: 'app_internship_index', methods: ['GET'])]
-public function index(InternshipRepository $internshipRepository): Response
+    public function index(Request $request, InternshipRepository $internshipRepository): Response
 {
     $user = $this->getUser();
 
@@ -28,38 +29,75 @@ public function index(InternshipRepository $internshipRepository): Response
     $queryBuilder = $internshipRepository->createQueryBuilder('i')
         ->where('i.IsVerified = true');
 
-    if (in_array('ROLE_ADMIN', $roles) || in_array('ROLE_SUPER_ADMIN', $roles)) {
-        // Admins voient tout ce qui est validé
-        $internships = $queryBuilder->getQuery()->getResult();
+    $em = $internshipRepository->getEntityManager();
 
-    } elseif (in_array('ROLE_TEACHER', $roles)) {
-        // Profs : stages des élèves de leur classe
-        $classe = $user->getGrade();
+    // Récupérer les paramètres de recherche
+    $searchName = $request->query->get('search_name');
+    $searchClass = $request->query->get('search_class');
+    $searchSession = $request->query->get('search_session');
+
+    $needJoinUser = $searchName || $searchClass || in_array('ROLE_TEACHER', $roles);
+
+    if ($needJoinUser) {
+        $queryBuilder->join('i.relation', 'u');
+    }
+
+    if ($searchName) {
         $queryBuilder
-            ->join('i.relation', 'u')
+            ->andWhere('LOWER(u.firstName) LIKE :searchName OR LOWER(u.lastName) LIKE :searchName')
+            ->setParameter('searchName', '%' . strtolower($searchName) . '%');
+    }
+
+    if ($searchClass) {
+        $queryBuilder
+            ->join('u.grade', 'g_search')
+            ->andWhere('g_search.id = :searchClass')
+            ->setParameter('searchClass', $searchClass);
+    }
+
+    if ($searchSession) {
+        $queryBuilder
+            ->andWhere('i.session = :searchSession')
+            ->setParameter('searchSession', $searchSession);
+    }
+
+    if (in_array('ROLE_ADMIN', $roles) || in_array('ROLE_SUPER_ADMIN', $roles)) {
+        $internships = $queryBuilder->getQuery()->getResult();
+        $grades = $em->getRepository(Grade::class)->findAll();
+    } elseif (in_array('ROLE_TEACHER', $roles)) {
+        $gradesCollection = $user->getGrade();
+        $grades = $gradesCollection->toArray();
+
+        $queryBuilder
             ->join('u.grade', 'g')
-            ->andWhere('g = :grade')
-            ->setParameter('grade', $classe);
+            ->andWhere('g IN (:grades)')
+            ->setParameter('grades', $grades);
 
         $internships = $queryBuilder->getQuery()->getResult();
-
     } elseif (in_array('ROLE_STUDENT', $roles)) {
-        // Élèves : seulement leur propre stage
         $internships = $internshipRepository->findBy([
             'relation' => $user,
             'IsVerified' => true
         ]);
+        $grades = [];
     } else {
         $internships = [];
+        $grades = [];
     }
+
+    $sessions = $em->getRepository(Session::class)->findAll();
 
     return $this->render('internship/index.html.twig', [
         'internships' => $internships,
+        'sessions' => $sessions,
+        'grades' => $grades,
     ]);
 }
 
+    
+
 #[Route('/internship/validation', name: 'app_internship_validation', methods: ['GET'])]
-public function validation(InternshipRepository $internshipRepository): Response
+public function validation(Request $request, InternshipRepository $internshipRepository): Response
 {
     $user = $this->getUser();
 
@@ -72,35 +110,72 @@ public function validation(InternshipRepository $internshipRepository): Response
     $queryBuilder = $internshipRepository->createQueryBuilder('i')
         ->where('i.IsVerified = false');
 
-    if (in_array('ROLE_ADMIN', $roles) || in_array('ROLE_SUPER_ADMIN', $roles)) {
-        // Admins voient tout ce qui est non vérifié
-        $internships = $queryBuilder->getQuery()->getResult();
+    $em = $internshipRepository->getEntityManager();
 
-    } elseif (in_array('ROLE_TEACHER', $roles)) {
-        // Profs : stages non vérifiés de leurs élèves
-        $classe = $user->getGrade();
+    // Recherche
+    $searchName = $request->query->get('search_name');
+    $searchClass = $request->query->get('search_class');
+    $searchSession = $request->query->get('search_session');
+
+    $needJoinUser = $searchName || $searchClass || in_array('ROLE_TEACHER', $roles);
+
+    if ($needJoinUser) {
+        $queryBuilder->join('i.relation', 'u');
+    }
+
+    if ($searchName) {
         $queryBuilder
-            ->join('i.relation', 'u')
+            ->andWhere('LOWER(u.firstName) LIKE :searchName OR LOWER(u.lastName) LIKE :searchName')
+            ->setParameter('searchName', '%' . strtolower($searchName) . '%');
+    }
+
+    if ($searchClass) {
+        $queryBuilder
+            ->join('u.grade', 'g_search')
+            ->andWhere('g_search.id = :searchClass')
+            ->setParameter('searchClass', $searchClass);
+    }
+
+    if ($searchSession) {
+        $queryBuilder
+            ->andWhere('i.session = :searchSession')
+            ->setParameter('searchSession', $searchSession);
+    }
+
+    if (in_array('ROLE_ADMIN', $roles) || in_array('ROLE_SUPER_ADMIN', $roles)) {
+        $internships = $queryBuilder->getQuery()->getResult();
+        $grades = $em->getRepository(Grade::class)->findAll();
+    } elseif (in_array('ROLE_TEACHER', $roles)) {
+        $gradesCollection = $user->getGrade();
+        $grades = $gradesCollection->toArray();
+
+        $queryBuilder
             ->join('u.grade', 'g')
-            ->andWhere('g = :grade')
-            ->setParameter('grade', $classe);
+            ->andWhere('g IN (:grades)')
+            ->setParameter('grades', $grades);
 
         $internships = $queryBuilder->getQuery()->getResult();
-
     } elseif (in_array('ROLE_STUDENT', $roles)) {
-        // Élèves : leurs stages non vérifiés
         $internships = $internshipRepository->findBy([
             'relation' => $user,
             'IsVerified' => false
         ]);
+        $grades = [];
     } else {
         $internships = [];
+        $grades = [];
     }
+
+    $sessions = $em->getRepository(Session::class)->findAll();
 
     return $this->render('internship/validation.html.twig', [
         'internships' => $internships,
+        'sessions' => $sessions,
+        'grades' => $grades,
     ]);
 }
+
+
 
     #[Route('/new', name: 'app_internship_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -120,14 +195,17 @@ public function validation(InternshipRepository $internshipRepository): Response
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($internship);
             $entityManager->flush();
-    
+            $this->addFlash('success', message: 'Stage soumis, attente de validation.');
             return $this->redirectToRoute('app_internship_index', [], Response::HTTP_SEE_OTHER);
         }
     
+        
         return $this->render('internship/new.html.twig', [
             'internship' => $internship,
             'form' => $form,
+           
         ]);
+        
     }
 
     #[Route('/{id}', name: 'app_internship_show', methods: ['GET'])]
@@ -141,7 +219,7 @@ public function validation(InternshipRepository $internshipRepository): Response
     #[Route('/{id}/edit', name: 'app_internship_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, internship $internship, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_TEACHER')) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
             return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
         }
