@@ -15,9 +15,15 @@ class CompanyRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Company::class);
     }
-    public function findFiltered(?string $name, ?string $cityZip, ?int $limit = null, ?int $offset = null): array
+    public function findFiltered(?string $name, ?string $cityZip, ?int $limit = null, ?int $offset = null, ?bool $isVerified = null): array
 {
     $qb = $this->createQueryBuilder('c');
+
+    if ($isVerified === true) {
+        $qb->andWhere('c.IsVerified = true');
+    } elseif ($isVerified === false) {
+        $qb->andWhere('c.IsVerified = false OR c.IsVerified IS NULL');
+    }
 
     if ($name) {
         $qb->andWhere('LOWER(c.name) LIKE :name')
@@ -39,6 +45,7 @@ class CompanyRepository extends ServiceEntityRepository
 
     return $qb->getQuery()->getResult();
 }
+
     
     public function countFiltered(?string $name, ?string $cityZip): int
     {

@@ -29,10 +29,109 @@ final class CompanyController extends AbstractController
     $searchName = $request->query->get('name');
     $searchCityOrZip = $request->query->get('city_zip');
 
-    $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, $limit, $offset);
-    $total = $companyRepository->countFiltered($searchName, $searchCityOrZip);
+    $queryBuilder = $companyRepository->createQueryBuilder('c')
+        ->where('c.IsVerified = true');
+
+    if ($searchName) {
+        $queryBuilder
+        ->andWhere('LOWER(c.name) LIKE :name')
+        ->setParameter('name', '%' . strtolower($searchName) . '%');
+}
+
+
+    if ($searchCityOrZip) {
+        $queryBuilder
+        ->andWhere('LOWER(c.city) LIKE :cityZip OR LOWER(c.zipCode) LIKE :cityZip')
+        ->setParameter('cityZip', '%' . strtolower($searchCityOrZip) . '%');
+}
+
+    // Clone pour compter
+    $countQueryBuilder = clone $queryBuilder;
+    $result = $countQueryBuilder
+        ->select('COUNT(c.id) as total')
+        ->getQuery()
+        ->getOneOrNullResult();
+
+    $total = $result['total'] ?? 0;
+    $maxPages = max(1, ceil($total / $limit));
+
+    // Redirection si la page demandée est trop grande
+    if ($page > $maxPages) {
+        return $this->redirectToRoute('app_company_index', [
+            'page' => $maxPages,
+            'name' => $searchName,
+            'city_zip' => $searchCityOrZip
+        ]);
+    }
+
+    // Résultats paginés
+    $companies = $queryBuilder
+        ->setFirstResult($offset)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
 
     return $this->render('company/index.html.twig', [
+        'companies' => $companies,
+        'total' => $total,
+        'limit' => $limit,
+        'page' => $page,
+        'pages' => $maxPages,
+        'searchName' => $searchName,
+        'searchCityZip' => $searchCityOrZip,
+    ]);
+}
+
+#[Route('/validation', name: 'app_company_validation', methods: ['GET'])]
+public function validation(CompanyRepository $companyRepository, Request $request): Response
+{
+    $user = $this->getUser();
+    if ($user && !$user->getIsVerified()) {
+        $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
+    }
+
+    $limit = 15;
+    $page = max(1, (int) $request->query->get('page', 1));
+    $offset = ($page - 1) * $limit;
+
+    $searchName = $request->query->get('name');
+    $searchCityOrZip = $request->query->get('city_zip');
+
+    // 👇 Affiche uniquement les entreprises NON vérifiées
+    $queryBuilder = $companyRepository->createQueryBuilder('c')
+        ->where('c.IsVerified = false OR c.IsVerified IS NULL');
+
+        if ($searchName) {
+            $queryBuilder
+            ->andWhere('LOWER(c.name) LIKE :name')
+            ->setParameter('name', '%' . strtolower($searchName) . '%');
+    }
+    
+    
+        if ($searchCityOrZip) {
+            $queryBuilder
+            ->andWhere('LOWER(c.city) LIKE :cityZip OR LOWER(c.zipCode) LIKE :cityZip')
+            ->setParameter('cityZip', '%' . strtolower($searchCityOrZip) . '%');
+    }
+    
+
+    // Clonage pour le COUNT
+    $countQueryBuilder = clone $queryBuilder;
+    $countResult = $countQueryBuilder
+        ->select('COUNT(c.id) as count')
+        ->getQuery()
+        ->getOneOrNullResult();
+
+    $total = (int) ($countResult['count'] ?? 0);
+
+    // Résultats paginés
+    $companies = $queryBuilder
+        ->setFirstResult($offset)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('company/validation.html.twig', [
         'companies' => $companies,
         'total' => $total,
         'limit' => $limit,
@@ -40,8 +139,11 @@ final class CompanyController extends AbstractController
         'pages' => ceil($total / $limit),
         'searchName' => $searchName,
         'searchCityZip' => $searchCityOrZip,
+        'currentRoute' => 'app_company_validation', // utile pour la pagination dynamique
     ]);
 }
+
+
 
     #[Route('/new', name: 'app_company_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -54,6 +156,7 @@ final class CompanyController extends AbstractController
             $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
         }
         $company = new Company();
+        $company->setVerified(false); 
         $form = $this->createForm(CompanyType::class, $company);
         $form->handleRequest($request);
 
@@ -144,8 +247,8 @@ final class CompanyController extends AbstractController
         $limit = 15;
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
-    
-        $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, $limit, $offset);
+        $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, $limit, $offset, true);
+
     
         return $this->generatePdf($companies, 'entreprises_page_' . $page);
     }
@@ -156,10 +259,22 @@ final class CompanyController extends AbstractController
         $searchName = $request->query->get('name');
         $searchCityOrZip = $request->query->get('city_zip');
     
-        $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, null, null);
+        $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, null, null, true);
+
     
         return $this->generatePdf($companies, 'entreprises_all');
     }
+
+    #[Route('/company/export/unverified', name: 'app_company_export_unverified')]
+public function exportUnverified(Request $request, CompanyRepository $companyRepository): Response
+{
+    $searchName = $request->query->get('name');
+    $searchCityOrZip = $request->query->get('city_zip');
+
+    $companies = $companyRepository->findFiltered($searchName, $searchCityOrZip, null, null, false); // false = uniquement non vérifiées
+
+    return $this->generatePdf($companies, 'entreprises_non_verifiees');
+}
     
     // 🛠️ Fonction privée partagée pour éviter de dupliquer le code
     private function generatePdf(array $companies, string $filenamePrefix): Response
@@ -216,7 +331,27 @@ final class CompanyController extends AbstractController
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+    #[Route('/entreprise/{id}/approve', name: 'app_company_approve', methods: ['POST'])]
+    public function approve(Company $company, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_TEACHER');
+        $company->setVerified(true);
+        $em->flush();
     
+        $this->addFlash('success', message: 'Entreprise accepté et validé.');
+        return $this->redirectToRoute('app_company_validation');
+    }
+    
+    #[Route('/entreprise/{id}/reject', name: 'app_company_reject', methods: ['POST'])]
+    public function reject(Company $company, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted(attribute: 'ROLE_TEACHER');
+        $em->remove($company);
+        $em->flush();
+    
+        $this->addFlash('success', 'Entreprise refusé et supprimé.');
+        return $this->redirectToRoute('app_company_validation');
+    }
 
     
 }

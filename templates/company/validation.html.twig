@@ -5,15 +5,17 @@
 {% block body %}
 <div class="container mx-auto py-8 px-4">
     <!-- Titre principal -->
-    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Entreprises</h1>
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Liste des Entreprises(non validés)</h1>
+
     <div class="mt-6 text-center">
-        <a href="{{ path('app_company_validation') }}" 
+        <a href="{{ path('app_company_index') }}" 
         class="inline-block px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium shadow-lg mb-6">
-          Voir les entreprises non validés
+          Voir les entreprises validés
      </a></div>
+
     <!-- Double barre de recherche -->
 <div class="mb-6">
-    <form method="get" action="{{ path('app_company_index') }}" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form method="get" action="{{ path('app_company_validation') }}" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
             <input type="text" name="name" value="{{ searchName|default('') }}" placeholder="Rechercher par nom d’entreprise"
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200">
@@ -63,25 +65,25 @@
                         <td class="py-3 px-6">{{ company.email }}</td>
                         <td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
-                            <!-- Icône de visualisation -->
-                            <a href="{{ path('app_company_show', {'id': company.id}) }}"
-   class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M12 5c-7.5 0-10 7-10 7s2.5 7 10 7 10-7 10-7-2.5-7-10-7zm0 11a4 4 0 100-8 4 4 0 000 8z"/>
-    </svg>
-</a>
-
-                            {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('app_company_edit', {'id': company.id}) }}"
-                               class="text-yellow-600 hover:text-yellow-800 font-medium">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.181 3.181l-11.42 11.42a2.25 2.25 0 01-.849.564l-4.25 1.585a.75.75 0 01-.96-.96l1.585-4.25a2.25 2.25 0 01.564-.849l11.42-11.42z" />
-                                </svg>
-                            </a>
-                            {{ include('company/_delete_form.html.twig') }}
+                            <td class="py-3 px-6 flex items-center justify-center space-x-2">
+                                <a href="{{ path('app_company_edit', {'id': company.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
+                                    <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
+                                </a>
+                             {% if is_granted('ROLE_TEACHER') %}
+                                <form method="post" action="{{ path('app_company_approve', {'id': company.id}) }}" class="inline-flex">
+                                    <button type="submit" class="text-green-600 hover:text-green-800 font-medium flex items-center">
+                                        <img src="{{ asset('svg/checkmark-svgrepo-com.svg') }}" alt="Valider" class="w-5 h-5">
+                                    </button>
+                                </form>
+                                
+                                
+                                <form method="post" action="{{ path('app_company_reject', {'id': company.id}) }}" class="inline-flex" onsubmit="return confirm('Voulez-vous vraiment refuser et supprimer cet utilisateur ?');">
+                                    <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
+                                        <img src="{{ asset('svg/x-mark-svgrepo-com.svg') }}" alt="Refuser" class="w-5 h-5">
+                                    </button>
+                                </form>
+                            </td>
                             {% endif %}
-                        </td>
                     </tr>
                 {% else %}
                     <tr>
@@ -94,7 +96,7 @@
     {% if pages > 1 %}
     <div class="mt-6 flex justify-center space-x-2">
         {% for p in 1..pages %}
-            <a href="{{ path('app_company_index', {
+            <a href="{{ path('app_company_validation', {
                 page: p,
                 name: searchName|default(''),
                 city_zip: searchCityZip|default('')
@@ -105,25 +107,14 @@
         {% endfor %}
     </div>
 {% endif %}
-{% if is_granted('ROLE_TEACHER') %}
 <div class="mt-6 text-center">
-    <a href="{{ path('app_company_export', {
-        'name': searchName,
-        'city_zip': searchCityZip,
-        'page': page
-    }) }}"
-       class="inline-block px-6 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg font-medium shadow-lg mr-2">
-        Exporter cette page
+    <a href="{{ path('app_company_export_unverified', {
+        name: searchName,
+        city_zip: searchCityZip
+    }) }}" class="inline-block px-6 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg font-medium shadow-lg mr-2" target="_blank">
+        Exporter les entreprises non vérifiées en PDF
     </a>
-    <a href="{{ path('app_company_export_all', {
-        'name': searchName,
-        'city_zip': searchCityZip
-    }) }}"
-       class="inline-block px-6 py-3 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium shadow-lg">
-        Exporter toutes les entreprises
-    </a>
-</div>
-{% endif %}
+    </div>
 {% if is_granted('ROLE_STUDENT') %}
     <!-- Bouton pour créer une nouvelle entreprise -->
     <div class="mt-6 text-center">
@@ -133,7 +124,7 @@
         </a>
     </div>
 </div>
+
+
 {% endif %}
-
-
 {% endblock %}
