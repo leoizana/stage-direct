@@ -221,15 +221,23 @@ public function edit(Request $request, Company $company, EntityManagerInterface 
 {
     $user = $this->getUser();
 
-    // Vérifie si l'utilisateur est connecté et a le bon rôle
-    if (!$this->isGranted('ROLE_TEACHER') && ($company->getRelation() !== $user)) {
-        $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour modifier cette entreprise.');
-        return $this->redirectToRoute('app_index'); // Redirige vers la page d'accueil si l'utilisateur n'a pas accès
+    // Vérifie si l'utilisateur est un étudiant et s'il est propriétaire de l'entreprise
+    if (in_array('ROLE_STUDENT', $user->getRoles())) {
+        if ($company->getRelation() !== $user) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour modifier cette entreprise.');
+            return $this->redirectToRoute('app_company_index');
+        }
+
+        if ($company->IsVerified() !== false && $company->IsVerified() !== null) {
+            $this->addFlash('error', 'Vous ne pouvez modifier cette entreprise que si elle n\'est pas encore validée.');
+            return $this->redirectToRoute('app_company_index');
+        }
     }
 
-    // Vérifier si l'utilisateur est connecté et si son compte est vérifié
-    if ($user && !$user->getIsVerified()) {
-        $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
+    // Vérifie si l'utilisateur a le rôle enseignant
+    if (!$this->isGranted('ROLE_TEACHER') && $company->getRelation() !== $user) {
+        $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour modifier cette entreprise.');
+        return $this->redirectToRoute('app_company_index');
     }
 
     $form = $this->createForm(CompanyType::class, $company);

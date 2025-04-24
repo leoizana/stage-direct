@@ -1,61 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de l'entreprise {% endblock %}
+{% block title %}Détails de l'entreprise
+{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-bold mb-6">Détails de l'entreprise</h1>
+	<div class="container mx-auto p-6">
+		<h1 class="text-3xl font-bold mb-6">Détails de l'entreprise</h1>
 
-        <!-- Table des informations -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <table class="table-auto w-full text-left border-collapse border border-gray-300">
-                <tbody>
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Id</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.id }}</td>
-                    </tr>
-                    <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Nom de l'entreprise</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.name }}</td>
-                    </tr>
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Domaine d'activité</th>
-                        <td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
-                    </tr>
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Rue</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.street }}</td>
-                    </tr>
-                    <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Code postal</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.zipCode }}</td>
-                    </tr>
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Ville</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.city }}</td>
-                    </tr>
-                    <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Pays</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.country }}</td>
-                    </tr>
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Numéro de téléphone</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.phone }}</td>
-                    </tr>
-                    <tr class="bg-gray-100">
-                        <th class="px-4 py-2 border border-gray-300 font-medium">Email</th>
-                        <td class="px-4 py-2 border border-gray-300">{{ company.email }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+		<!-- Table des informations -->
+		<div class="bg-white p-6 rounded-lg shadow-md">
+			<table class="table-auto w-full text-left border-collapse border border-gray-300">
+				<tbody>
+                {% if is_granted('ROLE_ADMIN') %}
+					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Id</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.id }}</td>
+					</tr>
+                    {% endif %}
+                    {% if is_granted('ROLE_TEACHER') %}
+					<tr class="bg-gray-100">
+					<th class="px-4 py-2 border border-gray-300 font-medium">Créateur de l'entreprise :</th>
+					<td class="px-4 py-2 border border-gray-300">
+						{% if company.relation is not null %}
+							<p>{{ company.relation.firstName }}
+							{{ company.relation.lastName }}</p>
+						{% else %}
+							<p>Aucun créateur associé</p>
+						{% endif %}
+					</td>
+				</tr>{% endif %}
+					<tr class="bg-gray-100">
+						<th class="px-4 py-2 border border-gray-300 font-medium">Nom de l'entreprise</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.name }}</td>
+					</tr>
+					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Domaine d'activité</th>
+						<td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
+					</tr>
+					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Rue</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.street }}</td>
+					</tr>
+					<tr class="bg-gray-100">
+						<th class="px-4 py-2 border border-gray-300 font-medium">Code postal</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.zipCode }}</td>
+					</tr>
+					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Ville</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.city }}</td>
+					</tr>
+					<tr class="bg-gray-100">
+						<th class="px-4 py-2 border border-gray-300 font-medium">Pays</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.country }}</td>
+					</tr>
+					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Numéro de téléphone</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.phone }}</td>
+					</tr>
+					<tr class="bg-gray-100">
+						<th class="px-4 py-2 border border-gray-300 font-medium">Email</th>
+						<td class="px-4 py-2 border border-gray-300">{{ company.email }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
-        <!-- Boutons d'action -->
-        <div class="mt-6">
-            <a href="{{ path('app_company_index') }}" 
-               class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
-                Retour à la liste
-            </a>
-        </div>
-    </div>
+		<!-- Boutons d'action -->
+		<div class="mt-6">
+			<a href="{{ path('app_company_index') }}" class="inline-block px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-medium">
+				Retour à la liste
+			</a>
+		</div>
+	</div>
 {% endblock %}

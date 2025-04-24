@@ -34,54 +34,38 @@ final class SchoolController extends AbstractController
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+            return $this->redirectToRoute('app_index'); 
         }
-    
-        // Création d'une nouvelle instance de l'entité School
         $school = new School();
-
-        // Création du formulaire en liant le formulaire à l'entité School
         $form = $this->createForm(SchoolType::class, $school);
-
-        // Traitement de la requête pour vérifier si le formulaire a été soumis
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupération des nouvelles classes ajoutées dynamiquement
             $newGrades = $form->get('newGrade')->getData();
             dump($newGrades);
 
-            // Vérification et ajout des nouvelles classes
             if (is_array($newGrades)) {
                 foreach ($newGrades as $newGradeName) {
                     if ($newGradeName) {
                         $existingGrade = $entityManager->getRepository(Grade::class)->findOneBy(['className' => $newGradeName]);
 
-                        // Si la classe n'existe pas, on la crée
                         if (!$existingGrade) {
                             $newGrade = new Grade();
                             $newGrade->setClassName($newGradeName);
                             $entityManager->persist($newGrade);
                             $school->addGrade($newGrade);
                         } else {
-                            // Sinon, on associe la classe existante à l'école
                             $school->addGrade($existingGrade);
                         }
                     }
                 }
             }
-
-            // Enregistrement de l'école et des relations
             $entityManager->persist($school);
             $entityManager->flush();
-
-            // Redirection après soumission réussie
             return $this->redirectToRoute('app_school_index');
         }
-
-        // Si le formulaire n'est pas encore soumis ou invalide, on le passe à la vue
         return $this->render('school/new.html.twig', [
-            'form' => $form->createView(), // Passe la vue du formulaire à Twig
+            'form' => $form->createView(), 
             'sessions' => $entityManager->getRepository(Session::class)->findAll(), 
         ]);
     }
@@ -91,7 +75,7 @@ final class SchoolController extends AbstractController
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+            return $this->redirectToRoute('app_index'); 
         }
     
         return $this->render('school/show.html.twig', [
@@ -111,8 +95,8 @@ final class SchoolController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted()) {
-            dump($form->isValid()); // Vérifie si c'est bien `true`
-            dump($form->getErrors(true)); // Affiche toutes les erreurs
+            dump($form->isValid()); 
+            dump($form->getErrors(true)); 
             dump($form->get('newSessions')->getData()); // Vérifie les données envoyées dans newSessions
         }
     
@@ -177,7 +161,7 @@ final class SchoolController extends AbstractController
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
+            return $this->redirectToRoute('app_index'); 
         }
     
         if ($this->isCsrfTokenValid('delete' . $school->getId(), $request->get('_token'))) {

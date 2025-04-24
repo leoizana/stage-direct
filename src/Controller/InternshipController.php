@@ -215,27 +215,43 @@ public function validation(Request $request, InternshipRepository $internshipRep
     }
 
     #[Route('/{id}/edit', name: 'app_internship_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, internship $internship, EntityManagerInterface $entityManager): Response
-    {
-        if (!$this->isGranted('ROLE_TEACHER')) {
-            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
-        }
-    
-        $form = $this->createForm(internshipType::class, $internship);
-        $form->handleRequest($request);
+public function edit(Request $request, Internship $internship, EntityManagerInterface $entityManager): Response
+{
+    $user = $this->getUser();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_internship_index', [], Response::HTTP_SEE_OTHER);
+    // Vérifie si l'utilisateur est un étudiant et s'il est propriétaire du stage
+    if (in_array('ROLE_STUDENT', $user->getRoles())) {
+        if ($internship->getRelation() !== $user) {
+            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour modifier ce stage.');
+            return $this->redirectToRoute('app_internship_index');
         }
 
-        return $this->render('internship/edit.html.twig', [
-            'internship' => $internship,
-            'form' => $form,
-        ]);
+        if ($internship->IsVerified() !== false && $internship->IsVerified() !== null) {
+            $this->addFlash('error', 'Vous ne pouvez modifier ce stage que s\'il n\'est pas encore validé.');
+            return $this->redirectToRoute('app_internship_index');
+        }
     }
+
+    // Vérifie si l'utilisateur a le rôle enseignant
+    if (!$this->isGranted('ROLE_TEACHER') && $internship->getRelation() !== $user) {
+        $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour modifier ce stage.');
+        return $this->redirectToRoute('app_internship_index');
+    }
+
+    $form = $this->createForm(InternshipType::class, $internship);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_internship_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('internship/edit.html.twig', [
+        'internship' => $internship,
+        'form' => $form,
+    ]);
+}
 
     #[Route('/{id}', name: 'app_internship_delete', methods: ['POST'])]
     public function delete(Request $request, Internship $internship, EntityManagerInterface $entityManager): Response
