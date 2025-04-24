@@ -12,7 +12,7 @@
         class="inline-block px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium shadow-lg mb-6">
           Voir les entreprises validés
      </a></div>
-
+{% if is_granted('ROLE_TEACHER') %}
     <!-- Double barre de recherche -->
 <div class="mb-6">
     <form method="get" action="{{ path('app_company_validation') }}" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -29,6 +29,7 @@
         </div>
     </form>
 </div>
+{% endif %}
 
 
     <!-- Tableau des entreprises -->
@@ -65,10 +66,11 @@
                         <td class="py-3 px-6">{{ company.email }}</td>
                         <td class="py-3 px-6">{{ company.activity ? company.activity.label : 'Aucune activité' }}</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
-                            <td class="py-3 px-6 flex items-center justify-center space-x-2">
-                                <a href="{{ path('app_company_edit', {'id': company.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
-                                    <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
-                                </a>
+                            <a href="{{ path('app_company_edit', {'id': company.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center justify-center">
+                                <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
+                            </a>
+                     
+
                              {% if is_granted('ROLE_TEACHER') %}
                                 <form method="post" action="{{ path('app_company_approve', {'id': company.id}) }}" class="inline-flex">
                                     <button type="submit" class="text-green-600 hover:text-green-800 font-medium flex items-center">
@@ -77,7 +79,7 @@
                                 </form>
                                 
                                 
-                                <form method="post" action="{{ path('app_company_reject', {'id': company.id}) }}" class="inline-flex" onsubmit="return confirm('Voulez-vous vraiment refuser et supprimer cet utilisateur ?');">
+                                <form method="post" action="{{ path('app_company_reject', {'id': company.id}) }}" class="inline-flex" onsubmit="return confirm('Voulez-vous vraiment refuser et supprimer cette entreprise ?');">
                                     <button type="submit" class="text-red-600 hover:text-red-800 font-medium flex items-center">
                                         <img src="{{ asset('svg/x-mark-svgrepo-com.svg') }}" alt="Refuser" class="w-5 h-5">
                                     </button>
@@ -107,6 +109,7 @@
         {% endfor %}
     </div>
 {% endif %}
+{% if is_granted('ROLE_TEACHER') %}
 <div class="mt-6 text-center">
     <a href="{{ path('app_company_export_unverified', {
         name: searchName,
@@ -115,6 +118,7 @@
         Exporter les entreprises non vérifiées en PDF
     </a>
     </div>
+    {% endif %}
 {% if is_granted('ROLE_STUDENT') %}
     <!-- Bouton pour créer une nouvelle entreprise -->
     <div class="mt-6 text-center">

@@ -17,8 +17,8 @@ final class CompanyController extends AbstractController
     #[Route(name: 'app_company_index', methods: ['GET'])]
     public function index(CompanyRepository $companyRepository, Request $request): Response
 {
-    $user = $this->getUser();
-    if ($user && !$user->getIsVerified()) {
+    $User = $this->getUser();
+    if ($User && !$User->getIsVerified()) {
         $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
     }
 
@@ -85,8 +85,8 @@ final class CompanyController extends AbstractController
 #[Route('/validation', name: 'app_company_validation', methods: ['GET'])]
 public function validation(CompanyRepository $companyRepository, Request $request): Response
 {
-    $user = $this->getUser();
-    if ($user && !$user->getIsVerified()) {
+    $User = $this->getUser();
+    if ($User && !$User->getIsVerified()) {
         $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
     }
 
@@ -97,34 +97,49 @@ public function validation(CompanyRepository $companyRepository, Request $reques
     $searchName = $request->query->get('name');
     $searchCityOrZip = $request->query->get('city_zip');
 
-    // 👇 Affiche uniquement les entreprises NON vérifiées
+    $roles = $User?->getRoles() ?? [];
+
     $queryBuilder = $companyRepository->createQueryBuilder('c')
         ->where('c.IsVerified = false OR c.IsVerified IS NULL');
 
-        if ($searchName) {
-            $queryBuilder
+    if (in_array('ROLE_STUDENT', $roles)) {
+        $queryBuilder
+            ->andWhere('c.relation = :User')
+            ->setParameter('User', $User);
+    }
+
+    if ($searchName) {
+        $queryBuilder
             ->andWhere('LOWER(c.name) LIKE :name')
             ->setParameter('name', '%' . strtolower($searchName) . '%');
     }
-    
-    
-        if ($searchCityOrZip) {
-            $queryBuilder
+
+    if ($searchCityOrZip) {
+        $queryBuilder
             ->andWhere('LOWER(c.city) LIKE :cityZip OR LOWER(c.zipCode) LIKE :cityZip')
             ->setParameter('cityZip', '%' . strtolower($searchCityOrZip) . '%');
     }
-    
 
     // Clonage pour le COUNT
     $countQueryBuilder = clone $queryBuilder;
+    $countQueryBuilder->select('COUNT(c.id) as count');
+
+    if (in_array('ROLE_STUDENT', $roles)) {
+        $countQueryBuilder->setParameter('User', $User);
+    }
+    if ($searchName) {
+        $countQueryBuilder->setParameter('name', '%' . strtolower($searchName) . '%');
+    }
+    if ($searchCityOrZip) {
+        $countQueryBuilder->setParameter('cityZip', '%' . strtolower($searchCityOrZip) . '%');
+    }
+
     $countResult = $countQueryBuilder
-        ->select('COUNT(c.id) as count')
         ->getQuery()
         ->getOneOrNullResult();
 
     $total = (int) ($countResult['count'] ?? 0);
 
-    // Résultats paginés
     $companies = $queryBuilder
         ->setFirstResult($offset)
         ->setMaxResults($limit)
@@ -139,48 +154,61 @@ public function validation(CompanyRepository $companyRepository, Request $reques
         'pages' => ceil($total / $limit),
         'searchName' => $searchName,
         'searchCityZip' => $searchCityOrZip,
-        'currentRoute' => 'app_company_validation', // utile pour la pagination dynamique
+        'currentRoute' => 'app_company_validation',
     ]);
 }
 
 
 
-    #[Route('/new', name: 'app_company_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-    
-        // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
-        $user = $this->getUser();
-        
-        if ($user && !$user->getIsVerified()) {
-            $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
-        }
-        $company = new Company();
-        $company->setVerified(false); 
-        $form = $this->createForm(CompanyType::class, $company);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($company);
-            $entityManager->flush();
-            $this->addFlash('success', message: 'Entreprise soumise, attente de validation.');
-            return $this->redirectToRoute('app_company_index', [], Response::HTTP_SEE_OTHER);
-        }
 
-        return $this->render('company/new.html.twig', [
-            'company' => $company,
-            'form' => $form,
-        ]);
+#[Route('/new', name: 'app_company_new', methods: ['GET', 'POST'])]
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    // Vérifie si l'utilisateur est connecté
+    $User = $this->getUser();
+    if (!$User) {
+        $this->addFlash('error', 'Vous devez être connecté pour créer une entreprise.');
+        return $this->redirectToRoute('app_login');
     }
+
+    // Créer une nouvelle entreprise et l'associer à l'utilisateur connecté
+    $company = new Company();
+    $company->setVerified(false);  // L'entreprise n'est pas encore validée
+    $company->setRelation($User); // Associe l'utilisateur connecté à l'entreprise
+
+    // Créer et traiter le formulaire de l'entreprise
+    $form = $this->createForm(CompanyType::class, $company);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Persister l'entreprise dans la base de données
+        $entityManager->persist($company);
+        $entityManager->flush();
+
+        // Afficher un message de succès
+        $this->addFlash('success', 'Entreprise soumise, attente de validation.');
+
+        // Rediriger vers la liste des entreprises
+        return $this->redirectToRoute('app_company_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    // Rendre la vue du formulaire pour l'ajout d'une entreprise
+    return $this->render('company/new.html.twig', [
+        'company' => $company,
+        'form' => $form->createView(),
+    ]);
+}
+
 
     #[Route('/{id}', name: 'app_company_show', methods: ['GET'])]
     public function show(Company $company): Response
     {
     
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
-        $user = $this->getUser();
+        $User = $this->getUser();
         
-        if ($user && !$user->getIsVerified()) {
+        if ($User && !$User->getIsVerified()) {
             $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
         }
         return $this->render('company/show.html.twig', [
@@ -189,33 +217,36 @@ public function validation(CompanyRepository $companyRepository, Request $reques
     }
 
     #[Route('/{id}/edit', name: 'app_company_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Company $company, EntityManagerInterface $entityManager): Response
-    {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour consulter cette page.');
-            return $this->redirectToRoute('app_index'); // Remplacez 'app_index' par la route de votre page d'accueil ou index
-        }
-    
-        // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
-        $user = $this->getUser();
-        
-        if ($user && !$user->getIsVerified()) {
-            $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
-        }
-        $form = $this->createForm(CompanyType::class, $company);
-        $form->handleRequest($request);
+public function edit(Request $request, Company $company, EntityManagerInterface $entityManager): Response
+{
+    $user = $this->getUser();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_company_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('company/edit.html.twig', [
-            'company' => $company,
-            'form' => $form,
-        ]);
+    // Vérifie si l'utilisateur est connecté et a le bon rôle
+    if (!$this->isGranted('ROLE_TEACHER') && ($company->getRelation() !== $user)) {
+        $this->addFlash('error', 'Vous n\'avez pas l\'accès requis pour modifier cette entreprise.');
+        return $this->redirectToRoute('app_index'); // Redirige vers la page d'accueil si l'utilisateur n'a pas accès
     }
+
+    // Vérifier si l'utilisateur est connecté et si son compte est vérifié
+    if ($user && !$user->getIsVerified()) {
+        $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
+    }
+
+    $form = $this->createForm(CompanyType::class, $company);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_company_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('company/edit.html.twig', [
+        'company' => $company,
+        'form' => $form,
+    ]);
+}
+
 
     #[Route('/{id}', name: 'app_company_delete', methods: ['POST'])]
     public function delete(Request $request, Company $company, EntityManagerInterface $entityManager): Response
@@ -226,9 +257,9 @@ public function validation(CompanyRepository $companyRepository, Request $reques
         }
     
         // Vérifier si l'utilisateur est connecté et n'a pas vérifié son compte
-        $user = $this->getUser();
+        $User = $this->getUser();
         
-        if ($user && !$user->getIsVerified()) {
+        if ($User && !$User->getIsVerified()) {
             $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
         }
         if ($this->isCsrfTokenValid('delete'.$company->getId(), $request->getPayload()->getString('_token'))) {

@@ -19,10 +19,8 @@ final class InternshipController extends AbstractController
     public function index(Request $request, InternshipRepository $internshipRepository): Response
 {
     $user = $this->getUser();
-
-    if (!$user) {
-        $this->addFlash('error', 'Vous devez être connecté pour voir cette page.');
-        return $this->redirectToRoute('app_login');
+    if ($user && !$user->getIsVerified()) {
+        $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
     }
 
     $roles = $user->getRoles();

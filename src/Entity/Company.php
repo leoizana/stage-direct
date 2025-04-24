@@ -56,6 +56,9 @@ class Company
     #[ORM\OneToMany(targetEntity: Internship::class, mappedBy: 'company')]
     private Collection $internships;
 
+    #[ORM\ManyToOne(inversedBy: 'companies')]
+    private ?User $relation = null;
+
     public function __construct()
     {
         $this->internships = new ArrayCollection();
@@ -219,6 +222,18 @@ class Company
                 $internship->setCompany(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRelation(): ?User
+    {
+        return $this->relation;
+    }
+
+    public function setRelation(?User $relation): static
+    {
+        $this->relation = $relation;
 
         return $this;
     }

@@ -257,10 +257,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?School $school = null;
 
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\OneToMany(targetEntity: Company::class, mappedBy: 'relation')]
+    private Collection $companies;
+
     public function __construct()
     {
         $this->internships = new ArrayCollection();
         $this->grade = new ArrayCollection();
+        $this->companies = new ArrayCollection();
     }
 
     public function getVerificationToken(): ?string
@@ -355,6 +362,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSchool(?School $school): static
     {
         $this->school = $school;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            // set the owning side to null (unless already changed)
+            if ($company->getRelation() === $this) {
+                $company->setRelation(null);
+            }
+        }
 
         return $this;
     }
