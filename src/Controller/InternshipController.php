@@ -207,14 +207,14 @@ public function validation(Request $request, InternshipRepository $internshipRep
     }
 
     #[Route('/{id}', name: 'app_internship_show', methods: ['GET'])]
-    public function show(internship $internship): Response
-    {   
-        return $this->render('internship/show.html.twig', [
-            'internship' => $internship,
-        ]);
-    }
+public function show(Internship $internship): Response
+{   
+    return $this->render('internship/show.html.twig', [
+        'internship' => $internship,
+    ]);
+}
 
-    #[Route('/{id}/edit', name: 'app_internship_edit', methods: ['GET', 'POST'])]
+#[Route('/{id}/edit', name: 'app_internship_edit', methods: ['GET', 'POST'])]
 public function edit(Request $request, Internship $internship, EntityManagerInterface $entityManager): Response
 {
     $user = $this->getUser();
@@ -289,5 +289,30 @@ public function reject(Internship $internship, EntityManagerInterface $em): Resp
     return $this->redirectToRoute('app_internship_validation');
 }
 
-    
+#[Route('/{id}/rapport', name: 'app_internship_report', methods: ['GET', 'POST'])]
+public function teacherReport(Request $request, Internship $internship, EntityManagerInterface $entityManager): Response
+{
+    // Vérifier que l'utilisateur est un professeur
+    $this->denyAccessUnlessGranted('ROLE_TEACHER');
+
+    // Vérifier que le stage est validé
+    if (!$internship->IsVerified()) {
+        $this->addFlash('error', 'Le stage doit être validé pour pouvoir ajouter un rapport.');
+        return $this->redirectToRoute('app_internship_index');
+    }
+
+    if ($request->isMethod('POST')) {
+        $report = $request->request->get('report');
+        $internship->setTeacherReport($report);
+        
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Rapport enregistré avec succès.');
+        return $this->redirectToRoute('app_internship_index');
+    }
+
+    return $this->render('internship/rapport_prof.html.twig', [
+        'internship' => $internship
+    ]);
+}
 }

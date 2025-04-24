@@ -32,7 +32,7 @@ class InternshipType extends AbstractType
                 'placeholder' => 'Choisir une session',
                 'attr' => ['class' => 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'],
             ])
-            ->add('themes', TextareaType::class, [
+            ->add('report', TextareaType::class, [
                 'label' => 'Rapports',
                 'required' => false,
             ])

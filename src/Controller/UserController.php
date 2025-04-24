@@ -118,80 +118,85 @@ public function validation(UserRepository $userRepository): Response
     
     
     #[Route('/inscription', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function inscription(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, EmailService $emailService): Response
-    {
-        $user = new User();
-    
-        // Vérifier si l'utilisateur qui crée le compte est administrateur
-        $loginType = 'user'; // Valeur par défaut
-        $isAdminCreating = false;
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $loginType = 'admin'; // Si l'utilisateur est admin, il peut choisir un rôle
-            $isAdminCreating = true; // Flag pour indiquer que l'admin crée le compte
-        }
-    
-        // Créer le formulaire avec le bon type (admin ou user)
-        $form = $this->createForm(UserType::class, $user, [
-            'login_type' => $loginType // Passer 'admin' ou 'user' en fonction des droits de l'utilisateur
-        ]);
-    
-        // Gestion de la soumission du formulaire
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer le mot de passe depuis le formulaire directement
-            $plainPassword = $form->get('password')->getData();
-            
-            // Hachage du mot de passe
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $plainPassword
-            );
-            $user->setPassword($hashedPassword);
-    
-            // Ajout d'un rôle par défaut si nécessaire
-            if (empty($user->getRoles())) {
-                $user->setRoles(['ROLE_USER']); // Rôle par défaut
-            }
-    
-            // Si l'utilisateur qui crée le compte est un admin, approuver directement l'utilisateur
-            if ($isAdminCreating) {
-                $user->setIsApprovedByTeacher(true); // Validation automatique par un administrateur
-            } else {
-                // Sinon, il est créé comme non approuvé
-                $user->setIsApprovedByTeacher(false); // Définir sur false pour les autres cas
-            }
-    
-            // Génération du token de vérification
-            $verificationToken = bin2hex(random_bytes(16));
-            $user->setVerificationToken($verificationToken);
-    
-            // Persist et flush
-            $entityManager->persist($user);
-            $entityManager->flush();
-    
-            // Envoyer l'email de confirmation avec le lien de vérification
-            $emailSubject = "Confirmation de votre inscription";
-            $emailText = "Bonjour " . $user->getFirstName() . ",\n\nVeuillez confirmer votre inscription en cliquant sur ce lien :\n\n" .
-                $this->generateUrl('app_user_verify_email', ['token' => $verificationToken], 0);
-            $destinataire = $user->getEmail();
-            $result = $emailService->sendEmail($emailSubject, $emailText, $destinataire);
-            if ($result == "00") {
-                // Succès 
-                $this->addFlash('success', 'Votre inscription a été réussie. Un email de confirmation vous a été envoyé.');
-            } else {
-                // Échec
-                $this->addFlash('error', 'Une erreur est survenue.');
-            }
-    
-            return $this->redirectToRoute('app_login');
-        }
-    
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
+public function inscription(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    UserPasswordHasherInterface $passwordHasher,
+    EmailService $emailService
+): Response {
+    $user = new User();
+
+    // Vérifier si l'utilisateur qui crée le compte est administrateur
+    $loginType = 'user'; // Valeur par défaut
+    $isAdminCreating = false;
+    if ($this->isGranted('ROLE_ADMIN')) {
+        $loginType = 'admin'; // Si l'utilisateur est admin, il peut choisir un rôle
+        $isAdminCreating = true; // Flag pour indiquer que l'admin crée le compte
     }
+
+    // Créer le formulaire avec le bon type (admin ou user)
+    $form = $this->createForm(UserType::class, $user, [
+        'login_type' => $loginType, // Passer 'admin' ou 'user' en fonction des droits de l'utilisateur
+    ]);
+
+    // Gestion de la soumission du formulaire
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Récupérer le mot de passe depuis le formulaire directement
+        $plainPassword = $form->get('password')->getData();
+
+        // Hachage du mot de passe
+        $hashedPassword = $passwordHasher->hashPassword(
+            $user,
+            $plainPassword
+        );
+        $user->setPassword($hashedPassword);
+
+        // Ajout d'un rôle par défaut si nécessaire
+        if (empty($user->getRoles())) {
+            $user->setRoles(['ROLE_USER']); // Rôle par défaut
+        }
+
+        // Si l'utilisateur qui crée le compte est un admin, approuver directement l'utilisateur
+        if ($isAdminCreating) {
+            $user->setIsApprovedByTeacher(true); // Validation automatique par un administrateur
+        } else {
+            // Sinon, il est créé comme non approuvé
+            $user->setIsApprovedByTeacher(false); // Définir sur false pour les autres cas
+        }
+
+        // Génération du token de vérification
+        $verificationToken = bin2hex(random_bytes(16));
+        $user->setVerificationToken($verificationToken);
+
+        // Persist et flush
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // Envoyer l'email de confirmation avec le lien de vérification
+        $emailSubject = "Confirmation de votre inscription";
+        $emailText = "Bonjour " . $user->getFirstName() . ",\n\nVeuillez confirmer votre inscription en cliquant sur ce lien :\n\n" .
+            $this->generateUrl('app_user_verify_email', ['token' => $verificationToken], 0);
+        $destinataire = $user->getEmail();
+        $result = $emailService->sendEmail($emailSubject, $emailText, $destinataire);
+
+        if ($result == "00") {
+            // Succès
+            $this->addFlash('success', 'Votre inscription a été réussie. Un email de confirmation vous a été envoyé.');
+        } else {
+            // Échec
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'envoi de l\'email.');
+        }
+
+        return $this->redirectToRoute('app_login');
+    }
+
+    return $this->render('user/new.html.twig', [
+        'user' => $user,
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/verifier-email/{token}', name: 'app_user_verify_email')]
     public function verifyEmail(string $token, UserRepository $userRepository, EntityManagerInterface $entityManager): Response

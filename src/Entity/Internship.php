@@ -22,7 +22,7 @@ class Internship
     private $dateFin;
 
     #[ORM\Column(type: 'text')]
-    private $themes;
+    private $report;
 
     #[ORM\ManyToOne(inversedBy: 'internships')]
     #[ORM\JoinColumn(nullable: false)]
@@ -38,7 +38,21 @@ class Internship
     #[ORM\JoinColumn(nullable: true)]
     private ?Company $Company = null;
 
+     #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $teacherReport = null;
+    
+       
     // Getters et setters
+    public function getTeacherReport(): ?string
+    {
+        return $this->teacherReport;
+    }
+
+    public function setTeacherReport(?string $teacherReport): self
+    {
+        $this->teacherReport = $teacherReport;
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -68,14 +82,14 @@ class Internship
         return $this;
     }
 
-    public function getThemes(): ?string
+    public function getreport(): ?string
     {
-        return $this->themes;
+        return $this->report;
     }
 
-    public function setThemes(string $themes): self
+    public function setreport(string $report): self
     {
-        $this->themes = $themes;
+        $this->report = $report;
 
         return $this;
     }

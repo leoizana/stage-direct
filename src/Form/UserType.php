@@ -5,6 +5,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Grade;
 use Symfony\Component\Form\AbstractType;
@@ -132,7 +133,7 @@ class UserType extends AbstractType
             $builder->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
                 'mapped' => false, // Symfony ne va pas lier ce champ à l'entité User
-                'required' => false, // L'utilisateur n'est pas obligé de le remplir
+                'required' => false, // L'utilisateur n'est pas obligé de le remplir en mode édition
                 'attr' => [
                     'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
                     'placeholder' => '••••••••',
@@ -143,6 +144,31 @@ class UserType extends AbstractType
                 'label' => 'Mot de Passe',
                 'mapped' => false,
                 'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le mot de passe est obligatoire.',
+                    ]),
+                    new Assert\Length([
+                        'min' => 12,
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères.',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[A-Z]/',
+                        'message' => 'Votre mot de passe doit contenir au moins une lettre majuscule.',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[a-z]/',
+                        'message' => 'Votre mot de passe doit contenir au moins une lettre minuscule.',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/\d/',
+                        'message' => 'Votre mot de passe doit contenir au moins un chiffre.',
+                    ]),
+                    new Assert\Regex([
+                        'pattern' => '/[\W_]/',
+                        'message' => 'Votre mot de passe doit contenir au moins un caractère spécial.',
+                    ]),
+                ],
                 'attr' => [
                     'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
                     'placeholder' => '••••••••',

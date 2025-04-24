@@ -1,44 +1,162 @@
 <title>S'inscrire | Stage-Direct</title>
 
 {% block stylesheets %}
-	<link href="/css/tailwind.min.css" rel="stylesheet">
+    <link href="/css/tailwind.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
-	<script src="/css/tailwind.js">
-		{% block importmap %}
-			{{ importmap('app') }}
-		{% endblock %}
-	</script>
+    <script src="/css/tailwind.js">
+        {% block importmap %}
+            {{ importmap('app') }}
+        {% endblock %}
+    </script>
 {% endblock %}
 
 {% block body %}
-	{% for type, messages in app.flashes %}
-		{% for message in messages %}
-			<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-				{{ message }}
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-			</div>
-		{% endfor %}
-	{% endfor %}
-	<section class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
-		<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto w-full flex-1">
-			<a href="{{ path('app_index') }}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-				<img class="w-1/2 mx-auto" src="{{ asset('images/stage2.png') }}" alt="logo">
-			</a>
-			<div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-4xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+    <section class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto w-full flex-1">
+            <div class="w-full bg-white rounded-lg shadow dark:border sm:max-w-4xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
+                        Créer un compte
+                    </h1>
 
-				<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-					<h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
-						Créer un compte
-					</h1>
-					{{ include('user/_form.html.twig') }}
-					<p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center">
-						Déjà un compte ?
-						<a href="{{ path('app_login') }}" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Se connecter ici</a>
-					</p>
-				</div>
-			</div>
-		</div>
-	</section>
+                    {# Affiche les erreurs globales du formulaire #}
+                    {% if form.vars.errors|length > 0 %}
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(form) }}
+
+					{# Champ email #}
+                        <div class="text-left">
+                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                            {{ form_widget(form.email, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.email.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.email) }}
+                                </div>
+                            {% endif %}
+
+                        {# Champ mot de passe #}
+                        <div class="text-left">
+                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mot de passe</label>
+                            {{ form_widget(form.password, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.password.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.password) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                    <div class="space-y-4">
+                        {# Champ prénom #}
+                        <div class="text-left">
+                            <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom</label>
+                            {{ form_widget(form.firstName, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.firstName.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.firstName) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ nom #}
+                        <div class="text-left">
+                            <label for="lastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom</label>
+                            {{ form_widget(form.lastName, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.lastName.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.lastName) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ date de naissance #}
+                        <div class="text-left">
+                            <label for="birthDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date de naissance</label>
+                            {{ form_widget(form.birthDate, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.birthDate.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.birthDate) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ numéro de téléphone #}
+                        <div class="text-left">
+                            <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Numéro de téléphone</label>
+                            {{ form_widget(form.phone, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.phone.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.phone) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ adresse postale #}
+                        <div class="text-left">
+                            <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse postale</label>
+                            {{ form_widget(form.address, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.address.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.address) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ code postal #}
+                        <div class="text-left">
+                            <label for="postalCode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Code postal</label>
+                            {{ form_widget(form.postalCode, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.postalCode.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.postalCode) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ ville #}
+                        <div class="text-left">
+                            <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ville</label>
+                            {{ form_widget(form.city, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.city.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.city) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Champ classe #}
+                        <div class="text-left">
+                            <label for="grade" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Classe</label>
+                            {{ form_widget(form.grade, { 'attr': { 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5' } }) }}
+                            {% if form.grade.vars.errors|length > 0 %}
+                                <div class="text-red-600 text-sm mt-1">
+                                    {{ form_errors(form.grade) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        
+                    <div class="mt-6">
+                        <button type="submit" class="w-full bg-blue-500 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                            S'inscrire
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+
+                    <p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center mt-4">
+                        Déjà un compte ?
+                        <a href="{{ path('app_login') }}" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Se connecter ici</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

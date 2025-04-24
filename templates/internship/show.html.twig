@@ -45,7 +45,7 @@
 					</tr>
 					<tr>
 						<th class="px-4 py-2 border border-gray-300 font-medium">Rapports</th>
-						<td class="px-4 py-2 border border-gray-300">{{ internship.themes|raw }}</td>
+						<td class="px-4 py-2 border border-gray-300">{{ internship.report|raw }}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -58,4 +58,14 @@
 			</a>
 		</div>
 	</div>
+
+{# Ajouter cette section où vous voulez afficher le rapport #}
+{% if internship.teacherReport %}
+    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Rapport de visite</h2>
+        <div class="prose max-w-none">
+            {{ internship.teacherReport|raw }}
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rapport de visite - Stage de {{ internship.relation.firstName }} {{ internship.relation.lastName }}{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Rapport de visite - Stage de {{ internship.relation.firstName }} {{ internship.relation.lastName }}</h1>
+
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">Informations du stage</h2>
+            <p><strong>Entreprise :</strong> {{ internship.company.name }}</p>
+            <p><strong>Période :</strong> Du {{ internship.dateDebut|date('d/m/Y') }} au {{ internship.dateFin|date('d/m/Y') }}</p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            <div>
+                <label for="report" class="block text-xl font-semibold text-gray-800 mb-4">Rapport de visite</label>
+                <textarea id="report" name="report" rows="10" 
+                    class="tinymce shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    placeholder="Saisissez votre rapport de visite ici...">{{ internship.teacherReport }}</textarea>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="{{ path('app_internship_index') }}" 
+                   class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                    Retour
+                </a>
+                <button type="submit" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Enregistrer le rapport
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
