@@ -34,15 +34,4 @@
                 {{ form_end(form) }}
             </form>
         </div>
-
-        {# Ajouter ceci après le formulaire principal #}
-        {% if internship.teacherReport %}
-            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-bold mb-4">Rapport de visite</h2>
-                <div class="prose max-w-none">
-                    {{ internship.teacherReport|raw }}
-                </div>
-            </div>
-        {% endif %}
-    </div>
 {% endblock %}

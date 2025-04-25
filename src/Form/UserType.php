@@ -5,16 +5,16 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Grade;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;  // Importation du EmailType
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -30,6 +30,43 @@ class UserType extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
 
     }
+    private function addPasswordField(FormBuilderInterface $builder, bool $required = true): void
+{
+    $builder->add('password', PasswordType::class, [
+        'label' => 'Mot de passe',
+        'mapped' => false,
+        'required' => $required,
+        'constraints' => [
+            new Assert\NotBlank(['message' => 'Veuillez saisir un mot de passe.']),
+            new Assert\Length([
+                'min' => 12,
+                'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
+            ]),
+            new Assert\Regex([
+                'pattern' => '/[A-Z]/',
+                'message' => 'Le mot de passe doit contenir au moins une lettre majuscule.',
+            ]),
+            new Assert\Regex([
+                'pattern' => '/[a-z]/',
+                'message' => 'Le mot de passe doit contenir au moins une lettre minuscule.',
+            ]),
+            new Assert\Regex([
+                'pattern' => '/\d/',
+                'message' => 'Le mot de passe doit contenir au moins un chiffre.',
+            ]),
+            new Assert\Regex([
+                'pattern' => '/[\W_]/',
+                'message' => 'Le mot de passe doit contenir au moins un caractère spécial.',
+            ]),
+        ],
+        'attr' => [
+            'autocomplete' => 'new-password',
+            'placeholder' => '••••••••',
+            'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+        ],
+    ]);
+}
+
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

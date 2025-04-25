@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center">Mon Profil</h1>
+    
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+            <p class="text-gray-700"><strong>Nom :</strong> {{ user.lastName }}</p>
+            <p class="text-gray-700"><strong>Prénom :</strong> {{ user.firstName }}</p>
+            <p class="text-gray-700"><strong>Email :</strong> {{ user.email }}</p>
+        </div>
+        <div>
+            <p class="text-gray-700"><strong>Date de naissance :</strong> {{ user.birthDate ? user.birthDate|date('d/m/Y') : 'Non renseignée' }}</p>
+            <p class="text-gray-700"><strong>Adresse :</strong> {{ user.address }} {{ user.postalCode }} {{ user.city }}</p>
+            <p class="text-gray-700"><strong>Téléphone :</strong> {{ user.phone }}</p>
+        </div>
+    </div>
+
+    {% if user.isVerified %}
+    <form method="post" class="mt-8 space-y-4">
+        <h2 class="text-xl font-semibold mb-2">Modifier mon mot de passe</h2>
+    
+        {% if success is not null %}
+            {% if success %}
+                <div class="text-green-600">Mot de passe modifié avec succès.</div>
+            {% else %}
+                <div class="text-red-600">Les mots de passe ne correspondent pas ou sont invalides.</div>
+            {% endif %}
+        {% endif %}
+    
+        {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_label(form.password) }}
+                {{ form_widget(form.password, {'attr': {'class': 'w-full px-4 py-2 border rounded-lg'}}) }}
+                {{ form_errors(form.password) }} <!-- Affichage des erreurs -->
+            </div>
+    
+            <div class="mb-4">
+                {{ form_label(form.confirmPassword) }}
+                {{ form_widget(form.confirmPassword, {'attr': {'class': 'w-full px-4 py-2 border rounded-lg'}}) }}
+                {{ form_errors(form.confirmPassword) }} <!-- Affichage des erreurs -->
+            </div>
+    
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Changer le mot de passe</button>
+        {{ form_end(form) }}
+    </form>
+    
+    {% else %}
+        <p class="text-red-600 mt-6">Votre compte n'est pas encore vérifié, vous ne pouvez pas modifier votre mot de passe.</p>
+    {% endif %}
+</div>
+{% endblock %}

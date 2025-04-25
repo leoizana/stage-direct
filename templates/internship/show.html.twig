@@ -44,9 +44,15 @@
 						<td class="px-4 py-2 border border-gray-300">{{ internship.session }}</td>
 					</tr>
 					<tr>
-						<th class="px-4 py-2 border border-gray-300 font-medium">Rapports</th>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Rapports de l'élève</th>
 						<td class="px-4 py-2 border border-gray-300">{{ internship.report|raw }}</td>
 					</tr>
+					{% if internship.teacherReport %}
+					<tr>
+						<th class="px-4 py-2 border border-gray-300 font-medium">Rapports du professeur</th>
+						<td class="px-4 py-2 border border-gray-300">{{ internship.teacherReport|raw }}</td>
+					</tr>
+					{% endif %}
 				</tbody>
 			</table>
 		</div>
@@ -58,14 +64,4 @@
 			</a>
 		</div>
 	</div>
-
-{# Ajouter cette section où vous voulez afficher le rapport #}
-{% if internship.teacherReport %}
-    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold mb-4">Rapport de visite</h2>
-        <div class="prose max-w-none">
-            {{ internship.teacherReport|raw }}
-        </div>
-    </div>
-{% endif %}
 {% endblock %}
