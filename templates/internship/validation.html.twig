@@ -111,7 +111,44 @@
             </tbody>
         </table>
     </div>
-
+    {% if pages > 1 %}
+    <div class="mt-6 flex justify-center space-x-2">
+        {% for p in 1..pages %}
+    <a href="{{ path('app_internship_validation', {
+        page: p,
+        search_name: searchName|default(''),
+        search_class: searchClass|default(''),
+        search_session: searchSession|default('')
+    }) }}"
+       class="px-4 py-2 rounded-lg border {{ page == p ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-100' }}">
+        {{ p }}
+    </a>
+{% endfor %}
+</div>
+    {% endif %}
+    {% if is_granted('ROLE_TEACHER') %}
+    <div class="flex justify-end space-x-2 mb-4">
+        <a href="{{ path('app_internship_export_unverified_page', {
+            'page': page,
+            'search_name': searchName,
+            'search_class': searchClass,
+            'search_session': searchSession
+        }) }}" 
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Exporter la page courante
+        </a>
+        
+        <a href="{{ path('app_internship_export_unverified_all', {
+            'search_name': searchName,
+            'search_class': searchClass,
+            'search_session': searchSession
+        }) }}" 
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            Exporter tous les stages non validés
+        </a>
+    </div>
+{% endif %}
+    </div>
     <!-- Bouton pour créer un nouveau stage -->
     <div class="mt-6 text-center">
         <a href="{{ path('app_internship_new') }}"

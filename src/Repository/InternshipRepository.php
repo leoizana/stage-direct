@@ -25,6 +25,59 @@ class InternshipRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->getRepository(Grade::class)->findAll();
     }
+    public function findFiltered(?string $title, ?string $cityZip, ?int $limit = null, ?int $offset = null, ?bool $IsVerified = null): array
+{
+    $qb = $this->createQueryBuilder('i');
+
+    if ($title) {
+        $qb->andWhere('LOWER(i.title) LIKE :title')
+           ->setParameter('title', '%' . strtolower($title) . '%');
+    }
+
+    if ($cityZip) {
+        $qb->andWhere('LOWER(i.city) LIKE :cityZip OR i.zipCode LIKE :cityZip')
+           ->setParameter('cityZip', '%' . strtolower($cityZip) . '%');
+    }
+
+    if ($IsVerified !== null) {
+        $qb->andWhere('i.IsVerified = :IsVerified')
+           ->setParameter('IsVerified', $IsVerified);
+    }
+
+    if ($limit !== null) {
+        $qb->setMaxResults($limit);
+    }
+
+    if ($offset !== null) {
+        $qb->setFirstResult($offset);
+    }
+
+    return $qb->getQuery()->getResult();
+}
+
+public function countFiltered(?string $title, ?string $cityZip, ?bool $IsVerified = null): int
+{
+    $qb = $this->createQueryBuilder('i')
+               ->select('COUNT(i.id)');
+
+    if ($title) {
+        $qb->andWhere('LOWER(i.title) LIKE :title')
+           ->setParameter('title', '%' . strtolower($title) . '%');
+    }
+
+    if ($cityZip) {
+        $qb->andWhere('LOWER(i.city) LIKE :cityZip OR i.zipCode LIKE :cityZip')
+           ->setParameter('cityZip', '%' . strtolower($cityZip) . '%');
+    }
+
+    if ($IsVerified !== null) {
+        $qb->andWhere('i.IsVerified = :IsVerified')
+           ->setParameter('IsVerified', $IsVerified);
+    }
+
+    return (int) $qb->getQuery()->getSingleScalarResult();
+}
+
 //    /**
 //     * @return Stage[] Returns an array of Stage objects
 //     */
