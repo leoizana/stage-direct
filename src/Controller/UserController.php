@@ -68,60 +68,67 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profile', name: 'app_user_profile')]
-    public function profil(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $success = null;
-    
-        // Formulaire de modification de mot de passe
-        $form = $this->createFormBuilder()
-            ->add('password', PasswordType::class, [
-                'label' => 'Nouveau mot de passe',
-                'required' => true,
-                'attr' => [
-                    'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                    'placeholder' => '••••••••',
-                ],
-            ])
-            ->add('confirmPassword', PasswordType::class, [
-                'label' => 'Confirmer le mot de passe',
-                'required' => true,
-                'attr' => [
-                    'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-                    'placeholder' => '••••••••',
-                ],
-            ])
-            ->getForm();
-    
-        // Si le formulaire est soumis
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-    
-            if ($form->isSubmitted() && $form->isValid()) {
-                // Vérification si les mots de passe sont identiques
-                $newPassword = $form->get('password')->getData();
-                $confirmPassword = $form->get('confirmPassword')->getData();
-    
-                if ($newPassword === $confirmPassword) {
-                    // Hash du mot de passe et enregistrement dans la base
-                    $hashedPassword = $hasher->hashPassword($user, $newPassword);
-                    $user->setPassword($hashedPassword);
-                    $em->flush();  // Assure-toi que l'objet est bien enregistré
-                    $success = true;
-                } else {
-                    $success = false;
-                }
+    #[Route('/profil', name: 'app_user_profil', methods: ['GET', 'POST'])]
+public function profil(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
+{
+    /** @var User $user */
+    $user = $this->getUser();
+    $success = null;
+
+    // Formulaire de modification de mot de passe
+    $form = $this->createFormBuilder()
+        ->add('password', PasswordType::class, [
+            'label' => 'Nouveau mot de passe',
+            'required' => true,
+            'attr' => [
+                'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                'placeholder' => '••••••••',
+            ],
+        ])
+        ->add('confirmPassword', PasswordType::class, [
+            'label' => 'Confirmer le mot de passe',
+            'required' => true,
+            'attr' => [
+                'class' => 'bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+                'placeholder' => '••••••••',
+            ],
+        ])
+        ->getForm();
+
+    if ($request->isMethod('POST')) {
+        // Ici on gère le wantMail d'abord
+        if ($this->isGranted('ROLE_TEACHER')) {
+            $wantMail = $request->request->get('wantMail', false);
+            $user->setWantMail($wantMail === 'on');
+        }
+
+        // Puis on gère le formulaire mot de passe
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $newPassword = $form->get('password')->getData();
+            $confirmPassword = $form->get('confirmPassword')->getData();
+
+            if ($newPassword === $confirmPassword) {
+                $hashedPassword = $hasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+                $success = true;
+            } else {
+                $success = false;
             }
         }
-    
-        return $this->render('user/profil.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-            'success' => $success,
-        ]);
+
+        // À la fin : flush toutes les modifs d'un coup
+        $em->flush();
     }
+
+    return $this->render('user/profil.html.twig', [
+        'user' => $user,
+        'form' => $form->createView(),
+        'success' => $success,
+    ]);
+}
+
 
 
 

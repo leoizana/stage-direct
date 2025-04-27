@@ -263,6 +263,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Company::class, mappedBy: 'relation')]
     private Collection $companies;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $WantMail = null;
+
     public function __construct()
     {
         $this->internships = new ArrayCollection();
@@ -392,6 +395,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $company->setRelation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isWantMail(): ?bool
+    {
+        return $this->WantMail;
+    }
+
+    public function setWantMail(?bool $WantMail): static
+    {
+        $this->WantMail = $WantMail;
 
         return $this;
     }

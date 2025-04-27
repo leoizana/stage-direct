@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\EmailService;
+use App\Repository\UserRepository;
 
 #[Route('/stage')]
 final class InternshipController extends AbstractController
@@ -173,38 +175,62 @@ public function validation(Request $request, InternshipRepository $internshipRep
     ]);
 }
 
-
-
-    #[Route('/new', name: 'app_internship_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour créer un stage.');
-            return $this->redirectToRoute('app_login');
-        }
-    
-        $internship = new Internship();
-        $internship->setVerified(false); 
-        $internship->setRelation($user); // Associe l'utilisateur connecté
-        $form = $this->createForm(InternshipType::class, $internship);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($internship);
-            $entityManager->flush();
-            $this->addFlash('success', message: 'Stage soumis, attente de validation.');
-            return $this->redirectToRoute('app_internship_index', [], Response::HTTP_SEE_OTHER);
-        }
-    
-        
-        return $this->render('internship/new.html.twig', [
-            'internship' => $internship,
-            'form' => $form,
-           
-        ]);
-        
+#[Route('/new', name: 'app_internship_new', methods: ['GET', 'POST'])]
+public function new(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, EmailService $emailService): Response
+{
+    $user = $this->getUser();
+    if (!$user) {
+        $this->addFlash('error', 'Vous devez être connecté pour créer un stage.');
+        return $this->redirectToRoute('app_login');
     }
+
+    $internship = new Internship();
+    $internship->setVerified(false);
+    $internship->setRelation($user);
+
+    $form = $this->createForm(InternshipType::class, $internship);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($internship);
+        $entityManager->flush();
+
+        $studentGrade = $user->getGrade();
+        $teachers = $userRepository->createQueryBuilder('u')
+            ->innerJoin('u.grade', 'g')
+            ->where('g IN (:grades)')
+            ->andWhere('u.WantMail = :wantMail')
+            ->andWhere('u.isApprovedByTeacher = :approved')
+            ->setParameter('grades', $studentGrade)
+            ->setParameter('wantMail', true)
+            ->setParameter('approved', true)
+            ->getQuery()
+            ->getResult();
+    
+        // Envoi d'email à chaque prof
+        foreach ($teachers as $teacher) {
+            $subject = "Nouveau stage soumis par " . $user->getFirstName() . " " . $user->getLastName();
+            $message = "Bonjour " . $teacher->getFirstName() . ",\n\n" .
+                       $user->getFirstName() . " " . $user->getLastName() . " a soumis un stage le " . (new \DateTime())->format('d/m/Y H:i') . ".\n\n" .
+                       "Entreprise : " . $internship->getCompany()->getName() . "\n" .  // Ajout de ->getName()
+                       "Date de début : " . $internship->getDateDebut()->format('d/m/Y') . "\n" .
+                       "Date de fin : " . $internship->getDateFin()->format('d/m/Y') . "\n\n" .
+                       "Merci de valider ce stage via Stage-Direct.";
+
+            $emailService->sendEmail($subject, $message, $teacher->getEmail());
+        }
+
+        $this->addFlash('success', 'Stage soumis, attente de validation.');
+        return $this->redirectToRoute('app_internship_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('internship/new.html.twig', [
+        'internship' => $internship,
+        'form' => $form,
+    ]);
+}
+
+
 
     #[Route('/{id}', name: 'app_internship_show', methods: ['GET'])]
 public function show(Internship $internship): Response

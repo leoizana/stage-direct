@@ -51,5 +51,19 @@
     {% else %}
         <p class="text-red-600 mt-6">Votre compte n'est pas encore vérifié, vous ne pouvez pas modifier votre mot de passe.</p>
     {% endif %}
+
+    {% if is_granted('ROLE_TEACHER') %}
+    <form method="post" class="mt-8 space-y-4">
+        <h2 class="text-xl font-semibold mb-2">Préférences de notification</h2>
+
+        <div class="mb-4">
+            <label for="wantMail" class="text-gray-700">Recevoir un mail lors de la création d'un stage</label>
+            <input type="checkbox" id="wantMail" name="wantMail" class="w-6 h-6"
+                {% if user.wantMail %}checked{% endif %}>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Enregistrer</button>
+    </form>
+{% endif %}
 </div>
 {% endblock %}
