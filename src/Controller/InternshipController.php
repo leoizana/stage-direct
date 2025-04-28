@@ -23,6 +23,11 @@ final class InternshipController extends AbstractController
     public function index(Request $request, InternshipRepository $internshipRepository, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour voir cette page.');
+            return $this->redirectToRoute('app_login');
+        }
+
         if ($user && !$user->getIsVerified()) {
             $this->addFlash('error', 'Votre compte n\'est pas vérifié. Veuillez vérifier votre email pour éviter la suppression.');
         }
@@ -32,19 +37,35 @@ final class InternshipController extends AbstractController
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
         
-        // Utilisation de l'EntityManager injecté
         $grades = $em->getRepository(Grade::class)->findAll();
         $sessions = $em->getRepository(Session::class)->findAll();
         $searchName = $request->query->get('search_name');
         $searchClass = $request->query->get('search_class');
         $searchSession = $request->query->get('search_session');
-    
+
         $queryBuilder = $internshipRepository->createQueryBuilder('i')
             ->where('i.IsVerified = true');
 
+        // Restriction selon le rôle
+        if (in_array('ROLE_STUDENT', $roles)) {
+            // Un étudiant ne voit que ses stages
+            $queryBuilder
+                ->andWhere('i.relation = :userId')
+                ->setParameter('userId', $user->getId());
+        } elseif (in_array('ROLE_TEACHER', $roles)) {
+            // Un professeur ne voit que les stages des étudiants de ses classes
+            $queryBuilder
+                ->join('i.relation', 'u')
+                ->join('u.grade', 'g')
+                ->andWhere('g IN (:teacherGrades)')
+                ->setParameter('teacherGrades', $user->getGrade());
+        }
+        // Les admins voient tout (pas de restriction supplémentaire)
+
+        // Reste du code de filtrage
         $needJoinUser = $searchName || $searchClass;
         
-        if ($needJoinUser) {
+        if ($needJoinUser && !in_array('ROLE_TEACHER', $roles)) {
             $queryBuilder->join('i.relation', 'u');
         }
 
@@ -55,8 +76,13 @@ final class InternshipController extends AbstractController
         }
 
         if ($searchClass) {
+            if (!$queryBuilder->getDQLPart('join')['u']) {
+                $queryBuilder->join('i.relation', 'u');
+            }
+            if (!$queryBuilder->getDQLPart('join')['g']) {
+                $queryBuilder->join('u.grade', 'g');
+            }
             $queryBuilder
-                ->join('u.grade', 'g')
                 ->andWhere('g.id = :searchClass')
                 ->setParameter('searchClass', $searchClass);
         }
@@ -113,96 +139,118 @@ final class InternshipController extends AbstractController
     
 
     #[Route('/internship/validation', name: 'app_internship_validation', methods: ['GET'])]
-    public function validation(Request $request, InternshipRepository $internshipRepository, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
+public function validation(Request $request, InternshipRepository $internshipRepository, EntityManagerInterface $em): Response
+{
+    $user = $this->getUser();
+
+    if (!$user) {
+        $this->addFlash('error', 'Vous devez être connecté pour voir cette page.');
+        return $this->redirectToRoute('app_login');
+    }
+
+    $roles = $user->getRoles();
+    $limit = 15;
+    $page = max(1, (int) $request->query->get('page', 1));
+    $offset = ($page - 1) * $limit;
+    $grades = $em->getRepository(Grade::class)->findAll();
+    $sessions = $em->getRepository(Session::class)->findAll();
+    $searchName = $request->query->get('search_name');
+    $searchClass = $request->query->get('search_class');
+    $searchSession = $request->query->get('search_session');
     
-        if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour voir cette page.');
-            return $this->redirectToRoute('app_login');
-        }
+    $queryBuilder = $internshipRepository->createQueryBuilder('i')
+        ->where('i.IsVerified = false');
+
+    // Restriction selon le rôle
+    if (in_array('ROLE_STUDENT', $roles)) {
+        // Un étudiant ne voit que ses stages
+        $queryBuilder
+            ->andWhere('i.relation = :userId')
+            ->setParameter('userId', $user->getId());
+    } elseif (in_array('ROLE_TEACHER', $roles) && !in_array('ROLE_ADMIN', $roles)) {
+        // Un professeur ne voit que les stages des étudiants de ses classes
+        $queryBuilder
+            ->join('i.relation', 'u')
+            ->join('u.grade', 'g')
+            ->andWhere('g IN (:teacherGrades)')
+            ->setParameter('teacherGrades', $user->getGrade());
+    }
+    // Les admins voient tout (pas de restriction supplémentaire)
+
+    // Reste du code de filtrage
+    $needJoinUser = $searchName || $searchClass;
     
-        $roles = $user->getRoles();
-        $limit = 15;
-        $page = max(1, (int) $request->query->get('page', 1));
-        $offset = ($page - 1) * $limit;
-        $grades = $em->getRepository(Grade::class)->findAll();
-        $sessions = $em->getRepository(Session::class)->findAll();
-        $searchName = $request->query->get('search_name');
-        $searchClass = $request->query->get('search_class');
-        $searchSession = $request->query->get('search_session');
-        
-        $queryBuilder = $internshipRepository->createQueryBuilder('i')
-            ->where('i.IsVerified = false');
-    
-        $needJoinUser = $searchName || $searchClass || in_array('ROLE_TEACHER', $roles);
-    
-        if ($needJoinUser) {
+    if ($needJoinUser && !$queryBuilder->getDQLPart('join')['u']) {
+        $queryBuilder->join('i.relation', 'u');
+    }
+
+    if ($searchName) {
+        $queryBuilder
+            ->andWhere('LOWER(u.firstName) LIKE :searchName OR LOWER(u.lastName) LIKE :searchName')
+            ->setParameter('searchName', '%' . strtolower($searchName) . '%');
+    }
+
+    if ($searchClass) {
+        if (!$queryBuilder->getDQLPart('join')['u']) {
             $queryBuilder->join('i.relation', 'u');
         }
-    
-        if ($searchName) {
-            $queryBuilder
-                ->andWhere('LOWER(u.firstName) LIKE :searchName OR LOWER(u.lastName) LIKE :searchName')
-                ->setParameter('searchName', '%' . strtolower($searchName) . '%');
+        if (!$queryBuilder->getDQLPart('join')['g']) {
+            $queryBuilder->join('u.grade', 'g');
         }
+        $queryBuilder
+            ->andWhere('g.id = :searchClass')
+            ->setParameter('searchClass', $searchClass);
+    }
+
+    if ($searchSession) {
+        $queryBuilder
+            ->andWhere('i.session = :searchSession')
+            ->setParameter('searchSession', $searchSession);
+    }
     
-        if ($searchClass) {
-            $queryBuilder
-                ->join('u.grade', 'g_search')
-                ->andWhere('g_search.id = :searchClass')
-                ->setParameter('searchClass', $searchClass);
-        }
-    
-        if ($searchSession) {
-            $queryBuilder
-                ->andWhere('i.session = :searchSession')
-                ->setParameter('searchSession', $searchSession);
-        }
-    
-        // Clone pour compter
-        $countQueryBuilder = clone $queryBuilder;
-        $result = $countQueryBuilder
-            ->select('COUNT(i.id) as total')
-            ->getQuery()
-            ->getOneOrNullResult();
-    
-        $total = $result['total'] ?? 0;
-        $maxPages = max(1, ceil($total / $limit));
-    
-        // Redirection si la page demandée est trop grande
-        if ($page > $maxPages) {
-            return $this->redirectToRoute('app_internship_validation', [
-                'page' => $maxPages,
-                'search_name' => $searchName,
-                'search_class' => $searchClass,
-                'search_session' => $searchSession
-            ]);
-        }
-    
-        // Résultats paginés
-        $internships = $queryBuilder
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    
-        $sessions = $em->getRepository(Session::class)->findAll();
-    
-        // Retourner les résultats avec la pagination et les filtres
-        return $this->render('internship/validation.html.twig', [
-            'internships' => $internships,
-            'total' => $total,
-            'limit' => $limit,
-            'page' => $page,
-            'pages' => $maxPages,
-            'searchName' => $searchName,
-            'searchClass' => $searchClass,
-            'searchSession' => $searchSession,
-            'sessions' => $sessions,
-            'grades' => $grades,
+    // Clone pour compter
+    $countQueryBuilder = clone $queryBuilder;
+    $result = $countQueryBuilder
+        ->select('COUNT(i.id) as total')
+        ->getQuery()
+        ->getOneOrNullResult();
+
+    $total = $result['total'] ?? 0;
+    $maxPages = max(1, ceil($total / $limit));
+
+    // Redirection si la page demandée est trop grande
+    if ($page > $maxPages) {
+        return $this->redirectToRoute('app_internship_validation', [
+            'page' => $maxPages,
+            'search_name' => $searchName,
+            'search_class' => $searchClass,
+            'search_session' => $searchSession
         ]);
     }
+
+    // Résultats paginés
+    $internships = $queryBuilder
+        ->setFirstResult($offset)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+
+    $sessions = $em->getRepository(Session::class)->findAll();
+
+    // Retourner les résultats avec la pagination et les filtres
+    return $this->render('internship/validation.html.twig', [
+        'internships' => $internships,
+        'total' => $total,
+        'limit' => $limit,
+        'page' => $page,
+        'pages' => $maxPages,
+        'searchName' => $searchName,
+        'searchClass' => $searchClass,
+        'searchSession' => $searchSession,
+        'sessions' => $sessions,
+        'grades' => $grades,
+    ]);
+}
     
 
 #[Route('/new', name: 'app_internship_new', methods: ['GET', 'POST'])]
