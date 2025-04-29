@@ -84,7 +84,10 @@
 							{{ internship.company.name }}
 						</td>
                         <td class="py-3 px-6 flex items-center justify-center space-x-2">
-                               <a href="{{ path('app_internship_edit', {'id': internship.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
+                            <a href="{{ path('app_internship_show', {'id': internship.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
+                            </a>   
+                            <a href="{{ path('app_internship_edit', {'id': internship.id}) }}" class="text-yellow-600 hover:text-yellow-800 font-medium flex items-center">
                                    <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
                                </a>
                             {% if is_granted('ROLE_TEACHER') %}

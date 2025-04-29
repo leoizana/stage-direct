@@ -79,7 +79,10 @@
                             <img src="{{ asset('svg/pencil-svgrepo-com.svg') }}" alt="Éditer" class="w-5 h-5">
                         </a>
                                {% endif %}
-
+                               <a href="{{ path('app_user_show', {'id': user.id}) }}" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                <img src="{{ asset('svg/eye-svgrepo-com.svg') }}" alt="Voir" class="w-5 h-5">
+                            </a>
+                            
                         <form method="post" action="{{ path('app_user_approve', {'id': user.id}) }}" class="inline-flex">
                             <button type="submit" class="text-green-600 hover:text-green-800 font-medium flex items-center">
                                 <img src="{{ asset('svg/checkmark-svgrepo-com.svg') }}" alt="Valider" class="w-5 h-5">
