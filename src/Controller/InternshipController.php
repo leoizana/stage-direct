@@ -76,12 +76,7 @@ final class InternshipController extends AbstractController
         }
 
         if ($searchClass) {
-            if (!$queryBuilder->getDQLPart('join')) {
-                $queryBuilder->join('i.relation', 'u');
-            }
-            if (!$queryBuilder->getDQLPart('join')) {
-                $queryBuilder->join('u.grade', 'g');
-            }
+            $queryBuilder->join('u.grade', 'g');
             $queryBuilder
                 ->andWhere('g.id = :searchClass')
                 ->setParameter('searchClass', $searchClass);
@@ -191,10 +186,10 @@ public function validation(Request $request, InternshipRepository $internshipRep
     }
 
     if ($searchClass) {
-        if (!$queryBuilder->getDQLPart('join')) {
+        if (!$queryBuilder->getDQLPart('join')['u']) {
             $queryBuilder->join('i.relation', 'u');
         }
-        if (!$queryBuilder->getDQLPart('join')) {
+        if (!$queryBuilder->getDQLPart('join')['g']) {
             $queryBuilder->join('u.grade', 'g');
         }
         $queryBuilder
