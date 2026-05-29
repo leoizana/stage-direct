@@ -20,13 +20,12 @@ final class Version20250419195329 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE tbl_internship DROP classe_eleve');
+        $this->addSql('ALTER TABLE tbl_internship DROP COLUMN classe_eleve');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE tbl_internship ADD classe_eleve VARCHAR(255) NOT NULL');
     }
 }

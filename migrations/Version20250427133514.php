@@ -26,7 +26,6 @@ final class Version20250427133514 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE tbl_user DROP want_mail');
+        $this->addSql('ALTER TABLE tbl_user DROP COLUMN want_mail');
     }
 }

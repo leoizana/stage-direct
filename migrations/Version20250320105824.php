@@ -27,8 +27,7 @@ final class Version20250320105824 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE tbl_company DROP size');
-        $this->addSql('ALTER TABLE tbl_company DROP fax');
+        $this->addSql('ALTER TABLE tbl_company DROP COLUMN size');
+        $this->addSql('ALTER TABLE tbl_company DROP COLUMN fax');
     }
 }

@@ -20,17 +20,14 @@ final class Version20250401064455 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP SEQUENCE session_id_seq CASCADE');
-        $this->addSql('CREATE TABLE tbl_session (id SERIAL NOT NULL, session_list VARCHAR(15) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('DROP TABLE session');
+        $this->addSql('CREATE TABLE tbl_session (id INT AUTO_INCREMENT NOT NULL, session_list VARCHAR(15) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('DROP TABLE `session`');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('CREATE SEQUENCE session_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE session (id SERIAL NOT NULL, session_list VARCHAR(15) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE `session` (id INT AUTO_INCREMENT NOT NULL, session_list VARCHAR(15) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('DROP TABLE tbl_session');
     }
 }
